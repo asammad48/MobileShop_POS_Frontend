@@ -19,27 +19,27 @@ interface DataTableProps {
 
 export default function DataTable({ columns, data, onEdit, onDelete, showActions = true }: DataTableProps) {
   return (
-    <Card>
+    <Card className="shadow-md">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/50">
               {columns.map((column) => (
-                <TableHead key={column.key}>{column.label}</TableHead>
+                <TableHead key={column.key} className="font-semibold">{column.label}</TableHead>
               ))}
-              {showActions && <TableHead className="text-right">Actions</TableHead>}
+              {showActions && <TableHead className="text-right font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + (showActions ? 1 : 0)} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={columns.length + (showActions ? 1 : 0)} className="text-center text-muted-foreground py-12">
                   No data available
                 </TableCell>
               </TableRow>
             ) : (
               data.map((row, index) => (
-                <TableRow key={row.id || index}>
+                <TableRow key={row.id || index} className="hover:bg-muted/30 transition-colors">
                   {columns.map((column) => (
                     <TableCell key={column.key}>
                       {column.render ? column.render(row[column.key], row) : row[column.key]}
@@ -47,11 +47,12 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                   ))}
                   {showActions && (
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
                         {onEdit && (
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
                             onClick={() => onEdit(row)}
                             data-testid={`button-edit-${row.id}`}
                           >
@@ -62,10 +63,11 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
                             onClick={() => onDelete(row)}
                             data-testid={`button-delete-${row.id}`}
                           >
-                            <Trash2 className="w-4 h-4 text-destructive" />
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         )}
                       </div>
