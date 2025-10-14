@@ -1,0 +1,102 @@
+You are an expert React + Tailwind developer. I want you to build the frontend for a SaaS-based POS (Point of Sale) system with multiple user roles.
+
+⚙️ Tech Stack:
+
+React (latest version)
+Tailwind CSS
+React Router DOM
+Axios
+Zustand or Redux Toolkit for state management
+React Hook Form for forms
+Lucide React or Heroicons for icons
+Shadcn UI components for clean design
+JWT authentication (frontend only, for now simulate role-based access)
+🎯 Project Overview: We are building a multi-role SaaS POS application for mobile repair shops and accessory sellers. There are three user roles:
+
+Super Admin
+Admin (Shop Owner)
+Sales Person (Shopkeeper / POS User)
+Each role will have a different dashboard layout and feature access.
+
+🧩 Pages and Features
+🔐 Authentication
+Login and Signup pages
+Simulated JWT-based login (store token and role in localStorage)
+Role-based redirection:
+Super Admin → /super-admin/dashboard
+Admin → /admin/dashboard
+Sales Person → /pos
+🧭 Main Layout
+Modern sidebar + top navbar layout
+Responsive design for desktop and tablet
+Sidebar menu adjusts based on role
+Super Admin Menu:
+
+Dashboard (view total admins, total sales, analytics)
+Manage Admins (list, edit, delete, create)
+Pricing Plans (add/edit/delete packages)
+System Analytics (revenue overview, total shops, active users)
+Admin (Shop Owner) Menu:
+
+Dashboard (sales summary, inventory count, shop performance)
+Products (CRUD)
+Categories (CRUD)
+Sales Report (filter by date, staff)
+Manage Staff (add/edit/delete sales persons)
+Subscription (current plan, renew/upgrade options)
+POS Access (redirect to POS page)
+Sales Person (POS) Menu:
+
+POS Dashboard
+Create New Sale
+View Recent Sales
+Products lookup
+💳 POS Page Features
+Dual input method:
+Barcode Scanner Integration → auto fills product details
+Manual Entry → search product by name, edit quantity, and price
+Cart system with add/remove/edit
+Realtime total calculation (subtotal, tax, discount, grand total)
+“Print Receipt” and “Complete Sale” buttons
+Clean, tablet-friendly UI for quick use
+Show stock warnings when product quantity is low
+💰 Pricing Module (Super Admin Side)
+Manage subscription tiers (e.g., Silver, Gold, Platinum)
+Display plan features, price, and limits (no. of staff, no. of products, etc.)
+Admin can view and upgrade their plan
+📊 UI / Design Requirements
+Modern SaaS-style dashboard (like Linear, Stripe, or Vercel UI)
+Use Tailwind + Shadcn UI components
+Rounded corners, soft shadows, consistent spacing
+Light theme
+Dashboard cards with gradient headers and icons
+Use dummy JSON data for now (to simulate API)
+🧠 State & Auth
+Store JWT + user role in localStorage
+Add a simple hook useAuth() to check role and protect routes
+Each protected route should redirect unauthorized users to /login
+📁 Folder Structure
+src/
+┣ components/
+┣ pages/
+┃ ┣ auth/
+┃ ┣ superAdmin/
+┃ ┣ admin/
+┃ ┣ pos/
+┣ hooks/
+┣ store/
+┣ utils/
+┣ App.jsx
+┣ main.jsx
+
+
+🧑‍💻 Development Goals
+Build reusable components (Sidebar, Navbar, DashboardCard, Modal, Table)
+Use Tailwind classes properly for spacing and typography
+Simulate backend using static JSON or mock API
+Keep code clean and modular for easy backend integration later
+🚀 Output Expectation
+Generate all base files and folder structure. Include routing, UI screens for each role, and dummy JSON data for sample views. Focus on UX — make it visually appealing and functional. Use dummy JWT logic for role-based routing.
+
+🧾 Summary:
+Build the frontend only for a SaaS POS app using React + Tailwind. It should include authentication, dashboards for each role, a POS page (with barcode/manual input), and a pricing management module for super admin. Make it modern, clean, and production-ready in UI/UX.
