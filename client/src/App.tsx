@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import AppHeader from "@/components/AppHeader";
 import { useAuthStore } from "@/store/authStore";
 import NotFound from "@/pages/not-found";
 
@@ -42,9 +43,10 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full">
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center justify-between p-4 border-b">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
-          </header>
+          <div className="flex items-center border-b">
+            <SidebarTrigger data-testid="button-sidebar-toggle" className="ml-4" />
+            <AppHeader />
+          </div>
           <main className="flex-1 overflow-auto p-6">
             {children}
           </main>
