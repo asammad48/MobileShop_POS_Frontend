@@ -12,24 +12,30 @@ interface StatCardProps {
   gradient?: string;
 }
 
-export default function StatCard({ title, value, icon: Icon, trend, gradient }: StatCardProps) {
+export default function StatCard({ title, value, icon: Icon, trend, gradient = 'from-primary to-accent' }: StatCardProps) {
   return (
-    <Card className="overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className={`p-5 ${gradient || 'bg-gradient-to-br from-primary to-chart-2'}`}>
-        <div className="flex items-center justify-between text-primary-foreground">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-            <Icon className="w-6 h-6" />
+    <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border-0">
+      <div className={`p-6 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12" />
+        <div className="relative flex items-center justify-between text-white">
+          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <Icon className="w-7 h-7" />
           </div>
           {trend && (
-            <span className="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">
-              {trend.isPositive ? '+' : ''}{trend.value}%
+            <span className={`text-sm font-semibold px-3 py-1.5 rounded-full ${
+              trend.isPositive ? 'bg-green-500/30' : 'bg-red-500/30'
+            } backdrop-blur-sm`}>
+              {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
             </span>
           )}
         </div>
       </div>
-      <div className="p-6">
-        <div className="text-3xl font-bold mb-1">{value}</div>
-        <div className="text-sm text-muted-foreground">{title}</div>
+      <div className="p-6 bg-card">
+        <div className="text-3xl font-bold mb-1 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          {value}
+        </div>
+        <div className="text-sm text-muted-foreground font-medium">{title}</div>
       </div>
     </Card>
   );

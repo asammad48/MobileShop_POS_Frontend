@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Wrench } from 'lucide-react';
 
 interface Device {
   id: string;
@@ -26,44 +27,58 @@ export default function DevicesInRepair({ devices: propDevices }: DevicesInRepai
 
   const devices = propDevices || mockDevices;
 
-  const getStatusVariant = (status: string) => {
-    if (status === 'completed') return 'default';
-    if (status === 'in_progress') return 'secondary';
-    return 'destructive';
+  const getStatusConfig = (status: string) => {
+    if (status === 'completed') return { variant: 'default' as const, label: 'Completed', color: 'bg-emerald-500' };
+    if (status === 'in_progress') return { variant: 'secondary' as const, label: 'In Progress', color: 'bg-blue-500' };
+    return { variant: 'destructive' as const, label: 'Pending', color: 'bg-amber-500' };
   };
 
   return (
-    <Card>
-      <div className="p-4 border-b">
-        <h3 className="font-semibold">Devices in Repairing</h3>
+    <Card className="shadow-lg border-0">
+      <div className="p-6 border-b">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center">
+            <Wrench className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg">Devices in Repair</h3>
+            <p className="text-sm text-muted-foreground">Active repair queue</p>
+          </div>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Device ID</TableHead>
-              <TableHead>Device</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Issue</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Est. Date</TableHead>
+            <TableRow className="bg-muted/30">
+              <TableHead className="font-semibold">ID</TableHead>
+              <TableHead className="font-semibold">Device</TableHead>
+              <TableHead className="font-semibold">Customer</TableHead>
+              <TableHead className="font-semibold">Issue</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Est. Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {devices.map((device) => (
-              <TableRow key={device.id}>
-                <TableCell className="font-mono text-sm">{device.id}</TableCell>
-                <TableCell className="font-medium">{device.deviceName}</TableCell>
-                <TableCell>{device.customerName}</TableCell>
-                <TableCell className="text-muted-foreground">{device.issue}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusVariant(device.status)}>
-                    {device.status.replace('_', ' ')}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm">{new Date(device.estimatedDate).toLocaleDateString()}</TableCell>
-              </TableRow>
-            ))}
+            {devices.map((device) => {
+              const statusConfig = getStatusConfig(device.status);
+              return (
+                <TableRow key={device.id} className="hover:bg-muted/20">
+                  <TableCell className="font-mono text-sm font-medium">{device.id}</TableCell>
+                  <TableCell className="font-semibold">{device.deviceName}</TableCell>
+                  <TableCell>{device.customerName}</TableCell>
+                  <TableCell className="text-muted-foreground">{device.issue}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${statusConfig.color}`} />
+                      <Badge variant={statusConfig.variant} className="rounded-lg">
+                        {statusConfig.label}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm font-medium">{new Date(device.estimatedDate).toLocaleDateString()}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

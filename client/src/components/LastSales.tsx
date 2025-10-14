@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Receipt } from 'lucide-react';
 
 interface Sale {
   id: string;
@@ -29,13 +29,22 @@ export default function LastSales({ sales: propSales, onViewAll }: LastSalesProp
   const sales = propSales || mockSales;
 
   return (
-    <Card>
-      <div className="p-4 border-b flex items-center justify-between">
-        <h3 className="font-semibold">Last Sales</h3>
+    <Card className="shadow-lg border-0">
+      <div className="p-6 border-b flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+            <Receipt className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg">Recent Sales</h3>
+            <p className="text-sm text-muted-foreground">Latest transactions</p>
+          </div>
+        </div>
         <Button 
-          variant="ghost" 
+          variant="outline" 
           size="sm"
           onClick={onViewAll}
+          className="rounded-xl hover-elevate"
           data-testid="button-view-all-sales"
         >
           View All
@@ -45,22 +54,22 @@ export default function LastSales({ sales: propSales, onViewAll }: LastSalesProp
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Sale ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Items</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Date & Time</TableHead>
+            <TableRow className="bg-muted/30">
+              <TableHead className="font-semibold">ID</TableHead>
+              <TableHead className="font-semibold">Customer</TableHead>
+              <TableHead className="font-semibold">Items</TableHead>
+              <TableHead className="font-semibold">Total</TableHead>
+              <TableHead className="font-semibold">Date & Time</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sales.map((sale) => (
-              <TableRow key={sale.id}>
-                <TableCell className="font-mono text-sm">{sale.id}</TableCell>
-                <TableCell className="font-medium">{sale.customer}</TableCell>
-                <TableCell className="text-muted-foreground">{sale.items}</TableCell>
-                <TableCell className="font-semibold">${sale.total.toFixed(2)}</TableCell>
-                <TableCell className="text-sm">{sale.date}</TableCell>
+              <TableRow key={sale.id} className="hover:bg-muted/20">
+                <TableCell className="font-mono text-sm font-medium">{sale.id}</TableCell>
+                <TableCell className="font-semibold">{sale.customer}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{sale.items}</TableCell>
+                <TableCell className="font-bold text-emerald-600">${sale.total.toFixed(2)}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{sale.date}</TableCell>
               </TableRow>
             ))}
           </TableBody>

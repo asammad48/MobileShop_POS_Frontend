@@ -27,40 +27,56 @@ export default function LowStockAlert({ items: propItems }: LowStockAlertProps) 
   const items = propItems || mockItems;
 
   return (
-    <Card>
-      <div className="p-4 border-b flex items-center gap-2">
-        <AlertTriangle className="w-5 h-5 text-destructive" />
-        <h3 className="font-semibold">Low Generic Stock</h3>
+    <Card className="shadow-lg border-0">
+      <div className="p-6 border-b flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
+          <AlertTriangle className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h3 className="font-bold text-lg">Low Stock Alert</h3>
+          <p className="text-sm text-muted-foreground">Items requiring restock</p>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Current Stock</TableHead>
-              <TableHead>Min Required</TableHead>
-              <TableHead>Status</TableHead>
+            <TableRow className="bg-muted/30">
+              <TableHead className="font-semibold">Product</TableHead>
+              <TableHead className="font-semibold">Category</TableHead>
+              <TableHead className="font-semibold">Current Stock</TableHead>
+              <TableHead className="font-semibold">Min Required</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell className="text-muted-foreground">{item.category}</TableCell>
-                <TableCell>
-                  <span className={item.currentStock === 0 ? 'text-destructive font-semibold' : ''}>
-                    {item.currentStock} units
-                  </span>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{item.minRequired} units</TableCell>
-                <TableCell>
-                  <Badge variant={item.currentStock === 0 ? 'destructive' : 'secondary'}>
-                    {item.currentStock === 0 ? 'Out of Stock' : 'Low Stock'}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
+            {items.map((item) => {
+              const isOutOfStock = item.currentStock === 0;
+              const stockPercentage = (item.currentStock / item.minRequired) * 100;
+              
+              return (
+                <TableRow key={item.id} className="hover:bg-muted/20">
+                  <TableCell className="font-semibold">{item.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{item.category}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-bold ${isOutOfStock ? 'text-red-600' : 'text-amber-600'}`}>
+                        {item.currentStock}
+                      </span>
+                      <span className="text-muted-foreground text-sm">units</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{item.minRequired} units</TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={isOutOfStock ? 'destructive' : 'secondary'} 
+                      className={`rounded-lg ${!isOutOfStock && 'bg-amber-100 text-amber-700 border-amber-300'}`}
+                    >
+                      {isOutOfStock ? '⚠️ Out of Stock' : '📉 Low Stock'}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

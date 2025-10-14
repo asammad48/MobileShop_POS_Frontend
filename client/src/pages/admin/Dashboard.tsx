@@ -26,33 +26,33 @@ export default function AdminDashboard() {
         <p className="text-muted-foreground mt-1">Overview of your shop performance</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Today's Sales"
           value={`$${stats.todaySales.toLocaleString()}`}
           icon={DollarSign}
           trend={{ value: 12.5, isPositive: true }}
-          gradient="bg-gradient-to-br from-chart-4 to-chart-3"
+          gradient="from-teal-500 to-emerald-600"
         />
         <StatCard
           title="Wallet Balance"
           value={`$${stats.walletBalance.toLocaleString()}`}
           icon={Wallet}
           trend={{ value: 8.2, isPositive: true }}
-          gradient="bg-gradient-to-br from-chart-3 to-primary"
+          gradient="from-blue-600 to-indigo-600"
         />
         <StatCard
           title="Total Stock Available"
           value={stats.totalStock}
           icon={Package}
           trend={{ value: 15.3, isPositive: true }}
-          gradient="bg-gradient-to-br from-primary to-chart-2"
+          gradient="from-purple-600 to-pink-600"
         />
         <StatCard
           title="Clients Credit"
           value={`$${stats.clientsCredit.toLocaleString()}`}
           icon={CreditCard}
-          gradient="bg-gradient-to-br from-chart-2 to-chart-1"
+          gradient="from-amber-500 to-orange-600"
         />
       </div>
 

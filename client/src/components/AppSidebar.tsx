@@ -5,11 +5,11 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarHeader,
 } from '@/components/ui/sidebar';
 import { 
   LayoutDashboard, 
@@ -26,9 +26,10 @@ import {
   LogOut,
   Crown,
   Store,
-  Receipt
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const menuItems = {
   super_admin: [
@@ -61,20 +62,32 @@ export function AppSidebar() {
 
   const items = menuItems[user.role as keyof typeof menuItems] || [];
   
-  const roleIcon = user.role === 'super_admin' ? Crown : user.role === 'admin' ? Store : Receipt;
-  const RoleIcon = roleIcon;
+  const roleConfig = {
+    super_admin: { icon: Crown, name: 'Super Admin', gradient: 'from-purple-600 to-indigo-600' },
+    admin: { icon: Store, name: user.shopName || 'Shop Owner', gradient: 'from-indigo-600 to-blue-600' },
+    sales_person: { icon: Zap, name: 'Sales Person', gradient: 'from-teal-500 to-emerald-500' }
+  };
+
+  const config = roleConfig[user.role as keyof typeof roleConfig];
+  const RoleIcon = config.icon;
 
   return (
-    <Sidebar>
-      <SidebarContent>
+    <Sidebar className="border-r-0">
+      <SidebarHeader className="border-b border-sidebar-border p-6">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
+            <RoleIcon className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-sidebar-foreground">POS System</h2>
+            <p className="text-xs text-sidebar-foreground/70">{config.name}</p>
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent className="px-4 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2 text-base px-4 py-4">
-            <RoleIcon className="w-5 h-5" />
-            <span className="font-semibold">
-              {user.role === 'super_admin' ? 'Super Admin' : user.role === 'admin' ? user.shopName || 'Shop Owner' : 'Sales Person'}
-            </span>
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="px-3">
+          <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {items.map((item) => {
                 const isActive = location === item.url || location.startsWith(item.url + '/');
@@ -83,10 +96,10 @@ export function AppSidebar() {
                     <SidebarMenuButton 
                       asChild 
                       className={`
-                        rounded-lg px-3 py-2.5 transition-all duration-200
+                        rounded-xl px-4 py-3 transition-all duration-200
                         ${isActive 
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                          : 'hover:bg-primary/10 hover:text-primary'
+                          ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/30' 
+                          : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                         }
                       `}
                     >
@@ -103,23 +116,29 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter>
-        <div className="p-4 border-t">
-          <div className="mb-3 px-2">
-            <div className="text-sm font-semibold mb-0.5">{user.username}</div>
-            <div className="text-xs text-muted-foreground">{user.email}</div>
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <div className="flex items-center gap-3 mb-4 px-2">
+          <Avatar className="h-10 w-10 border-2 border-sidebar-primary/30">
+            <AvatarImage src="" />
+            <AvatarFallback className={`bg-gradient-to-br ${config.gradient} text-white font-semibold`}>
+              {user.username.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-sidebar-foreground truncate">{user.username}</div>
+            <div className="text-xs text-sidebar-foreground/70 truncate">{user.email}</div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors" 
-            onClick={logout}
-            data-testid="button-logout"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
         </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors" 
+          onClick={logout}
+          data-testid="button-logout"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Logout
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

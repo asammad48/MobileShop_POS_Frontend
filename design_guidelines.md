@@ -1,188 +1,189 @@
-# Design Guidelines: Multi-Role SaaS POS System
+# Design Guidelines: Premium Multi-Role SaaS POS System for Mobile Repair Shops
 
 ## Design Approach
-**Reference-Based Approach** - Drawing inspiration from modern SaaS platforms like Linear, Stripe, and Vercel for clean, professional interfaces with excellent UX.
+**Reference-Based Approach** - Drawing inspiration from premium fintech platforms like Stripe, Mercury, and Ramp, combined with luxury SaaS dashboards like Linear and Vercel for sophisticated, trustworthy interfaces.
 
 ## Core Design Principles
-- **Professional SaaS Aesthetic**: Clean, modern, and trustworthy
-- **Role-Appropriate Complexity**: Each dashboard tailored to user needs
-- **Speed & Efficiency**: Optimized for quick POS transactions
-- **Visual Hierarchy**: Clear information architecture across all views
+- **Luxury SaaS Aesthetic**: Sophisticated, refined, and premium feel
+- **Trust Through Design**: Professional polish that inspires confidence
+- **Effortless Elegance**: Complex functionality presented simply
+- **Depth & Dimensionality**: Subtle layering through shadows and elevation
 
 ## Color Palette
 
 ### Primary Colors
-- **Brand Primary**: 239 84% 67% (Vibrant blue for CTAs and primary actions)
-- **Brand Secondary**: 262 83% 58% (Purple accent for highlights)
+- **Deep Indigo**: 233 47% 25% (Primary brand - sophisticated depth)
+- **Royal Purple**: 265 85% 65% (Premium accent - luxury touch)
+- **Slate**: 215 25% 27% (Secondary - professional anchor)
 
-### Neutral Colors
-- **Background**: 0 0% 100% (Pure white)
-- **Surface**: 240 5% 96% (Light gray for cards)
-- **Border**: 214 32% 91% (Soft gray borders)
-- **Text Primary**: 222 47% 11% (Dark blue-gray)
-- **Text Secondary**: 215 16% 47% (Medium gray)
+### Premium Neutrals
+- **Background Base**: 220 17% 97% (Soft off-white)
+- **Surface Elevated**: 0 0% 100% (Pure white cards)
+- **Border Subtle**: 220 13% 91% (Refined separation)
+- **Text Primary**: 222 47% 11% (Deep charcoal)
+- **Text Secondary**: 215 20% 55% (Sophisticated gray)
+- **Text Muted**: 216 12% 70% (Subtle labels)
 
 ### Semantic Colors
-- **Success**: 142 76% 36% (Green for completed sales)
-- **Warning**: 38 92% 50% (Orange for low stock alerts)
-- **Error**: 0 84% 60% (Red for errors)
-- **Info**: 199 89% 48% (Cyan for informational states)
+- **Success**: 158 64% 52% (Refined teal-green)
+- **Warning**: 38 95% 62% (Warm amber)
+- **Error**: 0 72% 51% (Controlled red)
+- **Premium Gold**: 45 93% 58% (Loyalty/VIP indicators)
 
-### Dashboard Gradients
-- **Super Admin Cards**: Linear gradient from 239 84% 67% to 262 83% 58%
-- **Admin Cards**: Linear gradient from 199 89% 48% to 239 84% 67%
-- **POS Highlights**: Linear gradient from 142 76% 36% to 199 89% 48%
+### Sophisticated Gradients
+- **Hero/Premium Cards**: Linear from 233 47% 25% to 265 85% 65% (45deg)
+- **Dashboard Accents**: Linear from 265 85% 65% to 280 80% 70% (135deg)
+- **Success States**: Linear from 158 64% 52% to 171 77% 64% (90deg)
 
 ## Typography
 
 ### Font Stack
-- **Primary**: 'Inter', sans-serif (via Google Fonts CDN)
-- **Monospace**: 'JetBrains Mono', monospace (for codes, prices)
+- **Display/Headings**: 'Plus Jakarta Sans', sans-serif (Premium geometric)
+- **Body/Interface**: 'Inter', sans-serif (Professional clarity)
+- **Mono/Data**: 'JetBrains Mono', monospace (Technical precision)
 
 ### Type Scale
-- **Display**: text-4xl (36px) - Dashboard headers
-- **H1**: text-3xl (30px) - Page titles
-- **H2**: text-2xl (24px) - Section headers
-- **H3**: text-xl (20px) - Card headers
-- **Body Large**: text-base (16px) - Primary content
-- **Body**: text-sm (14px) - Secondary content
-- **Caption**: text-xs (12px) - Labels, metadata
-
-### Font Weights
-- **Bold**: font-semibold (600) - Headings, important data
-- **Medium**: font-medium (500) - Subheadings, labels
-- **Regular**: font-normal (400) - Body text
+- **Display**: text-5xl font-bold tracking-tight (Hero sections)
+- **H1**: text-4xl font-semibold tracking-tight (Page titles)
+- **H2**: text-2xl font-semibold (Section headers)
+- **H3**: text-xl font-medium (Card titles)
+- **Body Large**: text-base font-normal (Primary content)
+- **Body**: text-sm font-normal (Standard text)
+- **Caption**: text-xs font-medium tracking-wide uppercase (Labels)
 
 ## Layout System
 
 ### Spacing Primitives
-Use Tailwind units: **2, 3, 4, 6, 8, 12, 16, 20, 24**
-- Tight spacing: p-2, gap-3
-- Standard spacing: p-4, gap-4, m-6
-- Generous spacing: p-8, gap-8, mb-12
+Core units: **3, 4, 6, 8, 12, 16, 20, 24, 32**
+- Compact: p-3, gap-4
+- Standard: p-6, gap-6, mb-8
+- Premium: p-8, gap-12, mb-20
 
-### Grid System
-- **Dashboard Cards**: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-- **Data Tables**: Full-width with responsive scroll
-- **POS Layout**: Two-column split (products left, cart right) on desktop, stacked on mobile
-
-### Container Widths
-- **Main Content**: max-w-7xl mx-auto
-- **Forms**: max-w-md (narrow) to max-w-2xl (wide)
-- **Modals**: max-w-lg to max-w-4xl based on content
+### Grid & Structure
+- **Dashboard Stats**: grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6
+- **Product Gallery**: grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4
+- **POS Layout**: 60/40 split (products/cart) on lg+, stacked mobile
+- **Container**: max-w-7xl with px-6 md:px-8 for breathing room
 
 ## Component Library
 
 ### Navigation
-- **Sidebar**: Fixed left, 256px wide on desktop, collapsible to icons only
-- **Top Navbar**: Sticky, 64px height, contains search, notifications, user menu
-- **Mobile Navigation**: Slide-out drawer with overlay
+- **Sidebar**: 280px wide, backdrop-blur-xl with subtle gradient overlay, shadow-2xl
+- **Top Bar**: 72px height, glass-morphism effect (backdrop-blur-md bg-white/80), shadow-sm
+- **Mobile Nav**: Full-screen overlay with blur backdrop
 
-### Cards & Surfaces
-- **Dashboard Cards**: Rounded-xl (12px), shadow-sm, hover:shadow-md transition
-- **Stat Cards**: Gradient header with white body, p-6 padding
-- **Table Cards**: Rounded-lg with subtle border, white background
+### Premium Cards
+- **Stat Cards**: rounded-2xl, shadow-lg shadow-slate-200/50, hover:shadow-xl transition-shadow duration-300
+- **Elevated Cards**: White surface with subtle inner shadow, 1px border in border-subtle
+- **Glass Cards**: backdrop-blur-lg bg-white/60, border border-white/20 for overlays
+- **Dashboard Cards**: Gradient header (h-32) with white body, subtle top border glow
 
 ### Buttons
-- **Primary**: Solid fill with brand primary, rounded-lg, px-4 py-2
-- **Secondary**: Outlined with border-2, transparent background
-- **Ghost**: Transparent with hover:bg-gray-100
-- **Icon Buttons**: Square or circular, 40px min-touch-target
+- **Primary**: Gradient fill (deep-indigo to royal-purple), rounded-xl, px-6 py-3, font-medium, shadow-lg hover:shadow-xl
+- **Secondary**: Border-2 slate, bg-white, hover:bg-slate-50
+- **Ghost**: Transparent, hover:bg-slate-100/50
+- **Premium Action**: Gold gradient for VIP features
+- **Icon Only**: 48px circle, subtle shadow, hover:scale-105
 
-### Forms
-- **Input Fields**: Rounded-md, border-gray-300, focus:ring-2 focus:ring-primary
-- **Labels**: text-sm font-medium mb-1
-- **Error States**: Red border with error message below
-- **Search Bars**: Leading icon, rounded-full for global search
+### Form Elements
+- **Input Fields**: rounded-lg, border border-slate-200, bg-white, shadow-inner, focus:ring-2 ring-royal-purple/20, h-12
+- **Labels**: text-sm font-medium text-slate-700 mb-2
+- **Search**: Leading icon, trailing keyboard shortcut badge, rounded-xl
+- **Select Dropdowns**: Custom styled with arrow icon, shadow-xl when open
 
 ### Data Display
-- **Tables**: Striped rows, hover states, sticky headers for long lists
-- **Badges**: Rounded-full, px-2 py-1, text-xs, color-coded by status
-- **Progress Bars**: Rounded-full, gradient fills for visual appeal
-- **Charts**: Use Chart.js or Recharts with brand color palette
+- **Tables**: Rounded-xl container, striped with slate-50/50, hover:bg-slate-50 rows, sticky header with gradient
+- **Badges**: rounded-full px-3 py-1 text-xs font-semibold, shadow-sm, role-specific colors
+- **Status Indicators**: Dot (8px) + label, pulsing animation for active states
+- **Metrics**: Large mono numbers (text-3xl) with subtle text gradients
+- **Charts**: Recharts with gradient fills, smooth curves, premium color palette
 
 ### Modals & Overlays
-- **Modal**: Centered overlay, max-w-lg, rounded-xl, shadow-2xl
-- **Backdrop**: bg-black/50 with backdrop-blur-sm
-- **Toast Notifications**: Top-right corner, auto-dismiss in 4s
+- **Modal Container**: rounded-2xl shadow-2xl max-w-2xl, glass-morphism backdrop
+- **Backdrop**: bg-slate-900/40 backdrop-blur-sm
+- **Notification Toasts**: Top-right, rounded-xl, shadow-2xl, 6s auto-dismiss
+- **Confirmation Dialogs**: Centered, max-w-md, prominent action buttons
 
-## POS-Specific Design
+## POS Interface Design
 
-### Dual Input Interface
-- **Barcode Scanner**: Large input field with scanner icon, auto-focus on mount
-- **Manual Search**: Autocomplete dropdown with product images and prices
-- **Visual Feedback**: Green flash on successful scan, red on error
+### Barcode & Search
+- **Scanner Input**: Oversized (h-16), rounded-2xl, gradient border on focus, auto-clear after scan
+- **Product Search**: Autocomplete with product thumbnails (64px), price, stock indicator
+- **Scan Feedback**: Green glow pulse animation, haptic-style visual bounce
 
-### Cart Design
-- **Product Rows**: Image thumbnail (48px), name, quantity controls, price
-- **Quantity Controls**: +/- buttons with input in middle
-- **Remove Button**: Red ghost button with trash icon
-- **Total Section**: Sticky bottom, large text, gradient background
+### Cart Experience
+- **Cart Panel**: Fixed right on lg+, sticky bottom on mobile, shadow-2xl, white surface
+- **Product Rows**: 72px height, image (56px rounded-lg), quantity stepper (premium buttons), price in mono
+- **Quantity Controls**: Rounded-lg buttons with +/-, center input (w-16), disable states with opacity
+- **Subtotal/Tax**: Separated with dashed border, mono font for numbers
+- **Total**: Gradient background panel, text-3xl mono, shadow-inner
 
-### Stock Warnings
-- **Low Stock Badge**: Orange badge next to product name when qty < 5
-- **Out of Stock**: Red overlay with "Out of Stock" text, disabled state
-- **Visual Indicators**: Color-coded inventory levels in product cards
+### Transaction Flow
+- **Complete Sale**: Full-width gradient button, h-14, rounded-xl, text-lg font-semibold, pulsing shadow on hover
+- **Payment Methods**: Icon cards (128px), rounded-xl, hover:scale-105, selected state with gradient border
+- **Receipt**: Print preview modal with clean typography, QR code, shop branding area
 
-### Receipt & Actions
-- **Complete Sale**: Large green button, full-width, py-4
-- **Print Receipt**: Secondary action, icon + text
-- **Clear Cart**: Ghost button, confirmation dialog required
+### Inventory Indicators
+- **In Stock**: Small teal badge with dot
+- **Low Stock (<10)**: Amber badge with warning icon
+- **Out of Stock**: Red badge, disabled card with 60% opacity overlay
+- **Stock Levels**: Mini progress bar under product (h-1, rounded-full, gradient fill)
 
-## Role-Based Visual Distinction
+## Role-Based Visual Identity
 
-### Super Admin
-- **Accent Color**: Purple gradients
-- **Dashboard Cards**: 4-column grid showing system-wide metrics
-- **Icons**: Crown, shield, globe themes
+### Super Admin Dashboard
+- **Accent**: Deep purple gradients throughout
+- **Cards**: 4-column grid, system-wide analytics with sparkline charts
+- **Icons**: Crown, shield, settings (Lucide React)
+- **Data Viz**: Multi-shop comparison charts with sophisticated color coding
 
-### Admin (Shop Owner)
-- **Accent Color**: Blue gradients
-- **Dashboard Cards**: 3-column grid showing shop performance
-- **Icons**: Store, chart, users themes
+### Shop Admin Dashboard
+- **Accent**: Royal blue to indigo gradients
+- **Cards**: 3-column grid, shop performance metrics, revenue charts
+- **Icons**: Store, trending-up, users
+- **Quick Actions**: Premium floating action buttons (FAB) bottom-right
 
-### Sales Person
-- **Accent Color**: Green/teal gradients
-- **Interface**: Simplified, action-focused, larger touch targets
-- **Icons**: Shopping cart, barcode, receipt themes
+### Sales Person Interface
+- **Accent**: Teal to emerald gradients
+- **Layout**: Maximized for speed, 56px minimum touch targets
+- **Icons**: Scan, shopping-bag, receipt
+- **Shortcuts**: Keyboard hints visible, recent products carousel
 
-## Responsive Behavior
+## Premium Touches & Micro-interactions
 
-### Breakpoints
-- **Mobile**: < 640px - Single column, full-width cards, bottom nav
-- **Tablet**: 640px - 1024px - Two-column grids, visible sidebar
-- **Desktop**: > 1024px - Multi-column layouts, expanded sidebar
+- **Card Hover**: Subtle lift (translateY(-2px)), shadow expansion, 200ms ease
+- **Button Press**: Scale(0.98) on active, satisfying tactile feel
+- **Loading**: Skeleton screens with shimmer gradient animation
+- **Success States**: Checkmark with expanding circle animation, confetti on large sales
+- **Page Transitions**: Fade + slight slide (8px), 300ms cubic-bezier
+- **Focus Indicators**: 3px gradient ring with offset, premium feel
 
-### Touch Optimization
-- **Minimum Touch Target**: 44px × 44px for all interactive elements
-- **Spacing**: Increased gap-4 to gap-6 on touch devices
-- **POS Controls**: Extra large buttons (min 56px height) for quick tapping
-
-## Accessibility Considerations
-- **Focus States**: Visible ring-2 ring-offset-2 on all interactive elements
-- **Color Contrast**: Minimum WCAG AA (4.5:1) for all text
-- **Keyboard Navigation**: Full keyboard support with logical tab order
-- **Screen Readers**: Proper ARIA labels, semantic HTML throughout
-
-## Animation & Micro-interactions
-**Minimal and purposeful only:**
-- **Page Transitions**: Subtle fade-in (200ms) for route changes
-- **Hover States**: Scale-105 on cards, opacity changes on buttons
-- **Loading States**: Skeleton screens with pulse animation
-- **Success Feedback**: Checkmark animation on sale completion
-
-## Images & Icons
+## Images & Assets
 
 ### Icon Library
-Use **Lucide React** via CDN for consistent, modern iconography
+**Lucide React** - Clean, consistent, professional stroke-based icons at 24px default
 
 ### Product Images
-- **Thumbnail Size**: 48px × 48px in cart, 80px × 80px in product list
-- **Placeholder**: Gray background with centered icon when image missing
-- **Format**: WebP with JPEG fallback, lazy-loaded below fold
+- **Thumbnails**: 64px rounded-lg in cart, 120px in product grid
+- **Placeholder**: Gradient background (slate-100 to slate-200) with centered phone icon
+- **Format**: WebP optimized, lazy-loaded, subtle loading blur-up effect
 
-### Dashboard Illustrations
-- **Empty States**: Friendly illustrations for "No Sales Yet", "No Products" states
-- **Hero Graphics**: Abstract geometric shapes or 3D mockups for auth pages (optional)
+### Dashboard & Marketing
+- **Hero Images**: Abstract geometric patterns or premium device photography (recommended for landing pages)
+- **Empty States**: Minimal line illustrations in brand colors
+- **3D Elements**: Subtle isometric icons for feature highlights (optional premium touch)
 
-This design system creates a professional, efficient, and visually cohesive multi-role POS application optimized for speed and usability across all user types.
+## Responsive Refinements
+
+- **Mobile (< 768px)**: Single column, bottom sheet cart, 56px touch targets, simplified nav
+- **Tablet (768-1024px)**: Two-column grids, persistent cart sidebar, full feature set
+- **Desktop (> 1024px)**: Multi-column layouts, expanded sidebar (280px), hover interactions enabled
+
+## Accessibility & Polish
+
+- **Contrast**: WCAG AAA where possible (7:1), minimum AA (4.5:1)
+- **Focus Management**: Visible gradient rings, logical tab order, skip links
+- **Motion**: Respect prefers-reduced-motion, disable animations when set
+- **Touch**: 48px minimum, increased spacing on touch devices (gap-6 becomes gap-8)
+
+This premium design system creates a luxurious, trustworthy multi-role POS experience that feels expensive and professional while maintaining exceptional usability across all user types and devices.

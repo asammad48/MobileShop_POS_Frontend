@@ -35,19 +35,16 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
   }
 
   const style = {
-    "--sidebar-width": "16rem",
+    "--sidebar-width": "17.5rem",
   };
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full bg-background">
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex items-center border-b">
-            <SidebarTrigger data-testid="button-sidebar-toggle" className="ml-4" />
-            <AppHeader />
-          </div>
-          <main className="flex-1 overflow-auto p-6">
+          <AppHeader />
+          <main className="flex-1 overflow-auto p-8">
             {children}
           </main>
         </div>

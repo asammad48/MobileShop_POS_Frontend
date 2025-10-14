@@ -58,15 +58,18 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
   const data = propData || mockData[period];
 
   return (
-    <Card className="p-6 shadow-md">
+    <Card className="p-6 shadow-lg border-0 bg-card">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">Sales Analytics</h3>
+        <div>
+          <h3 className="text-xl font-bold">Sales Analytics</h3>
+          <p className="text-sm text-muted-foreground mt-1">Revenue and profit tracking</p>
+        </div>
         <div className="flex gap-2">
           <Button
             size="sm"
             variant={period === 'weekly' ? 'default' : 'outline'}
             onClick={() => setPeriod('weekly')}
-            className="rounded-lg"
+            className="rounded-xl"
             data-testid="button-period-weekly"
           >
             Weekly
@@ -75,7 +78,7 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
             size="sm"
             variant={period === 'monthly' ? 'default' : 'outline'}
             onClick={() => setPeriod('monthly')}
-            className="rounded-lg"
+            className="rounded-xl"
             data-testid="button-period-monthly"
           >
             Monthly
@@ -84,7 +87,7 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
             size="sm"
             variant={period === 'yearly' ? 'default' : 'outline'}
             onClick={() => setPeriod('yearly')}
-            className="rounded-lg"
+            className="rounded-xl"
             data-testid="button-period-yearly"
           >
             Yearly
@@ -93,7 +96,7 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
             size="sm"
             variant={period === 'custom' ? 'default' : 'outline'}
             onClick={() => setPeriod('custom')}
-            className="rounded-lg"
+            className="rounded-xl"
             data-testid="button-period-custom"
           >
             Custom
@@ -101,9 +104,19 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={320}>
+      <ResponsiveContainer width="100%" height={340}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.3} />
+          <defs>
+            <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0}/>
+            </linearGradient>
+            <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="hsl(var(--chart-4))" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="hsl(var(--chart-4))" stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.2} />
           <XAxis 
             dataKey="date" 
             className="text-xs"
@@ -117,19 +130,24 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
             contentStyle={{ 
               backgroundColor: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
-              borderRadius: '0.75rem',
-              boxShadow: '0px 4px 12px hsl(0 0% 0% / 0.1)'
+              borderRadius: '1rem',
+              boxShadow: '0px 8px 16px hsl(0 0% 0% / 0.1)'
             }}
+            labelStyle={{ fontWeight: '600', marginBottom: '8px' }}
           />
-          <Legend />
+          <Legend 
+            wrapperStyle={{ paddingTop: '20px' }}
+            iconType="circle"
+          />
           <Line 
             type="monotone" 
             dataKey="sales" 
             stroke="hsl(var(--chart-3))" 
             strokeWidth={3}
             name="Sales Amount"
-            dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 2, r: 5 }}
-            activeDot={{ r: 7 }}
+            dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 2, r: 6 }}
+            activeDot={{ r: 8 }}
+            fill="url(#salesGradient)"
           />
           <Line 
             type="monotone" 
@@ -137,8 +155,9 @@ export default function SalesAnalyticsChart({ data: propData }: SalesAnalyticsCh
             stroke="hsl(var(--chart-4))" 
             strokeWidth={3}
             name="Profit Amount"
-            dot={{ fill: 'hsl(var(--chart-4))', strokeWidth: 2, r: 5 }}
-            activeDot={{ r: 7 }}
+            dot={{ fill: 'hsl(var(--chart-4))', strokeWidth: 2, r: 6 }}
+            activeDot={{ r: 8 }}
+            fill="url(#profitGradient)"
           />
         </LineChart>
       </ResponsiveContainer>

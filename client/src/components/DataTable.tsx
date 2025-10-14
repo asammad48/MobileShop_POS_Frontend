@@ -19,27 +19,32 @@ interface DataTableProps {
 
 export default function DataTable({ columns, data, onEdit, onDelete, showActions = true }: DataTableProps) {
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-lg border-0 overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/50">
+            <TableRow className="bg-gradient-to-r from-primary/5 to-accent/5 border-b-2 border-primary/20">
               {columns.map((column) => (
-                <TableHead key={column.key} className="font-semibold">{column.label}</TableHead>
+                <TableHead key={column.key} className="font-semibold text-foreground">{column.label}</TableHead>
               ))}
-              {showActions && <TableHead className="text-right font-semibold">Actions</TableHead>}
+              {showActions && <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + (showActions ? 1 : 0)} className="text-center text-muted-foreground py-12">
-                  No data available
+                <TableCell colSpan={columns.length + (showActions ? 1 : 0)} className="text-center text-muted-foreground py-16">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                      <span className="text-2xl">📋</span>
+                    </div>
+                    <p className="font-medium">No data available</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               data.map((row, index) => (
-                <TableRow key={row.id || index} className="hover:bg-muted/30 transition-colors">
+                <TableRow key={row.id || index} className="hover:bg-muted/30 transition-colors border-b border-border/50">
                   {columns.map((column) => (
                     <TableCell key={column.key}>
                       {column.render ? column.render(row[column.key], row) : row[column.key]}
@@ -52,7 +57,7 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                            className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary"
                             onClick={() => onEdit(row)}
                             data-testid={`button-edit-${row.id}`}
                           >
@@ -63,7 +68,7 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-9 w-9 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                             onClick={() => onDelete(row)}
                             data-testid={`button-delete-${row.id}`}
                           >
