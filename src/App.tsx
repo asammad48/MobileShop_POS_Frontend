@@ -17,6 +17,8 @@ import PricingPlans from "@/pages/superadmin/Pricing";
 import SystemAnalytics from "@/pages/superadmin/Analytics";
 
 import AdminDashboard from "@/pages/admin/Dashboard";
+import AdminClients from "@/pages/admin/AdminClients";
+import AddClient from "@/pages/admin/sub pages/AddClient";
 import Products from "@/pages/admin/Products";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
@@ -65,7 +67,7 @@ function Router() {
           <Redirect to="/login" />
         </Route>
       )}
-
+      {/* Super admin routes */}
       <Route path="/super-admin/dashboard">
         <ProtectedLayout><SuperAdminDashboard /></ProtectedLayout>
       </Route>
@@ -79,8 +81,15 @@ function Router() {
         <ProtectedLayout><SystemAnalytics /></ProtectedLayout>
       </Route>
 
+      {/* Admin routes */}
       <Route path="/admin/dashboard">
         <ProtectedLayout><AdminDashboard /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/clients">
+        <ProtectedLayout><AdminClients /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/clients/addclient">
+        <ProtectedLayout><AddClient /></ProtectedLayout>
       </Route>
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>

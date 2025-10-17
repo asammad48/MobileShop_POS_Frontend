@@ -47,7 +47,7 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                 <TableRow key={row.id || index} className="hover:bg-muted/30 transition-colors border-b border-border/50">
                   {columns.map((column) => (
                     <TableCell key={column.key}>
-                      {column.render ? column.render(row[column.key], row) : row[column.key]}
+                      {column.render ? column.render(row[column.key], row, index) : row[column.key]}
                     </TableCell>
                   ))}
                   {showActions && (

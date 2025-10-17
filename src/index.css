@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modern scrollbar style */
+div[data-slot="sidebar-content"] {
+  overflow-y: auto; /* ensures scrollability */
+}
+
+/* Chrome, Edge, Safari */
+div[data-slot="sidebar-content"]::-webkit-scrollbar {
+  width: 8px;
+}
+
+div[data-slot="sidebar-content"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+div[data-slot="sidebar-content"]::-webkit-scrollbar-thumb {
+  background-color: rgba(120, 120, 120, 0.4);
+  border-radius: 9999px;
+}
+
+div[data-slot="sidebar-content"]::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(120, 120, 120, 0.6);
+}
+
+/* Firefox */
+div[data-slot="sidebar-content"] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 120, 120, 0.4) transparent;
+}
+
+
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -382,3 +412,4 @@
     inset: -1px;
   }
 }
+
