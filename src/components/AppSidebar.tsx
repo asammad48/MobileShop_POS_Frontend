@@ -1,13 +1,12 @@
 import { Link, useLocation } from 'wouter';
 import { useAuthStore } from '@/store/authStore';
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
   SidebarHeader,
@@ -18,8 +17,6 @@ import {
   DollarSign,
   BarChart3,
   Package,
-  FolderTree,
-  FileText,
   UserPlus,
   CreditCard,
   ShoppingCart,
@@ -38,14 +35,15 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
 
 type SubMenuItem = {
-  title: string;
+  key: string;
   url: string;
 };
 
 type MenuItem = {
-  title: string;
+  key: string;
   url: string;
   icon: React.ElementType;
   subMenu?: SubMenuItem[];
@@ -53,56 +51,56 @@ type MenuItem = {
 
 const menuItems: Record<string, MenuItem[]> = {
   super_admin: [
-    { title: 'Dashboard', url: '/super-admin/dashboard', icon: LayoutDashboard },
-    { title: 'Manage Admins', url: '/super-admin/admins', icon: Users },
-    { title: 'Pricing Plans', url: '/super-admin/pricing', icon: DollarSign },
-    { title: 'System Analytics', url: '/super-admin/analytics', icon: BarChart3 },
+    { key: 'Dashboard', url: '/super-admin/dashboard', icon: LayoutDashboard },
+    { key: 'Manage Admins', url: '/super-admin/admins', icon: Users },
+    { key: 'Pricing Plans', url: '/super-admin/pricing', icon: DollarSign },
+    { key: 'System Analytics', url: '/super-admin/analytics', icon: BarChart3 },
   ],
   admin: [
-    { title: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
-    { title: 'Clients', url: '/admin/clients', icon: Users },
-    { title: 'Providers', url: '/admin/providers', icon: UserCheck },
+    { key: 'dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
+    { key: 'clients', url: '/admin/clients', icon: Users },
+    { key: 'providers', url: '/admin/providers', icon: UserCheck },
     {
-      title: 'Products',
+      key: 'products',
       url: '/admin/products',
       icon: Package,
       subMenu: [
-        { title: 'Products (IMEI/Serials)', url: '/admin/products/imei-serials' },
-        { title: 'Generic Products', url: '/admin/products/generic' },
+        { key: 'imei_serials', url: '/admin/products/imei-serials' },
+        { key: 'generic', url: '/admin/products/generic' },
       ],
     },
-    { title: 'Repair Book', url: '/admin/repair-book', icon: Book },
-    { title: 'Close Today Turn', url: '/admin/close-today-turn', icon: Clock },
-    { title: 'Private Wallet', url: '/admin/private-wallet', icon: CreditCard },
-    { title: 'Recharge Payments', url: '/admin/recharge-payments', icon: DollarSign },
-    { title: 'Activity Logs', url: '/admin/activity-logs', icon: List },
-    { title: 'Drawer Open History', url: '/admin/drawer-history', icon: Archive },
+    { key: 'repair_book', url: '/admin/repair-book', icon: Book },
+    { key: 'close_today_turn', url: '/admin/close-today-turn', icon: Clock },
+    { key: 'private_wallet', url: '/admin/private-wallet', icon: CreditCard },
+    { key: 'recharge_payments', url: '/admin/recharge-payments', icon: DollarSign },
+    { key: 'activity_logs', url: '/admin/activity-logs', icon: List },
+    { key: 'drawer_history', url: '/admin/drawer-history', icon: Archive },
     {
-      title: 'Reports',
+      key: 'reports',
       url: '/admin/reports',
       icon: BarChart3,
       subMenu: [
-        { title: 'Sales Reports', url: '/admin/reports/sales' },
-        { title: 'Available Stock', url: '/admin/reports/available-stock' },
-        { title: 'Stock Sold', url: '/admin/reports/stock-sold' },
-        { title: 'Generic Product Reports', url: '/admin/reports/generic-products' },
-        { title: 'Invoices', url: '/admin/reports/invoices' },
-        { title: 'Contracts', url: '/admin/reports/contracts' },
-        { title: 'Top Mobile Sales', url: '/admin/reports/top-mobile-sales' },
-        { title: 'Mobile Record', url: '/admin/reports/mobile-record' },
-        { title: 'Mobile Low Stock', url: '/admin/reports/mobile-low-stock' },
-        { title: 'Generic Low Stock', url: '/admin/reports/generic-low-stock' },
-        { title: 'Net Profit', url: '/admin/reports/net-profit' },
-        { title: 'Sale Return', url: '/admin/reports/sale-return' },
+        { key: 'sales', url: '/admin/reports/sales' },
+        { key: 'available_stock', url: '/admin/reports/available-stock' },
+        { key: 'stock_sold', url: '/admin/reports/stock-sold' },
+        { key: 'generic_products', url: '/admin/reports/generic-products' },
+        { key: 'invoices', url: '/admin/reports/invoices' },
+        { key: 'contracts', url: '/admin/reports/contracts' },
+        { key: 'top_mobile_sales', url: '/admin/reports/top-mobile-sales' },
+        { key: 'mobile_record', url: '/admin/reports/mobile-record' },
+        { key: 'mobile_low_stock', url: '/admin/reports/mobile-low-stock' },
+        { key: 'generic_low_stock', url: '/admin/reports/generic-low-stock' },
+        { key: 'net_profit', url: '/admin/reports/net-profit' },
+        { key: 'sale_return', url: '/admin/reports/sale-return' },
       ],
     },
-    { title: 'Sale Managers', url: '/admin/sale-managers', icon: UserPlus },
-    { title: 'Coupon Codes', url: '/admin/coupons', icon: Tag },
+    { key: 'sale_managers', url: '/admin/sale-managers', icon: UserPlus },
+    { key: 'coupons', url: '/admin/coupons', icon: Tag },
   ],
   sales_person: [
-    { title: 'POS Dashboard', url: '/pos', icon: ShoppingCart },
-    { title: 'Recent Sales', url: '/pos/sales', icon: Clock },
-    { title: 'Products', url: '/pos/products', icon: Package },
+    { key: 'POS Dashboard', url: '/pos', icon: ShoppingCart },
+    { key: 'Recent Sales', url: '/pos/sales', icon: Clock },
+    { key: 'Products', url: '/pos/products', icon: Package },
   ],
 };
 
@@ -110,9 +108,7 @@ export function AppSidebar() {
   const { user, logout } = useAuthStore();
   const [location] = useLocation();
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
-  const toggleSubMenu = (title: string) => {
-    setOpenSubMenu(openSubMenu === title ? null : title);
-  };
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -121,11 +117,15 @@ export function AppSidebar() {
   const roleConfig = {
     super_admin: { icon: Crown, name: 'Super Admin', gradient: 'from-purple-600 to-indigo-600' },
     admin: { icon: Store, name: user.shopName || 'Shop Owner', gradient: 'from-indigo-600 to-blue-600' },
-    sales_person: { icon: Zap, name: 'Sales Person', gradient: 'from-teal-500 to-emerald-500' }
+    sales_person: { icon: Zap, name: 'Sales Person', gradient: 'from-teal-500 to-emerald-500' },
   };
 
   const config = roleConfig[user.role as keyof typeof roleConfig];
   const RoleIcon = config.icon;
+
+  const toggleSubMenu = (key: string) => {
+    setOpenSubMenu(openSubMenu === key ? null : key);
+  };
 
   return (
     <Sidebar className="border-r-0">
@@ -147,23 +147,30 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {items.map((item) => {
                 const isActive = location === item.url || location.startsWith(item.url + '/');
-                const hasSubMenu = 'subMenu' in item && !!item.subMenu;
-                const isSubMenuOpen = openSubMenu === item.title;
+                const hasSubMenu = !!item.subMenu;
+                const isSubMenuOpen = openSubMenu === item.key;
+
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={item.key}>
                     <div
-                      onClick={() => hasSubMenu ? toggleSubMenu(item.title) : null}
+                      onClick={() => (hasSubMenu ? toggleSubMenu(item.key) : null)}
                       className={`
-          flex items-center justify-between rounded-xl px-4 py-3 cursor-pointer transition-all duration-200
-          ${isActive
+                        flex items-center justify-between rounded-xl px-4 py-3 cursor-pointer transition-all duration-200
+                        ${isActive
                           ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/30'
                           : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                         }
-        `}
+                      `}
                     >
                       <Link href={item.url} className="flex items-center gap-2 flex-1">
                         <item.icon className="w-5 h-5" />
-                        <span className="font-medium">{item.title}</span>
+                        <span className="font-medium">
+                          {user.role === 'admin'
+                            ? hasSubMenu
+                              ? t(`admin.sidebar.${item.key}.title`)
+                              : t(`admin.sidebar.${item.key}`)
+                            : item.key}
+                        </span>
                       </Link>
                       {hasSubMenu && (
                         <span className="ml-2">
@@ -176,7 +183,7 @@ export function AppSidebar() {
                       )}
                     </div>
 
-                    {/* Submenu Section */}
+                    {/* Submenu */}
                     {hasSubMenu && (
                       <div
                         className={`ml-8 mt-1 overflow-hidden transition-all duration-300 ${isSubMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
@@ -186,18 +193,21 @@ export function AppSidebar() {
                           const isSubActive = location === sub.url;
                           return (
                             <Link
-                              key={sub.title}
+                              key={sub.key}
                               href={sub.url}
                               className={`
-                  flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
-                  ${isSubActive
+                                flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+                                ${isSubActive
                                   ? 'bg-sidebar-primary/20 text-sidebar-primary-foreground'
                                   : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
                                 }
-                `}
+                              `}
                             >
-                              
-                              <span>{sub.title}</span>
+                              <span>
+                                {user.role === 'admin'
+                                  ? t(`admin.sidebar.${item.key}.sub.${sub.key}`)
+                                  : sub.key}
+                              </span>
                             </Link>
                           );
                         })}
@@ -232,7 +242,7 @@ export function AppSidebar() {
           data-testid="button-logout"
         >
           <LogOut className="w-4 h-4 mr-2" />
-          Logout
+          {t('admin.sidebar.logout')}
         </Button>
       </SidebarFooter>
     </Sidebar>

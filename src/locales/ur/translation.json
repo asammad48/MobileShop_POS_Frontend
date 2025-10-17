@@ -1,0 +1,108 @@
+{
+  "admin": {
+    "titles": {
+      "super_admin": "سسٹم ایڈمنسٹریشن",
+      "admin": "بزنس ڈیش بورڈ",
+      "sales_person": "پوائنٹ آف سیل"
+    },
+    "header": {
+      "search_placeholder": "تلاش کریں...",
+      "notifications": "اطلاعات",
+      "refresh": "تازہ کریں",
+      "hi": "سلام",
+      "dashboard_fallback": "ڈیش بورڈ",
+      "languages": {
+        "en": "انگریزی",
+        "es": "ہسپانوی",
+        "fr": "فرانسیسی",
+        "de": "جرمن",
+        "ar": "عربی",
+        "ur": "اردو"
+      }
+    },
+    "sidebar": {
+      "dashboard": "ڈیش بورڈ",
+      "clients": "کلائنٹس",
+      "providers": "سپلائرز",
+      "products": {
+        "title": "مصنوعات",
+        "sub": {
+          "imei_serials": "مصنوعات (IMEI/سیریل نمبر)",
+          "generic": "عام مصنوعات"
+        }
+      },
+      "repair_book": "مرمت کی کتاب",
+      "close_today_turn": "آج کا سیشن بند کریں",
+      "private_wallet": "ذاتی والٹ",
+      "recharge_payments": "ریچارج ادائیگیاں",
+      "activity_logs": "سرگرمی کے ریکارڈز",
+      "drawer_history": "دروازہ کھولنے کی ہسٹری",
+      "reports": {
+        "title": "رپورٹس",
+        "sub": {
+          "sales": "فروخت کی رپورٹ",
+          "available_stock": "دستیاب اسٹاک",
+          "stock_sold": "فروخت شدہ اسٹاک",
+          "generic_products": "عام مصنوعات کی رپورٹ",
+          "invoices": "انوائسز",
+          "contracts": "کنٹریکٹس",
+          "top_mobile_sales": "سب سے زیادہ موبائل فروخت",
+          "mobile_record": "موبائل ریکارڈ",
+          "mobile_low_stock": "موبائل کم اسٹاک",
+          "generic_low_stock": "عام مصنوعات کم اسٹاک",
+          "net_profit": "خالص منافع",
+          "sale_return": "فروخت واپسی"
+        }
+      },
+      "sale_managers": "سیلز منیجرز",
+      "coupons": "کپون کوڈز",
+      "logout": "لاگ آؤٹ"
+    },
+    "dashboard": {
+      "title": "دکان کا ڈیش بورڈ",
+      "subtitle": "اپنی دکان کی کارکردگی کا جائزہ لیں",
+      "cards": {
+        "sales": {
+          "title": "آج کی فروخت",
+          "value_label": "فروخت",
+          "growth": "{{percent}}٪ اضافہ"
+        },
+        "wallet": {
+          "title": "والٹ بیلنس",
+          "value_label": "بیلنس",
+          "growth": "{{percent}}٪ اضافہ"
+        },
+        "stock": {
+          "title": "کل دستیاب اسٹاک",
+          "value_label": "اشیاء",
+          "growth": "{{percent}}٪ اضافہ"
+        },
+        "clients_credit": {
+          "title": "کلائنٹس کریڈٹ",
+          "value_label": "کریڈٹ"
+        }
+      },
+      "sales_analytics": {
+        "title": "فروخت کا تجزیہ",
+        "subtitle": "آمدنی اور منافع کا جائزہ",
+        "filters": {
+          "weekly": "ہفتہ وار",
+          "monthly": "ماہانہ",
+          "yearly": "سالانہ",
+          "custom": "حسبِ ضرورت"
+        },
+        "chart": {
+          "revenue": "آمدنی",
+          "profit": "منافع"
+        }
+      }
+    },
+    "common": {
+      "dashboard": "ڈیش بورڈ",
+      "search": "تلاش کریں...",
+      "hi": "سلام"
+    },
+    "super_admin": {},
+    "sales_person": {}
+  }
+}

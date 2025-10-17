@@ -1,9 +1,108 @@
 {
-    "dashboard": "Dashboard",
-    "add_client": "Add New Client",
-    "name": "Name",
-    "id_number": "ID Number",
-    "phone": "Phone",
-    "unpaid_balance": "Unpaid Balance"
+  "admin": {
+    "titles": {
+      "super_admin": "System Administration",
+      "admin": "Business Dashboard",
+      "sales_person": "Point of Sale"
+    },
+    "header": {
+      "search_placeholder": "Search...",
+      "notifications": "Notifications",
+      "refresh": "Refresh",
+      "hi": "Hi",
+      "dashboard_fallback": "Dashboard",
+      "languages": {
+        "en": "English",
+        "es": "Spanish",
+        "fr": "French",
+        "de": "German",
+        "ar": "Arabic",
+        "ur": "Urdu"
+      }
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "clients": "Clients",
+      "providers": "Providers",
+      "products": {
+        "title": "Products",
+        "sub": {
+          "imei_serials": "Products (IMEI/Serials)",
+          "generic": "Generic Products"
+        }
+      },
+      "repair_book": "Repair Book",
+      "close_today_turn": "Close Today Turn",
+      "private_wallet": "Private Wallet",
+      "recharge_payments": "Recharge Payments",
+      "activity_logs": "Activity Logs",
+      "drawer_history": "Drawer Open History",
+      "reports": {
+        "title": "Reports",
+        "sub": {
+          "sales": "Sales Reports",
+          "available_stock": "Available Stock",
+          "stock_sold": "Stock Sold",
+          "generic_products": "Generic Product Reports",
+          "invoices": "Invoices",
+          "contracts": "Contracts",
+          "top_mobile_sales": "Top Mobile Sales",
+          "mobile_record": "Mobile Record",
+          "mobile_low_stock": "Mobile Low Stock",
+          "generic_low_stock": "Generic Low Stock",
+          "net_profit": "Net Profit",
+          "sale_return": "Sale Return"
+        }
+      },
+      "sale_managers": "Sale Managers",
+      "coupons": "Coupon Codes",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Shop Dashboard",
+      "subtitle": "Overview of your shop performance",
+      "cards": {
+        "sales": {
+          "title": "Today's Sales",
+          "value_label": "Sales",
+          "growth": "Up {{percent}}%"
+        },
+        "wallet": {
+          "title": "Wallet Balance",
+          "value_label": "Wallet Balance",
+          "growth": "Up {{percent}}%"
+        },
+        "stock": {
+          "title": "Total Stock Available",
+          "value_label": "Items",
+          "growth": "Up {{percent}}%"
+        },
+        "clients_credit": {
+          "title": "Clients Credit",
+          "value_label": "Credit"
+        }
+      },
+      "sales_analytics": {
+        "title": "Sales Analytics",
+        "subtitle": "Revenue and profit tracking",
+        "filters": {
+          "weekly": "Weekly",
+          "monthly": "Monthly",
+          "yearly": "Yearly",
+          "custom": "Custom"
+        },
+        "chart": {
+          "revenue": "Revenue",
+          "profit": "Profit"
+        }
+      }
+    },
+    "common": {
+      "dashboard": "Dashboard",
+      "search": "Search...",
+      "hi": "Hi"
+    },
+    "super_admin": {},
+    "sales_person": {}
+  }
 }
-  
