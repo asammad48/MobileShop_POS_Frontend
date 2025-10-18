@@ -64,7 +64,7 @@ export default function AppHeader() {
           {/* SEARCH FIELD */}
           <div className="relative hidden lg:block">
             <Search
-              className="absolute inset-inline-start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+              className="absolute inset-inline-start-3 top-1/2 left-3 -translate-y-1/2 w-4 h-4 text-muted-foreground"
             />
             <Input
               type="search"

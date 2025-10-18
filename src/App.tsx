@@ -18,7 +18,7 @@ import SystemAnalytics from "@/pages/superadmin/Analytics";
 
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminClients from "@/pages/admin/AdminClients";
-import AddClient from "@/pages/admin/sub pages/AddClient";
+import Providers from "./pages/admin/Providers";
 import Products from "@/pages/admin/Products";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
@@ -88,8 +88,8 @@ function Router() {
       <Route path="/admin/clients">
         <ProtectedLayout><AdminClients /></ProtectedLayout>
       </Route>
-      <Route path="/admin/clients/addclient">
-        <ProtectedLayout><AddClient /></ProtectedLayout>
+      <Route path="/admin/providers">
+        <ProtectedLayout><Providers /></ProtectedLayout>
       </Route>
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>

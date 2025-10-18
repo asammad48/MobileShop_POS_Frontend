@@ -65,7 +65,6 @@ const menuItems: Record<string, MenuItem[]> = {
       url: '/admin/products',
       icon: Package,
       subMenu: [
-        { key: 'imei_serials', url: '/admin/products/imei-serials' },
         { key: 'generic', url: '/admin/products/generic' },
       ],
     },
