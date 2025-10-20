@@ -1,4 +1,4 @@
-// ✅ pages/admin/AdminClients.tsx (FINAL)
+// ✅ pages/admin/AdminClients.tsx (Fixed with working Add/Edit modal)
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
@@ -25,6 +25,14 @@ export default function AdminClients() {
   const [viewingClient, setViewingClient] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<any | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    idNumber: "",
+    address: "",
+    paymentMethod: "Cash",
+  });
 
   const [clients, setClients] = useState(
     Array.from({ length: 100 }, (_, i) => ({
@@ -42,6 +50,7 @@ export default function AdminClients() {
     }))
   );
 
+  // 🔍 Filtering
   const filteredClients = useMemo(() => {
     return clients.filter((c) => {
       const matchesName =
@@ -63,17 +72,33 @@ export default function AdminClients() {
     return filteredClients.slice(start, start + limit);
   }, [filteredClients, page, limit]);
 
-  // Helper: open add/edit modal
+  // 🔧 Open Add/Edit Modal
   const handleOpenModal = (client?: any) => {
     if (client) {
       setEditingClient(client);
+      setFormData({
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        idNumber: client.idNumber,
+        address: client.address,
+        paymentMethod: client.paymentMethod,
+      });
     } else {
       setEditingClient(null);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        idNumber: "",
+        address: "",
+        paymentMethod: "Cash",
+      });
     }
     setIsModalOpen(true);
   };
 
-  // Helper: print single row
+  // 🧾 Print single client info
   const handlePrintRow = async (row: any) => {
     const container = document.createElement("div");
     container.id = "client-print-container";
@@ -104,7 +129,40 @@ export default function AdminClients() {
     });
   };
 
-  // Columns config
+  // 🧠 Handle form input changes
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // 💾 Save client (Add or Edit)
+  const handleSubmitClient = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (editingClient) {
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === editingClient.id ? { ...c, ...formData } : c
+        )
+      );
+      toast({ title: "Client Updated", description: `${formData.name} has been updated.` });
+    } else {
+      const newClient = {
+        id: clients.length + 1,
+        ...formData,
+        unpaidBalance: 0,
+        status: "Active",
+        joiningDate: new Date().toISOString().split("T")[0],
+        lastPurchase: "-",
+      };
+      setClients([...clients, newClient]);
+      toast({ title: "Client Added", description: `${formData.name} has been added.` });
+    }
+
+    setIsModalOpen(false);
+  };
+
+  // Table columns
   const columns = [
     {
       key: "index",
@@ -206,6 +264,77 @@ export default function AdminClients() {
         total={filteredClients.length}
         onPageChange={setPage}
       />
+
+      {/* ✅ Add/Edit Modal */}
+      <FormPopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2 className="text-2xl font-semibold mb-4">
+          {editingClient ? "Edit Client" : "Add New Client"}
+        </h2>
+        <form onSubmit={handleSubmitClient} className="space-y-4">
+          <div>
+            <Label>Name</Label>
+            <Input
+              name="name"
+              value={formData.name}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div>
+            <Label>Email</Label>
+            <Input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div>
+            <Label>Phone</Label>
+            <Input
+              name="phone"
+              value={formData.phone}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div>
+            <Label>ID Number</Label>
+            <Input
+              name="idNumber"
+              value={formData.idNumber}
+              onChange={handleFormChange}
+              required
+            />
+          </div>
+          <div>
+            <Label>Address</Label>
+            <Input
+              name="address"
+              value={formData.address}
+              onChange={handleFormChange}
+            />
+          </div>
+          <div>
+            <Label>Payment Method</Label>
+            <Input
+              name="paymentMethod"
+              value={formData.paymentMethod}
+              onChange={handleFormChange}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit">
+              {editingClient ? "Update Client" : "Add Client"}
+            </Button>
+          </div>
+        </form>
+      </FormPopupModal>
     </div>
   );
 }
