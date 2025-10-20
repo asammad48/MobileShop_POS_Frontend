@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Printer } from "lucide-react";
+import { Plus, Eye, Printer, MapPin, Laptop } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import FormPopupModal from "@/components/ui/FormPopupModal";
@@ -12,92 +12,136 @@ import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { useTranslation } from "react-i18next";
 import { createRoot } from "react-dom/client";
-import { printElement } from "@/utils/print"; // ✅ import reusable print utility
+import { printElement } from "@/utils/print";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Providers() {
-  const [viewingProvider, setViewingProvider] = useState<any | null>(null);
-  const { t } = useTranslation();
   useAuth("admin");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+
+  // ✅ Types and Locations (dynamic)
+  const [types, setTypes] = useState(["Laptop", "Mobile", "Accessory"]);
+  const [locations, setLocations] = useState(["Germany", "Spain", "France"]);
+
+  // ✅ Provider Data
   const [providers, setProviders] = useState(
-    Array.from({ length: 50 }, (_, i) => ({
+    Array.from({ length: 25 }, (_, i) => ({
       id: i + 1,
       name: `Provider ${i + 1}`,
       phone: `+34 346 486 83${i + 1}`,
       document: `DOC-${1000 + i}`,
-      location: "Germany",
-      type: "Laptop",
+      location: locations[i % locations.length],
+      type: types[i % types.length],
       balance: i % 2 === 0 ? i * 10 : -i * 5,
     }))
   );
 
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const filteredProviders = useMemo(() => {
+    return providers.filter((p) => {
+      const matchName =
+        !filters.name || p.name.toLowerCase().includes(filters.name.toLowerCase());
+      const matchPhone =
+        !filters.phone || p.phone.toLowerCase().includes(filters.phone.toLowerCase());
+      const matchLocation =
+        !filters.location || p.location === filters.location;
+      const matchType = !filters.type || p.type === filters.type;
+      const matchBalance =
+        !filters.balance ||
+        (filters.balance === "Positive" && p.balance >= 0) ||
+        (filters.balance === "Negative" && p.balance < 0);
+      return matchName && matchPhone && matchLocation && matchType && matchBalance;
+    });
+  }, [providers, filters]);
+
   const paginatedProviders = useMemo(() => {
     const start = (page - 1) * limit;
-    return providers.slice(start, start + limit);
-  }, [providers, page, limit]);
+    return filteredProviders.slice(start, start + limit);
+  }, [filteredProviders, page, limit]);
 
-  const columns = [
-    {
-      key: "index",
-      label: t("admin.providers.columns.index"),
-      render: (_: any, __: any, index: number) =>
-        (page - 1) * limit + index + 1,
-    },
-    { key: "name", label: t("admin.providers.columns.name") },
-    { key: "phone", label: t("admin.providers.columns.phone") },
-    { key: "location", label: t("admin.providers.columns.location") },
-    { key: "type", label: t("admin.providers.columns.type") },
-    { key: "document", label: t("admin.providers.columns.document") },
-    {
-      key: "balance",
-      label: t("admin.providers.columns.balance"),
-      render: (value: number) =>
-        value < 0 ? (
-          <Badge variant="destructive">{value.toFixed(2)}</Badge>
-        ) : (
-          <Badge variant="default">+{value.toFixed(2)}</Badge>
-        ),
-    },
-  ];
-
+  // ✅ Modals
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editProvider, setEditProvider] = useState<any>(null);
+  const [isAddTypeOpen, setIsAddTypeOpen] = useState(false);
+  const [isAddLocationOpen, setIsAddLocationOpen] = useState(false);
+  const [viewingProvider, setViewingProvider] = useState<any | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // ✅ Form State
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    document: "",
+    location: "",
+    type: "",
+    balance: 0,
+  });
+
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddProvider = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
     const newProvider = {
       id: providers.length + 1,
-      name: formData.get("name") as string,
-      document: formData.get("document") as string,
-      balance: parseFloat(formData.get("balance") as string) || 0,
+      ...formData,
+      balance: parseFloat(String(formData.balance)) || 0,
     };
-    setProviders([...providers, newProvider]);
+    setProviders((prev) => [...prev, newProvider]);
     setIsModalOpen(false);
     toast({
-      title: t("admin.providers.toasts.title_added"),
-      description: t("admin.providers.toasts.added", {
-        name: newProvider.name,
-      }),
+      title: "Provider Added",
+      description: `${newProvider.name} has been added successfully.`,
     });
   };
 
-  const handleView = (row: any) => {
-    setViewingProvider(row);
+  // ✅ Add new type or location logic
+  const [newType, setNewType] = useState("");
+  const [newLocation, setNewLocation] = useState("");
+
+  const handleAddType = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newType.trim()) return;
+    setTypes((prev) => [...prev, newType.trim()]);
+    setNewType("");
+    setIsAddTypeOpen(false);
+    toast({
+      title: "Type Added",
+      description: `${newType} added to list.`,
+    });
   };
 
-  //  Handle Print
+  const handleAddLocation = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newLocation.trim()) return;
+    setLocations((prev) => [...prev, newLocation.trim()]);
+    setNewLocation("");
+    setIsAddLocationOpen(false);
+    toast({
+      title: "Location Added",
+      description: `${newLocation} added to list.`,
+    });
+  };
+
+  // ✅ Print handler
   const handlePrint = async (provider: any) => {
     const container = document.createElement("div");
     container.id = "printable-provider";
     document.body.appendChild(container);
-  
+
     const root = createRoot(container);
-  
     root.render(
       <div
         id="printable-provider"
@@ -110,7 +154,7 @@ export default function Providers() {
             Generated on {new Date().toLocaleDateString()}
           </p>
         </header>
-  
+
         <section>
           <table className="w-full text-sm border-collapse">
             <tbody>
@@ -132,16 +176,14 @@ export default function Providers() {
             </tbody>
           </table>
         </section>
-  
+
         <footer className="mt-8 border-t pt-4 text-center text-xs text-gray-500">
-          © {new Date().getFullYear()} Sell POS System
+          © {new Date().getFullYear()} TechFix POS System
         </footer>
       </div>
     );
-  
-    // ✅ Wait for React to flush DOM updates before printing
+
     await new Promise((resolve) => setTimeout(resolve, 400));
-  
     await printElement("printable-provider", {
       title: `Provider - ${provider.name}`,
       onAfterPrint: () => {
@@ -150,16 +192,50 @@ export default function Providers() {
       },
     });
   };
-  
+
+  // ✅ Columns
+  const columns = [
+    {
+      key: "index",
+      label: "#",
+      filterType: "none",
+      render: (_: any, __: any, index: number) => (page - 1) * limit + index + 1,
+    },
+    { key: "name", label: "Provider Name", filterType: "text" },
+    { key: "phone", label: "Phone", filterType: "text" },
+    {
+      key: "location",
+      label: "Location",
+      filterType: "select",
+      filterOptions: locations,
+    },
+    {
+      key: "type",
+      label: "Type",
+      filterType: "select",
+      filterOptions: types,
+    },
+    { key: "document", label: "CIF/DNI/PASSPORT", filterType: "text" },
+    {
+      key: "balance",
+      label: "Balance",
+      filterType: "select",
+      filterOptions: ["Positive", "Negative"],
+      render: (value: number) =>
+        value < 0 ? (
+          <Badge variant="destructive">{value.toFixed(2)}</Badge>
+        ) : (
+          <Badge variant="default">+{value.toFixed(2)}</Badge>
+        ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-semibold">
-            {t("admin.providers.title")}
-          </h1>
+          <h1 className="text-3xl font-semibold">{t("admin.providers.title")}</h1>
           <p className="text-muted-foreground mt-1">
             {t("admin.providers.subtitle")}
           </p>
@@ -190,7 +266,7 @@ export default function Providers() {
               size="icon"
               variant="ghost"
               className="h-9 w-9 rounded-xl hover:bg-blue-100 hover:text-blue-600"
-              onClick={() => handleView(row)}
+              onClick={() => setViewingProvider(row)}
               title="View"
             >
               <Eye className="w-4 h-4" />
@@ -207,96 +283,42 @@ export default function Providers() {
             </Button>
           </div>
         )}
+        onFilterChange={(f) => {
+          setFilters(f);
+          setPage(1);
+        }}
       />
 
-      {/* Pagination */}
       <TablePagination
         page={page}
         limit={limit}
-        total={providers.length}
+        total={filteredProviders.length}
         onPageChange={setPage}
       />
 
-      {/* View Provider Modal */}
-      {viewingProvider && (
-        <div className="fixed !m-0 inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 w-[700px] relative shadow-2xl border border-gray-100">
-            <h2 className="text-2xl font-bold mb-4">Provider Information</h2>
-
-            <div className="space-y-3 text-sm text-gray-800">
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                <div>
-                  <p className="text-gray-500 font-medium">Name</p>
-                  <p className="font-semibold">{viewingProvider.name}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500 font-medium">Phone</p>
-                  <p>{viewingProvider.phone}</p>
-                </div>
-
-                <div>
-                  <p className="text-gray-500 font-medium">Location</p>
-                  <p>{viewingProvider.location}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500 font-medium">Type</p>
-                  <p>{viewingProvider.type}</p>
-                </div>
-
-                <div className="col-span-2">
-                  <p className="text-gray-500 font-medium">CIF / DNI / Passport</p>
-                  <p>{viewingProvider.document}</p>
-                </div>
-
-                <div className="col-span-2">
-                  <p className="text-gray-500 font-medium">Balance</p>
-                  <p
-                    className={`font-semibold ${
-                      viewingProvider.balance < 0
-                        ? "text-red-600"
-                        : "text-green-700"
-                    }`}
-                  >
-                    €{viewingProvider.balance.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-end gap-3 no-print">
-              <Button
-                variant="outline"
-                onClick={() => setViewingProvider(null)}
-              >
-                Close
-              </Button>
-              <Button onClick={() => handlePrint(viewingProvider)}>
-                <Printer className="w-4 h-4 mr-2" /> Print
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add/Edit Modal */}
+      {/* Add Provider Modal */}
       <FormPopupModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditProvider(null);
-        }}
+        onClose={() => setIsModalOpen(false)}
       >
-        <h2 className="text-2xl font-semibold mb-4">
-          {editProvider ? "Edit Provider" : "Add New Provider"}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h2 className="text-2xl font-semibold mb-4">Add New Provider</h2>
+        <form onSubmit={handleAddProvider} className="space-y-4">
           <div>
-            <Label>Provider Name</Label>
+            <Label>Name</Label>
             <Input
               name="name"
-              defaultValue={editProvider?.name || ""}
-              placeholder="Enter provider name"
+              value={formData.name}
+              onChange={handleFormChange}
               required
+            />
+          </div>
+
+          <div>
+            <Label>Phone</Label>
+            <Input
+              name="phone"
+              value={formData.phone}
+              onChange={handleFormChange}
             />
           </div>
 
@@ -304,18 +326,74 @@ export default function Providers() {
             <Label>CIF / DNI / Passport</Label>
             <Input
               name="document"
-              defaultValue={editProvider?.document || ""}
-              placeholder="Enter document number"
+              value={formData.document}
+              onChange={handleFormChange}
             />
           </div>
 
           <div>
-            <Label>Opening Balance</Label>
+            <Label>Location</Label>
+            <Select
+              onValueChange={(v) => setFormData((prev) => ({ ...prev, location: v }))}
+              value={formData.location}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((loc) => (
+                  <SelectItem key={loc} value={loc}>
+                    {loc}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-primary mt-1"
+              type="button"
+              onClick={() => setIsAddLocationOpen(true)}
+            >
+              + Add New Location
+            </Button>
+          </div>
+
+          <div>
+            <Label>Type</Label>
+            <Select
+              onValueChange={(v) => setFormData((prev) => ({ ...prev, type: v }))}
+              value={formData.type}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {types.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-primary mt-1"
+              type="button"
+              onClick={() => setIsAddTypeOpen(true)}
+            >
+              + Add New Type
+            </Button>
+          </div>
+
+          <div>
+            <Label>Opening Balance (€)</Label>
             <Input
               name="balance"
               type="number"
-              step="0.01"
-              defaultValue={editProvider?.balance || 0}
+              value={formData.balance}
+              onChange={handleFormChange}
             />
           </div>
 
@@ -327,12 +405,120 @@ export default function Providers() {
             >
               Cancel
             </Button>
-            <Button type="submit">
-              {editProvider ? "Update Provider" : "Add Provider"}
-            </Button>
+            <Button type="submit">Add Provider</Button>
           </div>
         </form>
       </FormPopupModal>
+
+      {/* Add Type Modal */}
+      <FormPopupModal
+        isOpen={isAddTypeOpen}
+        onClose={() => setIsAddTypeOpen(false)}
+      >
+        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+          <Laptop className="w-5 h-5" /> Add New Type
+        </h2>
+        <form onSubmit={handleAddType} className="space-y-4">
+          <div>
+            <Label>Type Name</Label>
+            <Input
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
+              placeholder="Enter new type (e.g. Tablet)"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsAddTypeOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Add Type</Button>
+          </div>
+        </form>
+      </FormPopupModal>
+
+      {/* Add Location Modal */}
+      <FormPopupModal
+        isOpen={isAddLocationOpen}
+        onClose={() => setIsAddLocationOpen(false)}
+      >
+        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+          <MapPin className="w-5 h-5" /> Add New Location
+        </h2>
+        <form onSubmit={handleAddLocation} className="space-y-4">
+          <div>
+            <Label>Location Name</Label>
+            <Input
+              value={newLocation}
+              onChange={(e) => setNewLocation(e.target.value)}
+              placeholder="Enter new location (e.g. Italy)"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsAddLocationOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Add Location</Button>
+          </div>
+        </form>
+      </FormPopupModal>
+
+      {/* View Provider Modal */}
+      {viewingProvider && (
+        <div className="fixed !m-0 inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 w-[700px] max-w-[95vw] relative shadow-2xl border border-gray-100">
+            <h2 className="text-2xl font-bold mb-4">Provider Information</h2>
+            <div className="space-y-3 text-sm text-gray-800 grid grid-cols-2 gap-x-6 gap-y-2">
+              <div>
+                <p className="text-gray-500 font-medium">Name</p>
+                <p className="font-semibold">{viewingProvider.name}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 font-medium">Phone</p>
+                <p>{viewingProvider.phone}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 font-medium">Location</p>
+                <p>{viewingProvider.location}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 font-medium">Type</p>
+                <p>{viewingProvider.type}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-gray-500 font-medium">CIF / DNI / Passport</p>
+                <p>{viewingProvider.document}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-gray-500 font-medium">Balance</p>
+                <p
+                  className={`font-semibold ${viewingProvider.balance < 0 ? "text-red-600" : "text-green-700"
+                    }`}
+                >
+                  €{viewingProvider.balance.toFixed(2)}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-3 no-print">
+              <Button variant="outline" onClick={() => setViewingProvider(null)}>
+                Close
+              </Button>
+              <Button onClick={() => handlePrint(viewingProvider)}>
+                <Printer className="w-4 h-4 mr-2" /> Print
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

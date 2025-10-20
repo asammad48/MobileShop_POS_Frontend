@@ -140,6 +140,59 @@
         "location": "Location"
       }
     },
+    "products": {
+      "title": "Products",
+      "subtitle": "Manage your inventory",
+      "create_new_product": "Create New Product",
+      "inter_stock_transfer": "Inter Stock Transfer",
+      "manage_stock": "Manage Stock",
+      "column": {
+        "product_name": "Product Name",
+        "imei": "IMEI/Serial",
+        "stock": "Stock",
+        "sale_price": "Sale Price"
+      },
+      "modal": {
+        "create_title": "Create New Product",
+        "edit_title": "Edit Product",
+        "product_name_label": "Product Name",
+        "sale_price_label": "Sale Price (PKR)",
+        "cancel_button": "Cancel",
+        "save_button": "Save Product",
+        "update_button": "Update Product"
+      },
+      "toast": {
+        "product_added_title": "Product Added",
+        "product_added_description": "{{name}} has been added.",
+        "product_updated_title": "Product Updated",
+        "product_updated_description": "{{name}} has been updated.",
+        "stock_added_title": "Stock Added",
+        "stock_added_description": "{{quantity}} units added to {{productName}}",
+        "stock_returned_title": "Stock Returned",
+        "stock_returned_description": "{{quantity}} units returned from {{productName}}"
+      },
+      "manage_stock_modal": {
+        "title": "Manage Stock",
+        "add_tab": "Add Stock",
+        "return_tab": "Return Stock",
+        "search_placeholder": "Search by Product Name or IMEI",
+        "no_products_found": "No products found",
+        "enter_quantity_add": "Enter quantity to add",
+        "enter_quantity_return": "Enter quantity to return",
+        "add_button": "Add",
+        "return_button": "Return"
+      },
+      "inter_stock_modal": {
+        "title": "Inter-Store Stock Movement",
+        "imei_label": "Enter IMEI or Serial Number",
+        "imei_placeholder": "Enter IMEI or Serial Number",
+        "send_to_label": "Send Stock To",
+        "cancel_button": "Cancel",
+        "transfer_button": "Transfer Stock",
+        "store1": "Store 1",
+        "store2": "Store 2"
+      }
+    },
     "super_admin": {},
     "sales_person": {}
   }

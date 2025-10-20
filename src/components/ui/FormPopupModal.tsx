@@ -11,20 +11,26 @@ const FormPopupModal = ({ isOpen, onClose, children }: ModalProps) => {
 
   return (
     <div
-      className="fixed top-0 inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 overflow-y-scroll !m-0"
+      className="fixed !mt-0 inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4"
       onClick={onClose}
     >
+      {/* Modal Container */}
       <div
-        className="bg-white p-8 rounded-lg max-w-lg w-full shadow-lg mt-[200px] mb-[50px] xl:mt-0 xl:mb-0"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+        className="relative bg-white w-full max-w-lg rounded-xl shadow-xl p-6 sm:p-8 overflow-hidden flex flex-col max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()} // prevent closing on content click
       >
+        {/* Scrollable content */}
+        <div className="overflow-y-auto pr-2 custom-scrollbar">
+          {children}
+        </div>
+
+        {/* Close Button */}
         <button
-          className="absolute top-4 right-4 text-white text-xl"
+          className="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
           onClick={onClose}
         >
           &times;
         </button>
-        {children}
       </div>
     </div>
   );
