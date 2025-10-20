@@ -80,6 +80,10 @@
         "clients_credit": {
           "title": "Clients Credit",
           "value_label": "Credit"
+        },
+        "expense": {
+          "title": "Expense",
+          "value_label": "Expense"
         }
       },
       "sales_analytics": {
@@ -100,7 +104,41 @@
     "common": {
       "dashboard": "Dashboard",
       "search": "Search...",
-      "hi": "Hi"
+      "hi": "Hi",
+      "show": "Show",
+      "showing": "Showing",
+      "of": "of",
+      "previous": "Previous",
+      "next": "Next",
+      "actions": "Actions",
+      "show_10": "Show 10",
+      "show_25": "Show 25",
+      "show_50": "Show 50",
+      "show_100": "Show 100"
+    },
+    "clients": {
+      "title": "Clients",
+      "sub_title": "Manage your clients",
+      "add_client": "Add Client",
+      "name": "Name",
+      "index": "#",
+      "id_number": "ID Number",
+      "phone": "Phone",
+      "unpaid_balance": "Unpaid Balance",
+      "actions": "Actions"
+    },
+    "providers": {
+      "title": "Providers",
+      "subtitle": "Manage your providers",
+      "columns": {
+        "index": "#",
+        "name": "Provider Name",
+        "document": "CIF/DNI/PASSPORT",
+        "balance": "Balance",
+        "phone": "Phone",
+        "type": "Type",
+        "location": "Location"
+      }
     },
     "super_admin": {},
     "sales_person": {}

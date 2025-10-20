@@ -15,7 +15,7 @@ const FormPopupModal = ({ isOpen, onClose, children }: ModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-white p-8 rounded-lg max-w-lg w-full shadow-lg xl:mt-[200px] xl:mb-[50px]"
+        className="bg-white p-8 rounded-lg max-w-lg w-full shadow-lg mt-[200px] mb-[50px] xl:mt-0 xl:mb-0"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
       >
         <button

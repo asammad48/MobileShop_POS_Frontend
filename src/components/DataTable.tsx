@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Column {
   key: string;
@@ -15,9 +16,12 @@ interface DataTableProps {
   onEdit?: (row: any) => void;
   onDelete?: (row: any) => void;
   showActions?: boolean;
+  renderActions?: (row: any) => React.ReactNode;
 }
 
-export default function DataTable({ columns, data, onEdit, onDelete, showActions = true }: DataTableProps) {
+export default function DataTable({ columns, data, onEdit, onDelete, showActions = true, renderActions }: DataTableProps) {
+  const {t} = useTranslation();
+  
   return (
     <Card className="shadow-lg border-0 overflow-hidden">
       <div className="overflow-x-auto">
@@ -27,7 +31,7 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
               {columns.map((column) => (
                 <TableHead key={column.key} className="font-semibold text-foreground">{column.label}</TableHead>
               ))}
-              {showActions && <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>}
+              {showActions && <TableHead className="text-right font-semibold text-foreground">{t("admin.common.actions")}</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -53,31 +57,37 @@ export default function DataTable({ columns, data, onEdit, onDelete, showActions
                   {showActions && (
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        {onEdit && (
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary"
-                            onClick={() => onEdit(row)}
-                            data-testid={`button-edit-${row.id}`}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        )}
-                        {onDelete && (
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-9 w-9 rounded-xl hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => onDelete(row)}
-                            data-testid={`button-delete-${row.id}`}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
+                        {renderActions
+                          ? renderActions(row) // 👈 If provided by the page, use it
+                          : (
+                            <>
+                              {onEdit && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary"
+                                  onClick={() => onEdit(row)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {onDelete && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-9 w-9 rounded-xl hover:bg-destructive/10 hover:text-destructive"
+                                  onClick={() => onDelete(row)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </>
+                          )
+                        }
                       </div>
                     </TableCell>
                   )}
+
                 </TableRow>
               ))
             )}

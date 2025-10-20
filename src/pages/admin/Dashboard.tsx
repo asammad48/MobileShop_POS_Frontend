@@ -4,7 +4,7 @@ import SalesAnalyticsChart from '@/components/SalesAnalyticsChart';
 import DevicesInRepair from '@/components/DevicesInRepair';
 import LastSales from '@/components/LastSales';
 import LowStockAlert from '@/components/LowStockAlert';
-import { DollarSign, Wallet, Package, CreditCard } from 'lucide-react';
+import { DollarSign, Wallet, Package, CreditCard, ArrowDownCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
 
@@ -57,6 +57,12 @@ export default function AdminDashboard() {
           value={`$${stats.clientsCredit.toLocaleString()}`}
           icon={CreditCard}
           gradient="from-amber-500 to-orange-600"
+        />
+        <StatCard
+          title={t('admin.dashboard.cards.expense.title')}
+          value={`$${stats.clientsCredit.toLocaleString()}`}
+          icon={ArrowDownCircle}
+          gradient="from-red-400 to-red-600"
         />
       </div>
 
