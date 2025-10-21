@@ -193,6 +193,80 @@
         "store2": "Store 2"
       }
     },
+    "generic": {
+      "buttons": {
+        "createCategory": "Create New Category",
+        "editCategory": "Edit Category",
+        "manageStock": "Manage Stock",
+        "cancel": "Cancel",
+        "close": "Close",
+        "save": "Save",
+        "create": "Create",
+        "update": "Update",
+        "print": "Print",
+        "add": "Add",
+        "return": "Return",
+        "garbage": "Garbage"
+      },
+      "modals": {
+        "product": {
+          "createTitle": "Create New Product",
+          "editTitle": "Edit Product",
+          "category": "Category",
+          "selectCategoryPlaceholder": "Select Category",
+          "productName": "Product Name",
+          "ean": "EAN/SKU/UPC",
+          "stock": "Stock",
+          "buyPrice": "Buy Price",
+          "salePrice": "Sale Price"
+        },
+        "categories": {
+          "mobiles": "Mobiles",
+          "accessories": "Accessories",
+          "laptops": "Laptops"
+        },
+        "viewProduct": {
+          "title": "View Product",
+          "fields": {
+            "category": "Category",
+            "productName": "Product Name",
+            "ean": "EAN/SKU/UPC",
+            "stock": "Stock",
+            "buyPrice": "Buy Price",
+            "salePrice": "Sale Price"
+          }
+        },
+        "createCategory": {
+          "title": "Create New Category",
+          "label": "Category Name"
+        },
+        "editCategory": {
+          "title": "Edit Category",
+          "selectCategory": "Select Category",
+          "newName": "New Name"
+        },
+        "manageStock": {
+          "title": "Manage Stock",
+          "tabs": {
+            "add": "Add Stock",
+            "return": "Return Stock",
+            "garbage": "Move to Wastage"
+          },
+          "searchPlaceholder": "Search by Product Name or EAN",
+          "productStock": "Stock",
+          "noProductsFound": "No products found",
+          "quantityPlaceholderAdd": "Enter quantity to add",
+          "quantityPlaceholderReturn": "Enter quantity to return"
+        }
+      },
+      "messages": {
+        "categoryExists": "Category already exists!",
+        "stockAdded": "Stock Added",
+        "stockReturned": "Stock Returned",
+        "stockAddedDescription": "{{qty}} items added to {{product}}",
+        "stockReturnedDescription": "{{qty}} items returned from {{product}}"
+      }
+    },
     "super_admin": {},
     "sales_person": {}
   }

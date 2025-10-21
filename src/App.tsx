@@ -19,6 +19,7 @@ import SystemAnalytics from "@/pages/superadmin/Analytics";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminClients from "@/pages/admin/AdminClients";
 import Providers from "./pages/admin/Providers";
+import GenericProducts from "./pages/admin/Generic";
 import Products from "@/pages/admin/Products";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
@@ -93,6 +94,9 @@ function Router() {
       </Route>
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/products/generic">
+        <ProtectedLayout><GenericProducts /></ProtectedLayout>
       </Route>
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>

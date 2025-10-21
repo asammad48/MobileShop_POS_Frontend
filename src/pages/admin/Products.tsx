@@ -1,3 +1,12 @@
+// Future notes - when the user returns the stock a reciept should be created
+// ref - first meeting 22:00
+// Different between return stock and wastage product
+/*
+return stock means return the stock to the person from which we have bought
+and wastage means the product is damaged and that person don't want to take it back
+and it's not our use, so we move it to the wastage
+*/
+
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
@@ -104,6 +113,7 @@ export default function Products() {
     setIsModalOpen(true);
   };
 
+
   const openManageStockModal = () => {
     setStockSearch("");
     setIsStockModalOpen(true);
@@ -149,7 +159,7 @@ export default function Products() {
 
   const handleStockSubmit = (
     e: React.FormEvent<HTMLFormElement>,
-    action: "add" | "return",
+    action: "add" | "return" | "wastage",
     product: any
   ) => {
     e.preventDefault();
@@ -161,20 +171,32 @@ export default function Products() {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id !== product.id) return p;
+
         if (action === "add") return { ...p, stock: p.stock + quantity };
         if (action === "return") return { ...p, stock: Math.max(0, p.stock - quantity) };
+        if (action === "wastage") return { ...p, stock: Math.max(0, p.stock - quantity) };
+
         return p;
       })
     );
 
-    toast({
-      title: action === "add" ? "Stock Added" : "Stock Returned",
-      description:
-        action === "add"
-          ? `${quantity} units added to ${product.name}`
-          : `${quantity} units returned from ${product.name}`,
-    });
+    let title = "";
+    let description = "";
+
+    if (action === "add") {
+      title = "Stock Added";
+      description = `${quantity} units added to ${product.name}`;
+    } else if (action === "return") {
+      title = "Stock Returned";
+      description = `${quantity} units returned from ${product.name}`;
+    } else {
+      title = "Moved to Wastage";
+      description = `${quantity} units of ${product.name} marked as wasted.`;
+    }
+
+    toast({ title, description });
   };
+
 
   // Filter inside Manage Stock modal
   const searchedProducts = useMemo(() => {
@@ -311,21 +333,25 @@ export default function Products() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-4 border-b">
-          {["add", "return"].map((tab) => (
+          {["add", "return", "wastage"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab as "add" | "return")}
+              onClick={() => setActiveTab(tab as "add" | "return" | "wastage")}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
-                ? "border-primary text-primary"
-                : "border-transparent text-gray-500 hover:text-primary"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-gray-500 hover:text-primary"
                 }`}
             >
-              {tab === "add" ? "Add Stock" : "Return Stock"}
+              {tab === "add"
+                ? "Add Stock"
+                : tab === "return"
+                  ? "Return Stock"
+                  : "Move to Wastage"}
             </button>
           ))}
         </div>
 
-        {/* Search Field with icon inside input */}
+        {/* Search Field */}
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
           <Input
@@ -362,22 +388,37 @@ export default function Products() {
                   type="number"
                   name="quantity"
                   placeholder={
-                    activeTab === "add" ? "Enter quantity to add" : "Enter quantity to return"
+                    activeTab === "add"
+                      ? "Enter quantity to add"
+                      : activeTab === "return"
+                        ? "Enter quantity to return"
+                        : "Enter quantity to mark as wastage"
                   }
                   min="1"
-                  className="w-32"
+                  className="w-40"
                 />
                 <Button
                   type="submit"
-                  variant={activeTab === "add" ? "default" : "outline"}
+                  variant={
+                    activeTab === "add"
+                      ? "default"
+                      : activeTab === "return"
+                        ? "outline"
+                        : "destructive"
+                  }
                 >
-                  {activeTab === "add" ? "Add" : "Return"}
+                  {activeTab === "add"
+                    ? "Add"
+                    : activeTab === "return"
+                      ? "Return"
+                      : "Move"}
                 </Button>
               </form>
             </div>
           ))}
         </div>
       </FormPopupModal>
+
 
       {/* Inter-Stock Modal */}
       <FormPopupModal isOpen={isInterStockModalOpen} onClose={() => setIsInterStockModalOpen(false)}>
