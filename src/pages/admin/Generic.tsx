@@ -271,6 +271,14 @@ export default function GenericProducts() {
             </div>
 
             <div className="flex items-center justify-end gap-3">
+
+                <Button onClick={() => setIsCreateCategoryOpen(true)}><Plus className="w-4 h-4 mr-2" />Create New Category</Button>
+                <Button variant="outline" onClick={() => setIsEditCategoryOpen(true)}><Edit className="w-4 h-4 mr-2" />Edit Category</Button>
+                <Button variant="outline" onClick={() => handleOpenModal()}><Plus className="w-4 h-4 mr-2" />Create New Product</Button>
+                <Button variant="outline" onClick={() => setIsManageStockOpen(true)}><Boxes className="w-4 h-4 mr-2" />Manage Stock</Button>
+            </div>
+
+            <div className="flex w-full justify-end">
                 <TablePageSizeSelector
                     limit={limit}
                     onChange={(val) => {
@@ -278,10 +286,6 @@ export default function GenericProducts() {
                         setPage(1);
                     }}
                 />
-                <Button onClick={() => setIsCreateCategoryOpen(true)}><Plus className="w-4 h-4 mr-2" />Create New Category</Button>
-                <Button variant="outline" onClick={() => setIsEditCategoryOpen(true)}><Edit className="w-4 h-4 mr-2" />Edit Category</Button>
-                <Button variant="outline" onClick={() => handleOpenModal()}><Plus className="w-4 h-4 mr-2" />Create New Product</Button>
-                <Button variant="outline" onClick={() => setIsManageStockOpen(true)}><Boxes className="w-4 h-4 mr-2" />Manage Stock</Button>
             </div>
         </div>
 

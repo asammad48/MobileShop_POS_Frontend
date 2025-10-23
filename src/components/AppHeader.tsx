@@ -104,7 +104,7 @@ export default function AppHeader() {
                 className="flex items-center justify-center h-9 px-3 rounded-xl hover:bg-muted/50 transition"
                 data-testid="button-language"
               >
-                <span className="text-lg leading-none">{languages.find(l => l.code === i18n.language)?.flag || '🌐'}</span>
+                <span className="text-lg leading-none">{languages.find(l => l.code === i18n.language)?.flag}</span>
                 <span className="absolute top-2 right-0 rtl:-right-2 ms-2 text-[8px] font-medium tracking-wide uppercase">{i18n.language}</span>
               </Button>
             </DropdownMenuTrigger>

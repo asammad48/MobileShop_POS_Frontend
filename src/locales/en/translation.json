@@ -55,6 +55,7 @@
         }
       },
       "sale_managers": "Sale Managers",
+      "subscription": "Subscription",
       "coupons": "Coupon Codes",
       "logout": "Logout"
     },
@@ -283,6 +284,23 @@
         },
         "action": "Actions"
       }
+    },
+    "recharge_payments": {
+      "title": "Recharge Payments History",
+      "columns": {
+        "time": "Date/Time",
+        "number": "Number",
+        "service_name": "Service Name",
+        "country": "Country",
+        "auth": "Authorization",
+        "amount": "Amount",
+        "type": "Type",
+        "status": "Status"
+      }
+
+    },
+    "sales_managers": {
+      "title": "Add Sale Manager"
     }
   },
   "super_admin": {},

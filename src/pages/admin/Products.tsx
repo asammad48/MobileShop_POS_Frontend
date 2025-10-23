@@ -17,6 +17,9 @@ import { useToast } from "@/hooks/use-toast";
 import FormPopupModal from "@/components/ui/FormPopupModal";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { TablePagination } from "@/components/ui/tablepagination";
+import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
+
 import {
   Select,
   SelectTrigger,
@@ -26,13 +29,22 @@ import {
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 
+interface Products {
+  id: number;
+  name: string;
+  imeiOrSerial: string;
+  stock: number;
+  salePrice: number;
+  store: string;
+}
+
 export default function Products() {
   useAuth("admin");
   const { toast } = useToast();
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
@@ -40,7 +52,7 @@ export default function Products() {
   const [currentProduct, setCurrentProduct] = useState<any | null>(null);
   const [formData, setFormData] = useState({ name: "", salePrice: 0 });
   const [stockSearch, setStockSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"add" | "return">("add");
+  const [activeTab, setActiveTab] = useState<"add" | "return" | "wastage">("add");
 
   // Inter-Store Transfer
   const [imeiInput, setImeiInput] = useState("");
@@ -49,11 +61,18 @@ export default function Products() {
   const [targetStore, setTargetStore] = useState("store1");
 
   // Example product data (with store info)
-  const [products, setProducts] = useState([
-    { id: 1, name: "iPhone 12", imeiOrSerial: "SN12345", stock: 5, salePrice: 900, store: "Main Store" },
-    { id: 2, name: "Samsung Galaxy", imeiOrSerial: "SN12346", stock: 3, salePrice: 800, store: "Main Store" },
-    { id: 3, name: "Pixel 8", imeiOrSerial: "SN12347", stock: 0, salePrice: 750, store: "Main Store" },
-  ]);
+  const [products, setProducts] = useState<Products[]>(
+    Array.from({ length: 250 }, (_, i) => ({
+      id: i + 1,
+      name: "iPhone 12",
+      imeiOrSerial: `SN1234${i}`,
+      stock: i % 50,
+      salePrice: 900 + i,
+      store: "Main Store",
+    }))
+  );
+
+
 
   // Filtered data
   const filteredProducts = useMemo(() => {
@@ -241,6 +260,17 @@ export default function Products() {
     setIsInterStockModalOpen(false);
   };
 
+  // Handle page size change (records per page)
+  const handlePageSizeChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1); // Reset to first page when page size is changed
+  };
+
+  // Handle page change (pagination)
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
   // UI
   return (
     <div className="space-y-6">
@@ -264,6 +294,14 @@ export default function Products() {
             {t("admin.products.inter_stock_transfer")}
           </Button>
         </div>
+      </div>
+
+      {/* Pagination and Records per Page Dropdown above table */}
+      <div className="flex justify-end items-center mb-4">
+        <TablePageSizeSelector
+          limit={limit}
+          onChange={handlePageSizeChange}
+        />
       </div>
 
       {/* ✅ DataTable */}
@@ -292,6 +330,15 @@ export default function Products() {
           setPage(1);
         }}
       />
+      {/* Pagination Controls Below Table */}
+      <div className="mt-4">
+        <TablePagination
+          page={page}
+          limit={limit}
+          total={filteredProducts.length}
+          onPageChange={handlePageChange}
+        />
+      </div>
 
       {/* Product Modal */}
       <FormPopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -338,8 +385,8 @@ export default function Products() {
               key={tab}
               onClick={() => setActiveTab(tab as "add" | "return" | "wastage")}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
-                  ? "border-primary text-primary"
-                  : "border-transparent text-gray-500 hover:text-primary"
+                ? "border-primary text-primary"
+                : "border-transparent text-gray-500 hover:text-primary"
                 }`}
             >
               {tab === "add"

@@ -23,11 +23,14 @@ import GenericProducts from "./pages/admin/Generic";
 import RepairBook from "@/pages/admin/RepairBook";
 import CloseTodayTurn from "@/pages/admin/CloseTodayTurn";
 import PrivateWallet from "@/pages/admin/PrivateWallet";
+import RechargePayments from "@/pages/admin/RechargePayment";
 import Products from "@/pages/admin/Products";
+import ActivityLogs from "@/pages/admin/ActivityLogs";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
 import ManageStaff from "@/pages/admin/Staff";
 import Subscription from "@/pages/admin/Subscription";
+import SalesManagers from "@/pages/admin/SaleManagers";
 
 import POS from "@/pages/pos/POS";
 import RecentSales from "@/pages/pos/Sales";
@@ -97,9 +100,9 @@ function Router() {
       </Route>
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>
+      </Route>
       <Route path="/admin/products/generic">
         <ProtectedLayout><GenericProducts /></ProtectedLayout>
-      </Route>
       </Route>
       <Route path="/admin/repair-book">
         <ProtectedLayout><RepairBook /></ProtectedLayout>
@@ -109,6 +112,12 @@ function Router() {
       </Route>
       <Route path="/admin/private-wallet">
         <ProtectedLayout><PrivateWallet /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/recharge-payments">
+        <ProtectedLayout><RechargePayments /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/activity-logs">
+        <ProtectedLayout><ActivityLogs /></ProtectedLayout>
       </Route>
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>
@@ -121,6 +130,9 @@ function Router() {
       </Route>
       <Route path="/admin/subscription">
         <ProtectedLayout><Subscription /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/sale-managers">
+        <ProtectedLayout><SalesManagers /></ProtectedLayout>
       </Route>
 
       <Route path="/pos">

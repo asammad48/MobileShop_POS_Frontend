@@ -40,7 +40,7 @@ interface DataTableProps {
 export default function DataTable({
   columns,
   data,
-  showActions = true,
+  showActions = false,
   renderActions,
   onFilterChange,
 }: DataTableProps) {

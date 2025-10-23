@@ -23,7 +23,7 @@ import {
 import { TablePagination } from "@/components/ui/tablepagination";
 import { printElement } from "@/utils/print";
 import { useTranslation } from "react-i18next";
-
+import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 
 interface RepairItem {
     id: number;
@@ -42,7 +42,7 @@ interface RepairItem {
 export default function RepairBook() {
     useAuth("admin");
     const { toast } = useToast();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const [repairs, setRepairs] = useState(
         Array.from({ length: 25 }, (_, i) => ({
@@ -57,11 +57,11 @@ export default function RepairBook() {
             customer: "Ali Khan",
             dni: `PK12345${i}`,
             status: "registered",
-            
+
         })));
 
     const [page, setPage] = useState(1);
-    const [limit] = useState(10);
+    const [limit, setLimit] = useState(10);
     const [filters, setFilters] = useState<Record<string, string>>({});
     const [viewItem, setViewItem] = useState<RepairItem | null>(null);
     const [editItem, setEditItem] = useState<RepairItem | null>(null);
@@ -143,10 +143,23 @@ export default function RepairBook() {
         });
     };
 
+    // Handle page size change (records per page)
+    const handlePageSizeChange = (newLimit: number) => {
+        setLimit(newLimit);
+        setPage(1); // Reset to first page when page size is changed
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-semibold">Repair Book</h1>
+            </div>
+            {/* Pagination and Records per Page Dropdown above table */}
+            <div className="flex justify-end items-center mb-4">
+                <TablePageSizeSelector
+                    limit={limit}
+                    onChange={handlePageSizeChange}
+                />
             </div>
 
             <DataTable

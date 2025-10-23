@@ -12,6 +12,7 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import {
+  BanknoteIcon,
   LayoutDashboard,
   Users,
   DollarSign,
@@ -94,6 +95,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { key: 'sale_managers', url: '/admin/sale-managers', icon: UserPlus },
+    { key: 'subscription', url: '/admin/subscription', icon: BanknoteIcon },
     { key: 'coupons', url: '/admin/coupons', icon: Tag },
   ],
   sales_person: [
