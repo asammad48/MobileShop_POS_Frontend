@@ -22,6 +22,7 @@ import Providers from "./pages/admin/Providers";
 import GenericProducts from "./pages/admin/Generic";
 import RepairBook from "@/pages/admin/RepairBook";
 import CloseTodayTurn from "@/pages/admin/CloseTodayTurn";
+import PrivateWallet from "@/pages/admin/PrivateWallet";
 import Products from "@/pages/admin/Products";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
@@ -105,6 +106,9 @@ function Router() {
       </Route>
       <Route path="/admin/close-today-turn">
         <ProtectedLayout><CloseTodayTurn /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/private-wallet">
+        <ProtectedLayout><PrivateWallet /></ProtectedLayout>
       </Route>
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>
