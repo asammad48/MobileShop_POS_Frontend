@@ -75,17 +75,7 @@ return ( <div className="space-y-8"> <h1 className="text-3xl font-semibold">Clos
             >
               <Eye className="w-4 h-4 mr-1" /> View
             </Button>
-            <Button
-              size="sm"
-              onClick={() =>
-                toast({
-                  title: "Printed!",
-                  description: `${salesperson}'s summary sent to printer.`,
-                })
-              }
-            >
-              <Printer className="w-4 h-4 mr-1" /> Print
-            </Button>
+            
           </div>
         </div>
 
@@ -172,16 +162,7 @@ return ( <div className="space-y-8"> <h1 className="text-3xl font-semibold">Clos
           <Button variant="outline" onClick={() => setViewItem(null)}>
             Close
           </Button>
-          <Button
-            onClick={() =>
-              toast({
-                title: "Printed!",
-                description: `${viewItem.salesperson}'s turn printed.`,
-              })
-            }
-          >
-            Print
-          </Button>
+          
         </div>
       </div>
     )}
