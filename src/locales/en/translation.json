@@ -267,7 +267,24 @@
         "stockReturnedDescription": "{{qty}} items returned from {{product}}"
       }
     },
-    "super_admin": {},
-    "sales_person": {}
-  }
+    "repair_book": {
+      "title": "Repair Book",
+      "columns": {
+        "date": "Date & Time",
+        "brand": "Brand/Model Name",
+        "imei": "IMEI/Serial",
+        "defect": "Defect",
+        "customer_name": "Customer Name",
+        "identification": "DNI/NIE/PASSPORT",
+        "status": {
+          "title": "Status",
+          "registered": "Registered",
+          "not_registered": "Not Registered"
+        },
+        "action": "Actions"
+      }
+    }
+  },
+  "super_admin": {},
+  "sales_person": {}
 }

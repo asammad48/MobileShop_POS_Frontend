@@ -20,6 +20,8 @@ import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminClients from "@/pages/admin/AdminClients";
 import Providers from "./pages/admin/Providers";
 import GenericProducts from "./pages/admin/Generic";
+import RepairBook from "@/pages/admin/RepairBook";
+import CloseTodayTurn from "@/pages/admin/CloseTodayTurn";
 import Products from "@/pages/admin/Products";
 import Categories from "@/pages/admin/Categories";
 import SalesReport from "@/pages/admin/Sales";
@@ -94,9 +96,15 @@ function Router() {
       </Route>
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>
-      </Route>
       <Route path="/admin/products/generic">
         <ProtectedLayout><GenericProducts /></ProtectedLayout>
+      </Route>
+      </Route>
+      <Route path="/admin/repair-book">
+        <ProtectedLayout><RepairBook /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/close-today-turn">
+        <ProtectedLayout><CloseTodayTurn /></ProtectedLayout>
       </Route>
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>
