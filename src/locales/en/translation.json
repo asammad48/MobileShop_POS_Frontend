@@ -301,7 +301,39 @@
     },
     "sales_managers": {
       "title": "Add Sale Manager"
+    },
+    "sales_detail": {
+      "title": "Sale Details",
+      "columns": {
+        "index": "#",
+        "product": "Product",
+        "quantity": "Quantity",
+        "price": "Price",
+        "sale_time": "Sale Time",
+        "refund": "Refund"
+      },
+      "table": {
+        "noRecords": "No sales records found."
+      },
+      "buttons": {
+        "backToList": "Back to List"
+      },
+      "errors": {
+        "fetchFailure": "Failed to load sales details."
+      }
+    },
+    "drawer_history": {
+      "title": "Drawer History",
+      "columns": {
+        "time": "Date/Time",
+        "description": "Description",
+        "seller": "Seller"
+      },
+      "buttons": {
+        "refresh": "Refresh"
+      }
     }
+    
   },
   "super_admin": {},
   "sales_person": {}

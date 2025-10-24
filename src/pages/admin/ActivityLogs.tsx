@@ -65,8 +65,8 @@ export default function ActivityLogs() {
       render: (_: any, __: any, index: number) => (page - 1) * limit + index + 1,
     },
     { key: "description", label: "Activity Description", filterType: "text" },
-    { key: "stockValue", label: "Stock Value (€)", filterType: "none" },
-    { key: "totalStockValue", label: "Total Current Stock Value (€)", filterType: "none" },
+    { key: "stockValue", label: "Stock Value", filterType: "none" },
+    { key: "totalStockValue", label: "Total Current Stock Value", filterType: "none" },
   ];
 
   return (

@@ -121,7 +121,7 @@ export default function PrivateWallet() {
                             <TableHead>Date/Time</TableHead>
                             <TableHead>Type</TableHead>
                             <TableHead>Description</TableHead>
-                            <TableHead className="text-right">Amount (€)</TableHead>
+                            <TableHead className="text-right">Amount</TableHead>
                             <TableHead>Added By</TableHead>
                         </TableRow>
                     </TableHeader>
