@@ -207,7 +207,8 @@
         "print": "Print",
         "add": "Add",
         "return": "Return",
-        "garbage": "Garbage"
+        "garbage": "Garbage",
+        "delete": "Delete"
       },
       "modals": {
         "product": {

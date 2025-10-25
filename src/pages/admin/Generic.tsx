@@ -525,6 +525,9 @@ export default function GenericProducts() {
                     <Button type="button" variant="outline" onClick={() => setIsEditCategoryOpen(false)}>
                         {t("admin.generic.buttons.cancel")}
                     </Button>
+                    <Button type="button" variant="destructive" onClick={() => setIsEditCategoryOpen(false)}>
+                        {t("admin.generic.buttons.delete")}
+                    </Button>
                     <Button type="submit">{t("admin.generic.buttons.save")}</Button>
                 </div>
             </form>

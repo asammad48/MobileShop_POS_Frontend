@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Eye, Printer } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Eye } from "lucide-react";
 import FormPopupModal from "@/components/ui/FormPopupModal";
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
+import { Link } from "wouter";
 
 interface TurnItem {
 id: number;
@@ -21,7 +21,6 @@ status: string;
 
 export default function CloseTodayTurn() {
 useAuth("admin");
-const { toast } = useToast();
 
 // Dummy data
 const allTurns: TurnItem[] = Array.from({ length: 8 }, (_, i) => ({
@@ -68,13 +67,15 @@ return ( <div className="space-y-8"> <h1 className="text-3xl font-semibold">Clos
           </h2>
 
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setViewItem(latestTurn)}
-            >
-              <Eye className="w-4 h-4 mr-1" /> View
-            </Button>
+            <Link href="/admin/close-today-turn/123">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setViewItem(latestTurn)}
+              >
+                <Eye className="w-4 h-4 mr-1" /> View
+              </Button>
+            </Link>
             
           </div>
         </div>

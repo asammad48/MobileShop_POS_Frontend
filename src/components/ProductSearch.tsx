@@ -17,9 +17,10 @@ interface ProductSearchProps {
   products: Product[];
   onSelectProduct: (product: Product) => void;
   autoFocus?: boolean;
+  handleScanning: () => void;
 }
 
-export default function ProductSearch({ products, onSelectProduct, autoFocus = false }: ProductSearchProps) {
+export default function ProductSearch({ products, onSelectProduct, autoFocus = false, handleScanning }: ProductSearchProps) {
   const [search, setSearch] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -57,7 +58,7 @@ export default function ProductSearch({ products, onSelectProduct, autoFocus = f
           autoFocus={autoFocus}
           data-testid="input-product-search"
         />
-        <Barcode className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Barcode onClick={() => {handleScanning()}} className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
       </div>
       
       {showResults && filteredProducts.length > 0 && (

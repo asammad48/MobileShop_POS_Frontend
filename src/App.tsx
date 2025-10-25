@@ -131,12 +131,6 @@ function Router() {
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>
       </Route>
-      <Route path="/admin/sales">
-        <ProtectedLayout><SalesReport /></ProtectedLayout>
-      </Route>
-      <Route path="/admin/staff">
-        <ProtectedLayout><ManageStaff /></ProtectedLayout>
-      </Route>
       <Route path="/admin/subscription">
         <ProtectedLayout><Subscription /></ProtectedLayout>
       </Route>

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Printer, Check } from 'lucide-react';
 import { mockProducts } from '@/utils/mockData';
 import { useToast } from '@/hooks/use-toast';
-
+import { Html5QrcodeScanner } from "html5-qrcode";
 interface CartItemType {
   id: string;
   name: string;
@@ -25,6 +25,7 @@ export default function POS() {
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
   const { toast } = useToast();
+  const [result, setResult] = useState("");
 
   const handleAddToCart = (product: any) => {
     const existing = cart.find(item => item.id === product.id);
@@ -69,13 +70,21 @@ export default function POS() {
       toast({ title: 'Empty Cart', description: 'Add items to cart first', variant: 'destructive' });
       return;
     }
-    toast({ 
-      title: 'Sale Completed', 
+    toast({
+      title: 'Sale Completed',
       description: `Total: $${total.toFixed(2)}`,
     });
     setCart([]);
     setDiscount(0);
   };
+
+  const handleScanning = () => {
+    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }, false);
+    scanner.render((decodedText, decodedResult) => {
+      setResult(decodedText);
+      console.log("Scanned:", decodedText);
+    });
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
@@ -88,8 +97,14 @@ export default function POS() {
         <ProductSearch
           products={mockProducts}
           onSelectProduct={handleAddToCart}
+          handleScanning={handleScanning}
           autoFocus
         />
+
+        <div>
+          <div id="reader" style={{ width: "300px" }}></div>
+          <p>Scanned Code: {result}</p>
+        </div>
 
         <Card className="flex-1">
           <div className="p-4 border-b">
@@ -117,7 +132,7 @@ export default function POS() {
       <div className="space-y-4">
         <Card className="p-6 space-y-4">
           <h3 className="font-semibold text-lg">Order Summary</h3>
-          
+
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Subtotal</span>
@@ -150,8 +165,8 @@ export default function POS() {
           </div>
 
           <div className="space-y-2 pt-4">
-            <Button 
-              className="w-full bg-gradient-to-br from-chart-4 to-chart-3" 
+            <Button
+              className="w-full bg-gradient-to-br from-chart-4 to-chart-3"
               size="lg"
               onClick={handleCompleteSale}
               data-testid="button-complete-sale"
@@ -159,8 +174,8 @@ export default function POS() {
               <Check className="w-5 h-5 mr-2" />
               Complete Sale
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full"
               onClick={() => toast({ title: 'Print Receipt', description: 'Printing receipt...' })}
               data-testid="button-print-receipt"
