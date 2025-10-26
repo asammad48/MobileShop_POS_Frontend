@@ -333,6 +333,33 @@
       "buttons": {
         "refresh": "Refresh"
       }
+    },
+    "sales_report": {
+      "title": "Daily Sales Report",
+      "subtitle": "Overview of all sales between selected dates",
+      "select_date_range": "Select Date Range",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "range_applied": "Date range applied",
+      "no_range": "No full range selected",
+      "total_sale": "Total Sale",
+      "card": "Card",
+      "credit": "Credit",
+      "bank": "Bank",
+      "voucher": "Voucher",
+      "cash": "Cash",
+      "records_per_page": "Records per page",
+      "download": "Download CSV",
+      "ticket": "#Ticket",
+      "date": "Date / Time",
+      "product": "Product",
+      "imei": "IMEI / Serial / EAN",
+      "buy_price": "Purchase Price",
+      "sale_price": "Sale Price",
+      "quantity": "Quantity",
+      "payment_type": "Payment Type",
+      "sale_type": "Sale Type"
     }
     
   },

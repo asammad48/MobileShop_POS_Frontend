@@ -21,9 +21,9 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { TablePagination } from "@/components/ui/tablepagination";
+import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { printElement } from "@/utils/print";
 import { useTranslation } from "react-i18next";
-import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 
 interface RepairItem {
     id: number;

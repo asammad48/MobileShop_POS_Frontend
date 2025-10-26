@@ -77,7 +77,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { key: 'drawer_history', url: '/admin/drawer-history', icon: Archive },
     {
       key: 'reports',
-      url: '/admin/reports',
+      url: '/admin/reports/sales',
       icon: BarChart3,
       subMenu: [
         { key: 'sales', url: '/admin/reports/sales' },

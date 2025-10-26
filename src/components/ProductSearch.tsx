@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Search, Barcode } from 'lucide-react';
+import { Search, Barcode, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface Product {
@@ -18,10 +18,14 @@ interface ProductSearchProps {
   onSelectProduct: (product: Product) => void;
   autoFocus?: boolean;
   handleScanning: () => void;
+  search: string;
+  result: string;
+  setSearch: (value: string) => void;
+  setResult: (value: string) => void;
 }
 
-export default function ProductSearch({ products, onSelectProduct, autoFocus = false, handleScanning }: ProductSearchProps) {
-  const [search, setSearch] = useState('');
+export default function ProductSearch({ products, onSelectProduct, autoFocus = false, handleScanning, search, setSearch, result, setResult }: ProductSearchProps) {
+  
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [showResults, setShowResults] = useState(false);
 
@@ -44,6 +48,10 @@ export default function ProductSearch({ products, onSelectProduct, autoFocus = f
     setSearch('');
     setShowResults(false);
   };
+  const clearInputField = () => {
+    setSearch("");
+    setResult("")
+  }
 
   return (
     <div className="relative">
@@ -52,13 +60,14 @@ export default function ProductSearch({ products, onSelectProduct, autoFocus = f
         <Input
           type="text"
           placeholder="Search by name or scan barcode..."
-          value={search}
+          value={search || result}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10 pr-10"
           autoFocus={autoFocus}
           data-testid="input-product-search"
         />
         <Barcode onClick={() => {handleScanning()}} className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        {(search != "" || result != "") ? <XCircle onClick={() => {clearInputField()}} className="absolute right-8 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" /> : ''}
       </div>
       
       {showResults && filteredProducts.length > 0 && (

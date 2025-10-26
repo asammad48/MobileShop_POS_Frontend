@@ -8,7 +8,7 @@ export const mockCategories = [
 ];
 
 export const mockProducts = [
-  { id: 'prod1', shopId: 'shop1', name: 'iPhone 13 Screen', barcode: '123456789', categoryId: 'cat1', price: '89.99', stock: 12, lowStockThreshold: 5, createdAt: new Date('2024-01-01') },
+  { id: 'prod1', shopId: 'shop1', name: 'iPhone 13 Screen', barcode: '123456789012', categoryId: 'cat1', price: '89.99', stock: 12, lowStockThreshold: 5, createdAt: new Date('2024-01-01') },
   { id: 'prod2', shopId: 'shop1', name: 'Samsung S21 Battery', barcode: '987654321', categoryId: 'cat2', price: '45.50', stock: 3, lowStockThreshold: 5, createdAt: new Date('2024-01-01') },
   { id: 'prod3', shopId: 'shop1', name: 'Phone Case Premium', barcode: '111222333', categoryId: 'cat4', price: '15.99', stock: 25, lowStockThreshold: 5, createdAt: new Date('2024-01-01') },
   { id: 'prod4', shopId: 'shop1', name: 'USB-C Cable', barcode: '444555666', categoryId: 'cat5', price: '12.99', stock: 8, lowStockThreshold: 5, createdAt: new Date('2024-01-01') },

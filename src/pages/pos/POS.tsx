@@ -25,6 +25,7 @@ export default function POS() {
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
   const { toast } = useToast();
+  const [search, setSearch] = useState('');
   const [result, setResult] = useState("");
 
   const handleAddToCart = (product: any) => {
@@ -98,12 +99,15 @@ export default function POS() {
           products={mockProducts}
           onSelectProduct={handleAddToCart}
           handleScanning={handleScanning}
+          search={search}
+          setSearch={setSearch}
+          result={result}
+          setResult={setResult}
           autoFocus
         />
 
         <div>
           <div id="reader" style={{ width: "300px" }}></div>
-          <p>Scanned Code: {result}</p>
         </div>
 
         <Card className="flex-1">

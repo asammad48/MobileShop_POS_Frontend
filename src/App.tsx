@@ -29,7 +29,7 @@ import Products from "@/pages/admin/Products";
 import ActivityLogs from "@/pages/admin/ActivityLogs";
 import DrawerOpenHistory from "@/pages/admin/DrawerOpenHistory";
 import Categories from "@/pages/admin/Categories";
-import SalesReport from "@/pages/admin/Sales";
+import SalesReport from "./pages/admin/reports/SalesReport";
 import ManageStaff from "@/pages/admin/Staff";
 import Subscription from "@/pages/admin/Subscription";
 import SalesManagers from "@/pages/admin/SaleManagers";
@@ -124,10 +124,12 @@ function Router() {
       <Route path="/admin/activity-logs">
         <ProtectedLayout><ActivityLogs /></ProtectedLayout>
       </Route>
+      <Route path="/admin/reports/sales">
+        <ProtectedLayout><SalesReport /></ProtectedLayout>
+      </Route>
       <Route path="/admin/drawer-history">
         <ProtectedLayout><DrawerOpenHistory /></ProtectedLayout>
       </Route>
-
       <Route path="/admin/categories">
         <ProtectedLayout><Categories /></ProtectedLayout>
       </Route>
