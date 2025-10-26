@@ -194,7 +194,7 @@ export default function DailySalesReport() {
               <div className="flex items-center justify-between gap-2">
                 <label className="text-sm font-medium">{t("admin.sales_report.to")}</label>
                 <Input
-                  className="!w-9/12 justify-center"
+                  className="!w-9/12 justify-center"    
                   type="date"
                   value={dateRange.to ? dateRange.to.toISOString().split("T")[0] : ""}
                   min={minDate.toISOString().split("T")[0]}
@@ -258,7 +258,7 @@ export default function DailySalesReport() {
 
         <Button
           onClick={handleDownload}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2"
+          variant={"default"}
         >
           <Download className="w-4 h-4" /> {t("admin.sales_report.download")}
         </Button>
