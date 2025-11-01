@@ -7,11 +7,14 @@ import LowStockAlert from '@/components/LowStockAlert';
 import { DollarSign, Wallet, Package, CreditCard, ArrowDownCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
+import { useTitle } from '@/context/TitleContext';
+import { useEffect } from 'react';
 
 export default function AdminDashboard() {
   useAuth('admin');
   const [, setLocation] = useLocation();
   const { t } = useTranslation();
+  const {setTitle} = useTitle();
 
   //todo: remove mock functionality
   const stats = {
@@ -21,13 +24,18 @@ export default function AdminDashboard() {
     clientsCredit: 3420.0,
   };
 
+  useEffect(() => {
+    setTitle('Shop Dashboard');           // set header title for this page
+    return () => setTitle('Business Dashboard'); // optional reset on unmount
+  }, [setTitle]);
+
   return (
     <div className="space-y-6">
       {/* Dashboard Header */}
-      <div>
+      {/* <div>
         <h1 className="text-3xl font-semibold">{t('admin.dashboard.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('admin.dashboard.subtitle')}</p>
-      </div>
+      </div> */}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

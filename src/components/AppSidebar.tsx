@@ -12,6 +12,7 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import {
+  BoxesIcon,
   BanknoteIcon,
   LayoutDashboard,
   Users,
@@ -45,7 +46,7 @@ type SubMenuItem = {
 
 type MenuItem = {
   key: string;
-  url: string;
+  url?: string;
   icon: React.ElementType;
   subMenu?: SubMenuItem[];
 };
@@ -63,11 +64,21 @@ const menuItems: Record<string, MenuItem[]> = {
     { key: 'providers', url: '/admin/providers', icon: UserCheck },
     {
       key: 'products',
-      url: '/admin/products',
       icon: Package,
       subMenu: [
+        { key: 'mobile', url: '/admin/products/' },
         { key: 'generic', url: '/admin/products/generic' },
       ],
+    },
+    {
+      key: "catalog",
+      icon: BoxesIcon,
+      subMenu: [
+        {key: 'add_product', url: '/catalog/add-product'},
+        {key: 'manage_stock', url: '/catalog/manage-stock'},
+        {key: 'category', url: '/catalog/categories'},
+        {key: 'reasons', url: '/catalog/manage-reasons'}
+      ]
     },
     { key: 'repair_book', url: '/admin/repair-book', icon: Book },
     { key: 'close_today_turn', url: '/admin/close-today-turn', icon: Clock },
@@ -147,9 +158,13 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {items.map((item) => {
-                const isActive = location === item.url || location.startsWith(item.url + '/');
                 const hasSubMenu = !!item.subMenu;
+                // Active if item's url matches OR any submenu url matches current location
+                const isActive = item.url
+                  ? location === item.url || location.startsWith(item.url + '/')
+                  : (item.subMenu ?? []).some(sub => location === sub.url || location.startsWith(sub.url + '/'));
                 const isSubMenuOpen = openSubMenu === item.key;
+
 
                 return (
                   <SidebarMenuItem key={item.key}>

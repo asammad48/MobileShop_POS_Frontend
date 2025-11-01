@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Printer } from "lucide-react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import FormPopupModal from "@/components/ui/FormPopupModal";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
+import { useTitle } from '@/context/TitleContext';
 
 interface Transaction {
     id: number;
@@ -18,7 +21,15 @@ interface Transaction {
 }
 
 export default function PrivateWallet() {
+    useAuth('admin');
     const { toast } = useToast();
+    const {t} = useTranslation();
+    const {setTitle} = useTitle();
+    useEffect(() => {
+        setTitle(t("admin.private_wallet.title"));         
+        return () => setTitle('Business Dashboard'); 
+      }, [setTitle]);
+
 
     // Dummy data
     const [transactions, setTransactions] = useState<Transaction[]>([
@@ -84,8 +95,8 @@ export default function PrivateWallet() {
     };
 
     return (
-        <div className="space-y-8"> <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-semibold">Private Wallet</h1>
+        <div className="space-y-8"> <div className="flex justify-end items-center">
+            
             <div className="flex gap-2">
 
                 <Button onClick={() => setModalOpen(true)}> <Plus className="w-4 h-4 mr-1" /> Add Transaction </Button>

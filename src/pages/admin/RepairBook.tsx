@@ -4,7 +4,7 @@ repair person
 
 */
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { printElement } from "@/utils/print";
 import { useTranslation } from "react-i18next";
+import { useTitle } from '@/context/TitleContext';
 
 interface RepairItem {
     id: number;
@@ -43,7 +44,11 @@ export default function RepairBook() {
     useAuth("admin");
     const { toast } = useToast();
     const { t } = useTranslation();
-
+    const {setTitle} = useTitle();
+    useEffect(() => {
+        setTitle(t("admin.repair_book.title"));           
+        return () => setTitle('Business Dashboard');
+      }, [setTitle]);
     const [repairs, setRepairs] = useState(
         Array.from({ length: 25 }, (_, i) => ({
             id: i + 1,
@@ -151,9 +156,6 @@ export default function RepairBook() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-semibold">Repair Book</h1>
-            </div>
             {/* Pagination and Records per Page Dropdown above table */}
             <div className="flex justify-end items-center mb-4">
                 <TablePageSizeSelector

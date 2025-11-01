@@ -11,6 +11,8 @@ import NotFound from "@/pages/not-found";
 
 import Login from "@/pages/auth/Login";
 
+import { TitleProvider } from '@/context/TitleContext';
+
 import SuperAdminDashboard from "@/pages/superadmin/Dashboard";
 import ManageAdmins from "@/pages/superadmin/Admins";
 import PricingPlans from "@/pages/superadmin/Pricing";
@@ -26,17 +28,19 @@ import SalesDetailPage from "./pages/admin/SalesDetailPage";
 import PrivateWallet from "@/pages/admin/PrivateWallet";
 import RechargePayments from "@/pages/admin/RechargePayment";
 import Products from "@/pages/admin/Products";
+import AddProduct from "./pages/admin/sub pages/AddProduct";
+import Category from "./pages/admin/sub pages/Category";
 import ActivityLogs from "@/pages/admin/ActivityLogs";
 import DrawerOpenHistory from "@/pages/admin/DrawerOpenHistory";
-import Categories from "@/pages/admin/Categories";
 import SalesReport from "./pages/admin/reports/SalesReport";
-import ManageStaff from "@/pages/admin/Staff";
 import Subscription from "@/pages/admin/Subscription";
 import SalesManagers from "@/pages/admin/SaleManagers";
 
 import POS from "@/pages/pos/POS";
 import RecentSales from "@/pages/pos/Sales";
 import POSProducts from "@/pages/pos/Products";
+import ManageReasons from "./pages/admin/sub pages/ManageReasons";
+import ManageStock from "./pages/admin/sub pages/ManageStock";
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -103,6 +107,18 @@ function Router() {
       <Route path="/admin/products">
         <ProtectedLayout><Products /></ProtectedLayout>
       </Route>
+      <Route path={"/catalog/add-product"}>
+        <ProtectedLayout><AddProduct /></ProtectedLayout>
+      </Route>
+      <Route path="/catalog/categories">
+        <ProtectedLayout><Category /></ProtectedLayout>
+      </Route>
+      <Route path="/catalog/manage-reasons">
+        <ProtectedLayout><ManageReasons /></ProtectedLayout>
+      </Route>
+      <Route path="/catalog/manage-stock">
+        <ProtectedLayout><ManageStock /></ProtectedLayout>
+      </Route>
       <Route path="/admin/products/generic">
         <ProtectedLayout><GenericProducts /></ProtectedLayout>
       </Route>
@@ -129,9 +145,6 @@ function Router() {
       </Route>
       <Route path="/admin/drawer-history">
         <ProtectedLayout><DrawerOpenHistory /></ProtectedLayout>
-      </Route>
-      <Route path="/admin/categories">
-        <ProtectedLayout><Categories /></ProtectedLayout>
       </Route>
       <Route path="/admin/subscription">
         <ProtectedLayout><Subscription /></ProtectedLayout>
@@ -162,10 +175,12 @@ function Router() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <TitleProvider defaultTitle="Business Dashboard">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </TitleProvider>
     </QueryClientProvider>
   );
 }

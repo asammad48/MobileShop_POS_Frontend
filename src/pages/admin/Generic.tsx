@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,17 @@ import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { useTitle } from '@/context/TitleContext';
 
 export default function GenericProducts() {
     useAuth("admin");
     const { toast } = useToast();
     const { t } = useTranslation();
+    const {setTitle} = useTitle();
+    useEffect(() => {
+        setTitle(t("admin.generic.title"));      
+        return () => setTitle('Business Dashboard'); 
+      }, [setTitle]);
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -264,12 +270,7 @@ export default function GenericProducts() {
 
     return (<div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between flex-col gap-8">
-            <div>
-                <h1 className="text-3xl font-semibold">Generic Products</h1>
-                <p className="text-muted-foreground mt-1">Manage categories and products here.</p>
-            </div>
-
+        <div className="flex justify-end flex-col gap-8">
             <div className="flex items-center justify-end gap-3">
 
                 <Button onClick={() => setIsCreateCategoryOpen(true)}><Plus className="w-4 h-4 mr-2" />Create New Category</Button>

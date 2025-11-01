@@ -11,7 +11,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+import { useTitle } from '@/context/TitleContext';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -25,6 +27,8 @@ const languages = [
 export default function AppHeader() {
   const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
+  const { title, setTitle } = useTitle(); // <-- read title
+
 
   useEffect(() => {
     const savedLang = localStorage.getItem('language');
@@ -54,7 +58,8 @@ export default function AppHeader() {
 
           <div className="hidden md:block">
             <h1 className="text-lg font-semibold">
-              {user ? roleTitle[user.role as keyof typeof roleTitle] : t('admin.header.dashboard_fallback')}
+              {/* {user ? roleTitle[user.role as keyof typeof roleTitle] : t('admin.header.dashboard_fallback')} */}
+              {title}
             </h1>
           </div>
         </div>

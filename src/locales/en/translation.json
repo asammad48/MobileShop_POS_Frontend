@@ -27,7 +27,7 @@
       "products": {
         "title": "Products",
         "sub": {
-          "imei_serials": "Products (IMEI/Serials)",
+          "mobile": "Mobile",
           "generic": "Generic Products"
         }
       },
@@ -57,7 +57,17 @@
       "sale_managers": "Sale Managers",
       "subscription": "Subscription",
       "coupons": "Coupon Codes",
-      "logout": "Logout"
+      "logout": "Logout",
+      "catalog": {
+        "title": "Catalog",
+        "sub": {
+          "add_product": "Add Product",
+          "manage_stock": "Manage Stock",
+          "category": "Category",
+          "reasons": "Manage Reasons"
+        }
+      
+      }
     },
     "dashboard": {
       "title": "Shop Dashboard",
@@ -195,6 +205,7 @@
       }
     },
     "generic": {
+      "title": "Generic Products",
       "buttons": {
         "createCategory": "Create New Category",
         "editCategory": "Edit Category",
@@ -298,10 +309,42 @@
         "type": "Type",
         "status": "Status"
       }
-
     },
     "sales_managers": {
-      "title": "Add Sale Manager"
+      "title": "Add Sale Manager",
+      "info_card": {
+        "limit_text": "You can add up to {{max}} Sales Managers in your current plan.",
+        "current_count": "Current number of sales managers: {{count}}"
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "store": "Store"
+        }
+      },
+      "buttons": {
+        "add_sales_manager": "Add Sales Manager",
+        "cancel": "Cancel",
+        "add_manager": "Add Manager"
+      },
+      "modal": {
+        "title": "Add Sales Manager",
+        "fields": {
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "store": "Store"
+        }
+      },
+      "toast": {
+        "limit_reached_title": "Limit Reached",
+        "limit_reached_description": "You can only add {{max}} Sales Managers in your current plan.",
+        "added_title": "Sales Manager Added",
+        "added_description": "{{name}} has been added successfully."
+      }
     },
     "sales_detail": {
       "title": "Sale Details",
@@ -360,8 +403,72 @@
       "quantity": "Quantity",
       "payment_type": "Payment Type",
       "sale_type": "Sale Type"
+    },
+    "close_today_turn": {
+      "title": "Close Today Turn"
+    },
+    "private_wallet": {
+      "title": "Private Wallet"
+    },
+    "activity_log": {
+      "title": "Activity Log"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "current_plan_card": {
+        "heading": "Current Plan",
+        "active_until": "Active until:"
+      },
+      "plans": {
+        "silver": {
+          "name": "Silver (Basic)",
+          "price_label": "/month",
+          "max_staff": "Max Staff",
+          "max_products": "Max Products",
+          "features": {
+            "basic_pos": "Basic POS",
+            "customer_management": "Customer Management",
+            "supplier_management": "Supplier Management",
+            "barcode_scanning": "Barcode Printing/Scanning",
+            "basic_reports": "Basic Reports (Sales, Profit)",
+            "advanced_analytics": "Advanced Analytics",
+            "loyalty_program": "Loyalty Program",
+            "gift_cards": "Gift Cards",
+            "purchase_order": "Purchase Order Management",
+            "multi_warehouse": "Multi-Warehouse Management",
+            "api_access": "API Access",
+            "premium_support": "Premium Support"
+          }
+        },
+        "gold": {
+          "name": "Gold (Growth)"
+        },
+        "platinum": {
+          "name": "Platinum (Enterprise)"
+        }
+      },
+      "labels": {
+        "current_plan": "Current Plan",
+        "upgrade": "Upgrade",
+        "price_prefix": "$",
+        "per_month": "/month"
+      }
+    },
+    "catalog": {
+      "add_product": {
+        "title": "Add Product"
+      },
+      "manage_stock": {
+        "title": "Manage Stock"
+      },
+      "category": {
+        "title": "Category"
+      },
+      "manage_resons": {
+        "title": "Manage Reasons"
+      }
+      
     }
-    
   },
   "super_admin": {},
   "sales_person": {}

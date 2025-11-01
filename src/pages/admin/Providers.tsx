@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,18 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { useTitle } from '@/context/TitleContext';
 
 export default function Providers() {
   useAuth("admin");
   const { toast } = useToast();
   const { t } = useTranslation();
+
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.providers.title"));          
+    return () => setTitle('Business Dashboard'); 
+  }, [setTitle]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -233,13 +240,7 @@ export default function Providers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-semibold">{t("admin.providers.title")}</h1>
-          <p className="text-muted-foreground mt-1">
-            {t("admin.providers.subtitle")}
-          </p>
-        </div>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-3">
 
         <div className="flex items-center gap-3">
           <TablePageSizeSelector

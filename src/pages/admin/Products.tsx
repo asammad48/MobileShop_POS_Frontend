@@ -5,9 +5,12 @@
 return stock means return the stock to the person from which we have bought
 and wastage means the product is damaged and that person don't want to take it back
 and it's not our use, so we move it to the wastage
+
+The product should be connected to vendor as well, so if someone return the stock, we would know
+from which vendor we bought the phone
 */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
@@ -17,8 +20,11 @@ import { useToast } from "@/hooks/use-toast";
 import FormPopupModal from "@/components/ui/FormPopupModal";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
+import { useTitle } from '@/context/TitleContext';
+
 
 import {
   Select,
@@ -42,6 +48,11 @@ export default function Products() {
   useAuth("admin");
   const { toast } = useToast();
   const { t } = useTranslation();
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.products.title"));          
+    return () => setTitle('Business Dashboard'); 
+  }, [setTitle]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -49,6 +60,7 @@ export default function Products() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
   const [isInterStockModalOpen, setIsInterStockModalOpen] = useState(false);
+  const [isPurchaseOrderOpen, setIsPurchaseOrderOpen] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<any | null>(null);
   const [formData, setFormData] = useState({ name: "", salePrice: 0 });
   const [stockSearch, setStockSearch] = useState("");
@@ -146,6 +158,10 @@ export default function Products() {
     setIsInterStockModalOpen(true);
   };
 
+  const openPurchaseOrderModel = () => {
+    setIsPurchaseOrderOpen(true)
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -219,6 +235,7 @@ export default function Products() {
 
   // Filter inside Manage Stock modal
   const searchedProducts = useMemo(() => {
+    if (!stockSearch.trim()) return [];
     return products.filter(
       (p) =>
         p.name.toLowerCase().includes(stockSearch.toLowerCase()) ||
@@ -275,11 +292,7 @@ export default function Products() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold">{t("admin.products.title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("admin.products.subtitle")}</p>
-        </div>
+      <div className="flex items-center justify-end">
 
         <div className="flex items-center gap-3">
           <Button onClick={openCreateModal}>
@@ -292,6 +305,9 @@ export default function Products() {
           </Button>
           <Button variant="outline" onClick={openInterStockModal}>
             {t("admin.products.inter_stock_transfer")}
+          </Button>
+          <Button variant={"outline"} onClick={openPurchaseOrderModel}>
+            Purchase Order
           </Button>
         </div>
       </div>
@@ -396,7 +412,7 @@ export default function Products() {
                   : "Move to Wastage"}
             </button>
           ))}
-        </div>
+        </div>  
 
         {/* Search Field */}
         <div className="relative mb-4">
@@ -412,7 +428,7 @@ export default function Products() {
         {/* Search Results */}
         <div className="space-y-4 max-h-80 overflow-y-auto">
           {searchedProducts.length === 0 && (
-            <p className="text-center text-gray-500 text-sm">No products found</p>
+            <p className="text-center text-gray-500 text-sm">Please enter a valid query...</p>
           )}
 
           {searchedProducts.map((product) => (
@@ -429,7 +445,7 @@ export default function Products() {
 
               <form
                 onSubmit={(e) => handleStockSubmit(e, activeTab, product)}
-                className="flex gap-2"
+                className="flex flex-col gap-2"
               >
                 <Input
                   type="number"
@@ -442,8 +458,11 @@ export default function Products() {
                         : "Enter quantity to mark as wastage"
                   }
                   min="1"
-                  className="w-40"
                 />
+                {activeTab !== "wastage" ? (<Textarea 
+                  placeholder="Please enter the reason"
+                
+                />) : ""}
                 <Button
                   type="submit"
                   variant={
@@ -534,6 +553,13 @@ export default function Products() {
             </Button>
           </div>
         </form>
+      </FormPopupModal>
+
+      <FormPopupModal isOpen={isPurchaseOrderOpen} onClose={() => setIsPurchaseOrderOpen(false)}>
+          <h2>Create new purchase order</h2>
+          <form>
+            
+          </form>
       </FormPopupModal>
     </div>
   );

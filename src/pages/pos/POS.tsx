@@ -27,6 +27,7 @@ export default function POS() {
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [result, setResult] = useState("");
+  const [couponCode, setCouponeCode] = useState('')
 
   const handleAddToCart = (product: any) => {
     const existing = cart.find(item => item.id === product.id);
@@ -158,6 +159,15 @@ export default function POS() {
                 step="0.01"
                 data-testid="input-discount"
               />
+            </div>
+            <div className="flex justify-between items-center">
+              <label htmlFor="coupon" className='text-muted-foreground'>Coupon</label>
+              <Input 
+              type="text" 
+              value={couponCode}
+              className="w-24 text-right"
+              />
+
             </div>
           </div>
 

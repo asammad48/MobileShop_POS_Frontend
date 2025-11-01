@@ -1,5 +1,5 @@
 // ✅ pages/admin/AdminClients.tsx (Fixed with working Add/Edit modal)
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import DataTable from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,18 @@ import { printElement } from "@/utils/print";
 import { useTranslation } from "react-i18next";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
+import { useTitle } from "@/context/TitleContext";
 
 export default function AdminClients() {
   useAuth("admin");
   const { toast } = useToast();
   const { t } = useTranslation();
+  const {setTitle} = useTitle();
+
+  useEffect(() => {
+    setTitle(t("admin.clients.title"));           
+    return () => setTitle('Business Dashboard');
+  }, [setTitle]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -162,6 +169,8 @@ export default function AdminClients() {
     setIsModalOpen(false);
   };
 
+
+
   // Table columns
   const columns = [
     {
@@ -191,15 +200,15 @@ export default function AdminClients() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-end">
+        {/* <div>
           <h1 className="text-3xl font-semibold">
             {t("admin.clients.title")}
           </h1>
           <p className="text-muted-foreground mt-1">
             {t("admin.clients.sub_title")}
           </p>
-        </div>
+        </div> */}
         <div className="flex items-center gap-3">
           <TablePageSizeSelector
             limit={limit}

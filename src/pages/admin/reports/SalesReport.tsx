@@ -1,30 +1,16 @@
-import { useState, useMemo } from "react";
-import StatCard from "@/components/StatCard";
-import {
-  DollarSign,
-  CreditCard,
-  Wallet,
-  Banknote,
-  Ticket,
-  Coins,
-  Calendar,
-  Download,
-} from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import {   DollarSign,   CreditCard,   Wallet,   Banknote,   Ticket,   Coins,   Calendar,   Download, } from "lucide-react";
 import DataTable from "@/components/DataTable";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import {   Select,   SelectTrigger,   SelectValue,   SelectContent,   SelectItem, } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
+import { useTitle } from '@/context/TitleContext';
 
 type DateRange = {
   from: Date | undefined;
@@ -32,8 +18,14 @@ type DateRange = {
 };
 
 export default function DailySalesReport() {
+  useAuth('admin')
   const { toast } = useToast();
   const { t } = useTranslation();
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.sales_report.title"));               
+    return () => setTitle('Business Dashboard');
+  }, [setTitle]);
 
   const [dateRange, setDateRange] = useState<DateRange>({
     from: new Date(2025, 9, 1),
@@ -146,13 +138,6 @@ export default function DailySalesReport() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-semibold">{t("admin.sales_report.title")}</h1>
-        <p className="text-muted-foreground mt-1">
-          {t("admin.sales_report.subtitle")}
-        </p>
-      </div>
 
       {/* Date Range Picker */}
       <div className="flex justify-end">
@@ -194,8 +179,8 @@ export default function DailySalesReport() {
               <div className="flex items-center justify-between gap-2">
                 <label className="text-sm font-medium">{t("admin.sales_report.to")}</label>
                 <Input
-                  className="!w-9/12 justify-center"    
-                  type="date"
+                  className="!w-9/12 justify-center"
+                      type="date"
                   value={dateRange.to ? dateRange.to.toISOString().split("T")[0] : ""}
                   min={minDate.toISOString().split("T")[0]}
                   max={maxDate.toISOString().split("T")[0]}
@@ -225,14 +210,32 @@ export default function DailySalesReport() {
         </Popover>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard title={t("admin.sales_report.total_sale")} value={`€${summary.sale}`} icon={DollarSign} gradient="from-teal-500 to-emerald-600" />
-        <StatCard title={t("admin.sales_report.card")} value={`€${summary.card}`} icon={CreditCard} gradient="from-indigo-500 to-blue-600" />
-        <StatCard title={t("admin.sales_report.credit")} value={`€${summary.credit}`} icon={Wallet} gradient="from-amber-500 to-orange-600" />
-        <StatCard title={t("admin.sales_report.bank")} value={`€${summary.bank}`} icon={Banknote} gradient="from-sky-500 to-cyan-600" />
-        <StatCard title={t("admin.sales_report.voucher")} value={`€${summary.voucher}`} icon={Ticket} gradient="from-fuchsia-500 to-pink-600" />
-        <StatCard title={t("admin.sales_report.cash")} value={`€${summary.cash}`} icon={Coins} gradient="from-slate-500 to-gray-700" />
+      {/* Minimal Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.total_sale")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.sale}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.card")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.card}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.credit")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.credit}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.bank")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.bank}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.voucher")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.voucher}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
+          <p className="text-sm font-medium text-gray-500">{t("admin.sales_report.cash")}</p>
+          <p className="text-xl font-semibold text-gray-900">€{summary.cash}</p>
+        </div>
       </div>
 
       {/* Table Controls */}

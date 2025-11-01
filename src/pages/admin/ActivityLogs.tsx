@@ -1,13 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
 import DataTable from "@/components/DataTable";
-import FormPopupModal from "@/components/ui/FormPopupModal";
-import { useTranslation } from "react-i18next";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
+import { useTitle } from '@/context/TitleContext';
 
 interface ActivityLog {
   id: number;
@@ -18,6 +16,13 @@ interface ActivityLog {
 
 export default function ActivityLogs() {
   useAuth("admin");
+  const {t} = useTranslation();
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.activity_log.title"));           
+    return () => setTitle('Business Dashboard');
+  }, [setTitle]);
+  
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

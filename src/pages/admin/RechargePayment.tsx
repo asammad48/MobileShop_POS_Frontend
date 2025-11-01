@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/DataTable";
@@ -6,6 +6,7 @@ import FormPopupModal from "@/components/ui/FormPopupModal";
 import { useTranslation } from "react-i18next";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
+import { useTitle } from '@/context/TitleContext';
 
 interface RechargePayment {
   id: number;
@@ -22,7 +23,11 @@ interface RechargePayment {
 export default function RechargePayments() {
   useAuth("admin");
   const { t } = useTranslation();
-
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.recharge_payments.title"));           
+    return () => setTitle('Business Dashboard');
+  }, [setTitle]);
   // Dummy data for recharge payments
   const [payments, setPayments] = useState<RechargePayment[]>(
     Array.from({ length: 250 }, (_, i) => ({
@@ -97,9 +102,6 @@ export default function RechargePayments() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-semibold">{t("admin.recharge_payments.title")}</h1>
-      </div>
 
       {/* Pagination and Records per Page Dropdown above table */}
       <div className="flex justify-end items-center mb-4">

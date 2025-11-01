@@ -4,10 +4,10 @@ import { useToast } from "@/hooks/use-toast";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import DataTable from "@/components/DataTable";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Eye, Edit } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useTitle } from '@/context/TitleContext';
+
 
 interface SaleDetail {
   product: string;
@@ -20,6 +20,11 @@ interface SaleDetail {
 export default function SalesDetailPage() {
   const { toast } = useToast();
   const { t } = useTranslation();
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.sales_detail.title"));  
+    return () => setTitle('Business Dashboard');
+  }, [setTitle]);
 
   const [salesDetails, setSalesDetails] = useState<SaleDetail[]>([]);
   const [loading, setLoading] = useState(false);
@@ -98,7 +103,6 @@ export default function SalesDetailPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-semibold">{t("admin.sales_detail.title")}</h1>
 
       {/* Pagination and Records per Page Dropdown */}
       <div className="flex justify-end items-center mb-4">

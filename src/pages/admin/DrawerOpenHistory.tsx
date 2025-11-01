@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/DataTable";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { useToast } from "@/hooks/use-toast";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { useTranslation } from "react-i18next";
+import { useTitle } from '@/context/TitleContext';
+import { useAuth } from "@/hooks/useAuth";
 
 interface DrawerHistoryItem {
   id: number;
@@ -14,8 +16,14 @@ interface DrawerHistoryItem {
 }
 
 export default function DrawerOpenHistory() {
+  useAuth('admin')
   const { toast } = useToast();
   const {t} = useTranslation();
+  const {setTitle} = useTitle();
+  useEffect(() => {
+    setTitle(t("admin.drawer_history.title"));           // set header title for this page
+    return () => setTitle('Business Dashboard'); // optional reset on unmount
+  }, [setTitle]);
 
   const [drawerHistory, setDrawerHistory] = useState<DrawerHistoryItem[]>(
     Array.from({ length: 20 }, (_, i) => ({
@@ -62,8 +70,7 @@ export default function DrawerOpenHistory() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">{t("admin.drawer_history.title")}</h1>
+      <div className="flex items-center justify-end">
         <Button onClick={() => toast({ title: "Refresh", description: "History refreshed!" })}>
           {t("admin.drawer_history.buttons.refresh")}
         </Button>
