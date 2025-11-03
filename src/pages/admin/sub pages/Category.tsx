@@ -14,7 +14,9 @@ import CategoryPopup from "@/components/ui/categorypopup";
 
 type CategoryType = "primary" | "generic";
 
-type Level3 = string;
+type Level3 = {
+  name: string;
+};
 
 type Level2 = {
   id: string;
@@ -57,8 +59,8 @@ export default function Category() {
         id: i + 1,
         name: `Primary ${i + 1}`,
         level2: [
-          { id: `p-${i + 1}-a`, name: `P${i + 1}-L2-A`, level3: ["A1", "A2"] },
-          { id: `p-${i + 1}-b`, name: `P${i + 1}-L2-B`, level3: ["B1"] },
+          { id: `p-${i + 1}-a`, name: `P${i + 1}-L2-A`, level3: [{ name: "A1" }, { name: "A2" }] },
+          { id: `p-${i + 1}-b`, name: `P${i + 1}-L2-B`, level3: [{ name: "B1" }] },
         ],
       }))
   );
@@ -68,7 +70,7 @@ export default function Category() {
       Array.from({ length: 8 }, (_, i) => ({
         id: i + 1,
         name: `Generic ${i + 1}`,
-        level2: [{ id: `g-${i + 1}-1`, name: `G${i + 1}-L2-1`, level3: ["X"] }],
+        level2: [{ id: `g-${i + 1}-1`, name: `G${i + 1}-L2-1`, level3: [{ name: "X" }] }],
       }))
   );
 
@@ -95,24 +97,14 @@ export default function Category() {
   // simple local id generator for Level2 items
   const makeId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-  // modal form state
-  const emptyLevel2 = (): Level2 => ({ id: makeId(), name: "", level3: [] });
-  const [form, setForm] = useState<{ name: string; level2: Level2[] }>({ name: "", level2: [emptyLevel2()] });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   // open add / edit modal
   const openAdd = () => {
     setEditing(null);
-    setForm({ name: "", level2: [emptyLevel2()] });
-    setErrors({});
     setIsModalOpen(true);
   };
 
   const openEdit = (cat: Category) => {
     setEditing(cat);
-    // deep copy to avoid mutation
-    setForm({ name: cat.name, level2: cat.level2.map((l) => ({ ...l, level3: [...l.level3] })) });
-    setErrors({});
     setIsModalOpen(true);
   };
 
@@ -121,6 +113,48 @@ export default function Category() {
     const updated = activeList.filter((c) => c.id !== cat.id);
     setActiveList(updated);
     toast({ title: "Category deleted" });
+  };
+
+  const handleSubmit = (categories: { name: string; level2: { id?: string; name: string; level3: { name: string }[] }[] }[]) => {
+    if (categories.length === 0) {
+      toast({ title: "Please add at least one category", variant: "destructive" });
+      return;
+    }
+
+    if (editing) {
+      // Update existing category - preserve IDs from submitted data or generate new ones
+      const updatedCategory: Category = {
+        id: editing.id,
+        name: categories[0].name,
+        level2: categories[0].level2.map((submittedL2) => ({
+          id: submittedL2.id || makeId(), // Use existing ID from popup or generate new
+          name: submittedL2.name,
+          level3: submittedL2.level3,
+        })),
+      };
+      const updated = activeList.map((c) => (c.id === editing.id ? updatedCategory : c));
+      setActiveList(updated);
+      toast({ title: `Category "${updatedCategory.name}" updated successfully` });
+    } else {
+      // Add new categories - generate unique IDs for each
+      let nextId = Math.max(...activeList.map(c => c.id), 0) + 1;
+      const newCategories: Category[] = categories.map((cat) => {
+        const category: Category = {
+          id: nextId++,
+          name: cat.name,
+          level2: cat.level2.map((l2) => ({
+            id: makeId(),
+            name: l2.name,
+            level3: l2.level3,
+          })),
+        };
+        return category;
+      });
+      setActiveList([...activeList, ...newCategories]);
+      toast({ title: `${newCategories.length} categor${newCategories.length > 1 ? 'ies' : 'y'} added successfully` });
+    }
+    
+    setEditing(null);
   };
 
   // columns — memoized; avoid unstable deps (do not include `t`)
@@ -146,7 +180,7 @@ export default function Category() {
         filterType: "none",
         // DataTable passes value,row,index — we need row to flatten level3
         render: (_value: any, row: Category) => (
-          <div className="max-w-xs truncate">{(row.level2 || []).flatMap((l) => l.level3).join(", ")}</div>
+          <div className="max-w-xs truncate">{(row.level2 || []).flatMap((l) => l.level3).map(l3 => l3.name).join(", ")}</div>
         ),
       },
     ],
@@ -222,9 +256,13 @@ export default function Category() {
 
       <CategoryPopup
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditing(null);
+        }}
         isGeneric={activeType}
-        onSubmit={(data) => console.log("Submitted:", data)}
+        initialData={editing ? [{ name: editing.name, level2: editing.level2 }] : undefined}
+        onSubmit={handleSubmit}
       />
 
 

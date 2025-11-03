@@ -1,0 +1,16 @@
+First I want you to go to Category component and make it work, the user should be able to create three level categories. the level 1 category have  multiple categories similarly leve 2 category can have mulitiple sub category and there are two main parent categories which are "Primary" and "General".
+
+Then you have to complete the page for manage reasons and managestock. 
+the manage reasons means the user will see existing resons and can add or delete or create new reasons. 
+In the manage stock, the user should be able to add stock, remove stock, or move the stock to wastage like if ther product get ruined due to user, they will move it wastage. 
+
+the reason should be dropdown and it will show the resons created by user, right now use dummy data but in future we will add backend.
+
+Then you have to create two new users, one is repair man, and other is whole seller, both should have different portal.
+
+The the repair man is a person who will add their service to the portal, like when a phone comes to the shop, they should be able to see the repair perons and their service charges. 
+The whole seller is a person who will sell their item through the portal, so like the admin will have a menu in the left sidebar to see the current packages by whole seller and the whole seller can add their products, deals offers like that. the admin should be able to see the profile of both whole seller and repair man and they should be able to create and edit their profile. the admin can create repair man but the whole seller will create their own profile, 
+
+the you have to make pages for reports, there can be multiple shopsl, so the admin should be able to choose reports for different shops and initially they will see data for all the shops, make every page i18n compatible, because this is a multi language app. 
+
+Create pages for super admin, the super admin should see reports and create user manually, so like if the super admin wants to add a friend or family they should be able to do it, also the super admin should be able to edit packages.

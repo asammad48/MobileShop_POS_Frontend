@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormPopupModal from "@/components/ui/FormPopupModal";
@@ -8,6 +8,7 @@ interface Level3 {
 }
 
 interface Level2 {
+  id?: string;
   name: string;
   level3: Level3[];
 }
@@ -21,16 +22,28 @@ export default function CategoryPopup({
   open,
   onClose,
   isGeneric,
+  initialData,
   onSubmit,
 }: {
   open: boolean;
   onClose: () => void;
   isGeneric: boolean;
+  initialData?: Category[];
   onSubmit: (data: Category[]) => void;
 }) {
   const [level1Categories, setLevel1Categories] = useState<Category[]>([]);
   const [expandedL1, setExpandedL1] = useState<number | null>(null);
   const [expandedL2, setExpandedL2] = useState<string | null>(null);
+
+  // Update when initialData changes or modal opens
+  useEffect(() => {
+    if (open) {
+      setLevel1Categories(initialData || []);
+      if (initialData && initialData.length > 0) {
+        setExpandedL1(0);
+      }
+    }
+  }, [open, initialData]);
 
   // ---------- Level 1 ----------
   const addLevel1Category = () => {

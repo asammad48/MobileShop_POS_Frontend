@@ -5,9 +5,10 @@ interface User {
   id: string;
   username: string;
   email: string;
-  role: 'super_admin' | 'admin' | 'sales_person';
+  role: 'super_admin' | 'admin' | 'sales_person' | 'repair_man' | 'wholesaler';
   shopId?: string;
   shopName?: string;
+  businessName?: string;
 }
 
 interface AuthState {
@@ -24,6 +25,8 @@ const mockUsers = [
   { id: '1', username: 'superadmin', password: 'admin123', email: 'super@admin.com', role: 'super_admin' as const },
   { id: '2', username: 'admin', password: 'admin123', email: 'admin@shop.com', role: 'admin' as const, shopId: 'shop1', shopName: 'TechFix Mobile Repair' },
   { id: '3', username: 'sales', password: 'sales123', email: 'sales@shop.com', role: 'sales_person' as const, shopId: 'shop1', shopName: 'TechFix Mobile Repair' },
+  { id: '4', username: 'repairman', password: 'repair123', email: 'repair@service.com', role: 'repair_man' as const, businessName: 'QuickFix Repairs' },
+  { id: '5', username: 'wholesaler', password: 'wholesale123', email: 'wholesale@supply.com', role: 'wholesaler' as const, businessName: 'TechWholesale Co.' },
 ];
 
 export const useAuthStore = create<AuthState>()(
@@ -52,9 +55,10 @@ export const useAuthStore = create<AuthState>()(
           id: Math.random().toString(36).substr(2, 9),
           username,
           email,
-          role: role as 'super_admin' | 'admin' | 'sales_person',
+          role: role as 'super_admin' | 'admin' | 'sales_person' | 'repair_man' | 'wholesaler',
           shopId: role === 'admin' || role === 'sales_person' ? 'shop1' : undefined,
           shopName: role === 'admin' || role === 'sales_person' ? 'My Shop' : undefined,
+          businessName: role === 'repair_man' || role === 'wholesaler' ? 'My Business' : undefined,
         };
         set({ 
           user: newUser, 

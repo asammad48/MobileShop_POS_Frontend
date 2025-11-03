@@ -26,6 +26,10 @@ export function useAuth(requiredRoles?: string | string[]) {
           setLocation('/admin/dashboard');
         } else if (user?.role === 'sales_person') {
           setLocation('/pos');
+        } else if (user?.role === 'repair_man') {
+          setLocation('/repair-man/dashboard');
+        } else if (user?.role === 'wholesaler') {
+          setLocation('/wholesaler/dashboard');
         }
       }
     }

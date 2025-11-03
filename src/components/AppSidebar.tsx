@@ -34,6 +34,8 @@ import {
   Tag,
   ChevronDown,
   ChevronRight,
+  Wrench,
+  Building2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -106,6 +108,8 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { key: 'sale_managers', url: '/admin/sale-managers', icon: UserPlus },
+    { key: 'repair_men', url: '/admin/repair-men', icon: Wrench },
+    { key: 'wholesalers', url: '/admin/wholesalers', icon: Building2 },
     { key: 'subscription', url: '/admin/subscription', icon: BanknoteIcon },
     { key: 'coupons', url: '/admin/coupons', icon: Tag },
   ],
@@ -113,6 +117,14 @@ const menuItems: Record<string, MenuItem[]> = {
     { key: 'POS Dashboard', url: '/pos', icon: ShoppingCart },
     { key: 'Recent Sales', url: '/pos/sales', icon: Clock },
     { key: 'Products', url: '/pos/products', icon: Package },
+  ],
+  repair_man: [
+    { key: 'Dashboard', url: '/repair-man/dashboard', icon: LayoutDashboard },
+    { key: 'My Services', url: '/repair-man/dashboard', icon: Wrench },
+  ],
+  wholesaler: [
+    { key: 'Dashboard', url: '/wholesaler/dashboard', icon: LayoutDashboard },
+    { key: 'My Products', url: '/wholesaler/dashboard', icon: Package },
   ],
 };
 
@@ -130,6 +142,8 @@ export function AppSidebar() {
     super_admin: { icon: Crown, name: 'Super Admin', gradient: 'from-purple-600 to-indigo-600' },
     admin: { icon: Store, name: user.shopName || 'Shop Owner', gradient: 'from-indigo-600 to-blue-600' },
     sales_person: { icon: Zap, name: 'Sales Person', gradient: 'from-teal-500 to-emerald-500' },
+    repair_man: { icon: Wrench, name: user.businessName || 'Repair Service', gradient: 'from-amber-500 to-orange-500' },
+    wholesaler: { icon: Building2, name: user.businessName || 'Wholesaler', gradient: 'from-green-500 to-teal-500' },
   };
 
   const config = roleConfig[user.role as keyof typeof roleConfig];
