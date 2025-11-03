@@ -33,6 +33,10 @@ export default function Login() {
         setLocation('/admin/dashboard');
       } else if (currentUser?.role === 'sales_person') {
         setLocation('/pos');
+      } else if (currentUser?.role === 'wholesaler') {
+        setLocation('/wholesaler/dashboard');
+      } else if (currentUser?.role === 'repair_man') {
+        setLocation('/repair-man/dashboard');
       }
     } else {
       toast({
@@ -115,6 +119,14 @@ export default function Login() {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Sales:</span>
               <code className="px-2 py-1 bg-white rounded-lg text-xs font-mono">sales / sales123</code>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Repair Man</span>
+              <code className="px-2 py-1 bg-white rounded-lg text-xs font-mono">repairman / repair123</code>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">wholesaler:</span>
+              <code className="px-2 py-1 bg-white rounded-lg text-xs font-mono">wholesaler / wholesale123</code>
             </div>
           </div>
         </div>

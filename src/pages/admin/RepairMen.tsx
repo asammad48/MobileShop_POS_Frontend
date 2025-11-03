@@ -90,10 +90,10 @@ export default function RepairMen() {
         filterType: "none",
         render: (_: any, __: any, idx: number) => (page - 1) * limit + idx + 1,
       },
-      { key: "businessName", label: "Business Name", filterType: "text" },
-      { key: "contactPerson", label: "Contact Person", filterType: "text" },
-      { key: "email", label: "Email", filterType: "text" },
-      { key: "phone", label: "Phone", filterType: "text" },
+      { key: "businessName", label: "Business Name", filterType: "none" },
+      { key: "contactPerson", label: "Contact Person", filterType: "none" },
+      { key: "email", label: "Email", filterType: "none" },
+      { key: "phone", label: "Phone", filterType: "none" },
       {
         key: "totalServices",
         label: "Services",
@@ -104,82 +104,47 @@ export default function RepairMen() {
         label: "Avg Price",
         filterType: "none",
         render: (value: number) => `$${value.toFixed(2)}`,
-      },
-      {
-        key: "isActive",
-        label: "Status",
-        filterType: "none",
-        render: (value: boolean) => (
-          <span className={`px-2 py-1 rounded-full text-xs ${value ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-            {value ? "Active" : "Inactive"}
-          </span>
-        ),
-      },
+      }
     ],
     [page, limit]
   );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Repair Service Providers</h1>
-          <p className="text-gray-600 dark:text-gray-400">View and manage repair service providers</p>
+
+      <div className="flex items-center justify-end">
+
+        <div className="flex items-center gap-3">
+          <TablePageSizeSelector
+            limit={limit}
+            onChange={(val) => {
+              setLimit(val);
+              setPage(1);
+            }}
+          />
         </div>
       </div>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>All Repair Service Providers</CardTitle>
-              <CardDescription>Browse available repair services and their pricing</CardDescription>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input
-                placeholder={t("search") || "Search..."}
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="w-64"
-                data-testid="input-search"
-              />
-              <TablePageSizeSelector
-                limit={limit}
-                onChange={(val) => {
-                  setLimit(val);
-                  setPage(1);
-                }}
-              />
-            </div>
+      <DataTable
+        columns={columns}
+        data={paginated}
+        showActions
+        renderActions={(row: RepairMan) => (
+          <div className="flex justify-end gap-2">
+            <Button size="sm" variant="ghost" onClick={() => viewProfile(row)} data-testid={`button-view-${row.id}`}>
+              <Eye className="w-4 h-4 mr-1" />
+              
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            columns={columns}
-            data={paginated}
-            showActions
-            renderActions={(row: RepairMan) => (
-              <div className="flex justify-end gap-2">
-                <Button size="sm" variant="outline" onClick={() => viewProfile(row)} data-testid={`button-view-${row.id}`}>
-                  <Eye className="w-4 h-4 mr-1" />
-                  View Details
-                </Button>
-              </div>
-            )}
-            onFilterChange={() => {}}
-          />
-          <TablePagination page={page} limit={limit} total={filtered.length} onPageChange={setPage} />
-        </CardContent>
-      </Card>
+        )}
+        onFilterChange={() => { }}
+      />
+      <TablePagination page={page} limit={limit} total={filtered.length} onPageChange={setPage} />
 
       <FormPopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {selectedRepairMan && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">{selectedRepairMan.businessName}</h2>
-            
+
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Contact Person</p>
@@ -192,10 +157,6 @@ export default function RepairMen() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Phone</p>
                 <p className="font-semibold">{selectedRepairMan.phone}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
-                <p className="font-semibold">{selectedRepairMan.isActive ? "Active" : "Inactive"}</p>
               </div>
             </div>
 

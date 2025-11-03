@@ -183,34 +183,26 @@ export default function WholesalerDashboard() {
         <StatCard
           title="Active Products"
           value={stats.totalProducts.toString()}
-          Icon={Package}
-          iconColor="text-blue-600"
-          bgGradient="from-blue-500/10 to-indigo-500/10"
-          data-testid="stat-active-products"
+          icon={Package}
+          gradient="from-blue-500/10 to-indigo-500/10"
         />
         <StatCard
           title="Total Stock"
           value={stats.totalStock.toString()}
-          Icon={TrendingUp}
-          iconColor="text-green-600"
-          bgGradient="from-green-500/10 to-teal-500/10"
-          data-testid="stat-total-stock"
+          icon={TrendingUp}
+          gradient="from-green-500/10 to-teal-500/10"
         />
         <StatCard
           title="Inventory Value"
           value={`$${stats.totalValue}`}
-          Icon={DollarSign}
-          iconColor="text-purple-600"
-          bgGradient="from-purple-500/10 to-pink-500/10"
-          data-testid="stat-inventory-value"
+          icon={DollarSign}
+          gradient="from-purple-500/10 to-pink-500/10"
         />
         <StatCard
           title="Avg Discount"
           value={`${stats.avgDiscount}%`}
-          Icon={Tag}
-          iconColor="text-amber-600"
-          bgGradient="from-amber-500/10 to-orange-500/10"
-          data-testid="stat-avg-discount"
+          icon={Tag}
+          gradient="from-amber-500/10 to-orange-500/10"
         />
       </div>
 

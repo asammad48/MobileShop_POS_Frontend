@@ -13,9 +13,7 @@ import FormPopupModal from "@/components/ui/FormPopupModal";
 
 type Reason = {
   id: number;
-  name: string;
-  type: "stock_adjustment" | "wastage" | "return" | "damage";
-  description?: string;
+  title: string;
 };
 
 export default function ManageReasons() {
@@ -25,7 +23,7 @@ export default function ManageReasons() {
   const { toast } = useToast();
 
   useEffect(() => {
-    setTitle(t("admin.sub_pages.manage_reasons.title") || "Manage Reasons");
+    setTitle(t("admin.catalog.manage_reasons.title"));
     return () => setTitle("Business Dashboard");
   }, [t, setTitle]);
 
@@ -35,25 +33,19 @@ export default function ManageReasons() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState<Reason | null>(null);
 
-  // Mock data for reasons
   const [reasons, setReasons] = useState<Reason[]>([
-    { id: 1, name: "Product Expired", type: "wastage", description: "Product passed expiry date" },
-    { id: 2, name: "Damaged in Transit", type: "damage", description: "Product damaged during shipping" },
-    { id: 3, name: "Customer Return", type: "return", description: "Customer returned the product" },
-    { id: 4, name: "Inventory Adjustment", type: "stock_adjustment", description: "Stock count correction" },
-    { id: 5, name: "Defective Product", type: "wastage", description: "Manufacturing defect" },
+    { id: 1, title: "Product Expired" },
+    { id: 2, title: "Damaged Item" },
+    { id: 3, title: "Customer Return" },
   ]);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    type: "wastage" as "stock_adjustment" | "wastage" | "return" | "damage",
-    description: "",
-  });
+  const [formTitle, setFormTitle] = useState("");
 
   const filtered = useMemo(() => {
     if (!search) return reasons;
-    return reasons.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
+    return reasons.filter((r) =>
+      r.title.toLowerCase().includes(search.toLowerCase())
+    );
   }, [reasons, search]);
 
   const paginated = useMemo(() => {
@@ -63,56 +55,48 @@ export default function ManageReasons() {
 
   const openAdd = () => {
     setEditing(null);
-    setFormData({ name: "", type: "wastage", description: "" });
+    setFormTitle("");
     setIsModalOpen(true);
   };
 
   const openEdit = (reason: Reason) => {
     setEditing(reason);
-    setFormData({
-      name: reason.name,
-      type: reason.type,
-      description: reason.description || "",
-    });
+    setFormTitle(reason.title);
     setIsModalOpen(true);
   };
 
   const handleDelete = (reason: Reason) => {
-    if (!confirm(`Delete reason "${reason.name}"?`)) return;
+    if (!confirm(`Delete reason "${reason.title}"?`)) return;
     setReasons(reasons.filter((r) => r.id !== reason.id));
     toast({ title: "Reason deleted successfully" });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name.trim()) {
-      toast({ title: "Please enter a reason name", variant: "destructive" });
+
+    if (!formTitle.trim()) {
+      toast({ title: "Please enter a reason title", variant: "destructive" });
       return;
     }
 
     if (editing) {
       setReasons(
         reasons.map((r) =>
-          r.id === editing.id
-            ? { ...r, name: formData.name, type: formData.type, description: formData.description }
-            : r
+          r.id === editing.id ? { ...r, title: formTitle } : r
         )
       );
       toast({ title: "Reason updated successfully" });
     } else {
       const newReason: Reason = {
         id: Math.max(...reasons.map((r) => r.id), 0) + 1,
-        name: formData.name,
-        type: formData.type,
-        description: formData.description,
+        title: formTitle,
       };
       setReasons([...reasons, newReason]);
       toast({ title: "Reason added successfully" });
     }
 
     setIsModalOpen(false);
-    setFormData({ name: "", type: "wastage", description: "" });
+    setFormTitle("");
     setEditing(null);
   };
 
@@ -124,42 +108,20 @@ export default function ManageReasons() {
         filterType: "none",
         render: (_: any, __: any, idx: number) => (page - 1) * limit + idx + 1,
       },
-      { key: "name", label: t("admin.sub_pages.manage_reasons.name") || "Reason Name", filterType: "text" },
       {
-        key: "type",
-        label: t("admin.sub_pages.manage_reasons.type") || "Type",
-        filterType: "text",
-        render: (value: string) => (
-          <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">
-            {value.replace("_", " ").toUpperCase()}
-          </span>
-        ),
-      },
-      {
-        key: "description",
-        label: t("admin.sub_pages.manage_reasons.description") || "Description",
-        filterType: "text",
-        render: (value: string) => value || "-",
+        key: "title",
+        filterType: "none",
+        label: t("admin.catalog.manage_reasons.column.reason_title"),
       },
     ],
-    [page, limit, t]
+    [page, limit]
   );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Input
-            placeholder={t("search") || "Search reasons..."}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="w-64"
-            data-testid="input-search-reasons"
-          />
-        </div>
+      {/* Top controls */}
+      <div className="flex items-center justify-end">
+        
 
         <div className="flex items-center gap-3">
           <TablePageSizeSelector
@@ -169,88 +131,53 @@ export default function ManageReasons() {
               setPage(1);
             }}
           />
-          <Button onClick={openAdd} data-testid="button-add-reason">
+          <Button onClick={openAdd}>
             <Plus className="w-4 h-4 mr-2" />
-            {t("admin.sub_pages.manage_reasons.add_button") || "Add Reason"}
+            {t('admin.catalog.manage_reasons.button.add')}
           </Button>
         </div>
       </div>
 
+      {/* Data Table */}
       <DataTable
         columns={columns}
         data={paginated}
         showActions
         renderActions={(row: Reason) => (
           <div className="flex justify-end gap-2">
-            <Button size="icon" variant="ghost" onClick={() => openEdit(row)} data-testid={`button-edit-${row.id}`}>
+            <Button size="icon" variant="ghost" onClick={() => openEdit(row)}>
               <Edit className="w-4 h-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => handleDelete(row)} data-testid={`button-delete-${row.id}`}>
+            <Button size="icon" variant="ghost" onClick={() => handleDelete(row)}>
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         )}
-        onFilterChange={() => {}}
       />
 
       <TablePagination page={page} limit={limit} total={filtered.length} onPageChange={setPage} />
 
+      {/* Form Modal */}
       <FormPopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <h2 className="text-xl font-semibold">
-            {editing ? t("admin.sub_pages.manage_reasons.edit_title") || "Edit Reason" : t("admin.sub_pages.manage_reasons.add_title") || "Add New Reason"}
+            {editing ? t('admin.catalog.manage_reasons.popup.title2') : t('admin.catalog.manage_reasons.popup.title')}
           </h2>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t("admin.sub_pages.manage_reasons.name") || "Reason Name"}
-            </label>
+            <label className="block text-sm font-medium mb-2">{t('admin.catalog.manage_reasons.popup.reason_title')}</label>
             <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter reason name"
-              data-testid="input-reason-name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              {t("admin.sub_pages.manage_reasons.type") || "Type"}
-            </label>
-            <select
-              value={formData.type}
-              onChange={(e) =>
-                setFormData({ ...formData, type: e.target.value as typeof formData.type })
-              }
-              className="w-full p-2 border rounded-md"
-              data-testid="select-reason-type"
-            >
-              <option value="wastage">Wastage</option>
-              <option value="damage">Damage</option>
-              <option value="return">Return</option>
-              <option value="stock_adjustment">Stock Adjustment</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              {t("admin.sub_pages.manage_reasons.description") || "Description (Optional)"}
-            </label>
-            <Input
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Enter description"
-              data-testid="input-reason-description"
+              value={formTitle}
+              onChange={(e) => setFormTitle(e.target.value)}
+              placeholder={t('admin.catalog.manage_reasons.placeholder.main')}
             />
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} data-testid="button-cancel">
-              {t("cancel") || "Cancel"}
+            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
             </Button>
-            <Button type="submit" data-testid="button-submit-reason">
-              {editing ? t("update") || "Update" : t("create") || "Create"}
-            </Button>
+            <Button type="submit">{editing ? "Update" : "Create"}</Button>
           </div>
         </form>
       </FormPopupModal>

@@ -67,7 +67,9 @@
           "reasons": "Manage Reasons"
         }
       
-      }
+      },
+      "repair_men": "Repair Men",
+      "wholesalers": "WholeSaler" 
     },
     "dashboard": {
       "title": "Shop Dashboard",
@@ -464,8 +466,25 @@
       "category": {
         "title": "Category"
       },
-      "manage_resons": {
-        "title": "Manage Reasons"
+      "manage_reasons": {
+        "title": "Manage Reasons",
+        "column": {
+          "reason_title": "Reason"
+        },
+        "button": {
+          "add": "Add Reason" ,
+          "cancel": "Cancel",
+          "create": "Create"
+        },
+        "popup": {
+          "title": "Add New Reason",
+          "title2": "Edit Reason",
+          "reason_title": "Reason Title"
+        },
+        "placeholder": {
+          "main": "enter the reason title"
+        }
+        
       }
       
     },
@@ -529,6 +548,12 @@
           "total_categories": "Total categories: {{count}}"
         }
       }
+    },
+    "repair_men": {
+      "title": "Repair Man"
+    },
+    "wholesalers": {
+      "title":"Wholesalers"
     }
   },
   "super_admin": {},

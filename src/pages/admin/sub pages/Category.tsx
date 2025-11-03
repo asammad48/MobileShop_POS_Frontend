@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import FormPopupModal from "@/components/ui/FormPopupModal";
 import DataTable from "@/components/DataTable";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
@@ -224,17 +223,6 @@ export default function Category() {
             />
             <span className="text-sm">{t("admin.sub_pages.category.filters.show_generic")}</span>
           </label>
-
-          <Input
-            placeholder={t("admin.sub_pages.category.filters.search_placeholder")}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="w-64"
-            data-testid="input-search-category"
-          />
         </div>
 
         <div className="flex items-center gap-3">
@@ -294,8 +282,6 @@ export default function Category() {
         initialData={editing ? [{ name: editing.name, level2: editing.level2 }] : undefined}
         onSubmit={handleSubmit}
       />
-
-
     </div>
   );
 }

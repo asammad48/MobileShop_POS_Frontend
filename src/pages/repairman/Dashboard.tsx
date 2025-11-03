@@ -160,25 +160,22 @@ export default function RepairManDashboard() {
         <StatCard
           title="Active Services"
           value={stats.totalServices.toString()}
-          Icon={Wrench}
-          iconColor="text-blue-600"
-          bgGradient="from-blue-500/10 to-indigo-500/10"
+          icon={Wrench}
+          gradient="from-blue-500/10 to-indigo-500/10"
           data-testid="stat-active-services"
         />
         <StatCard
           title="Average Price"
           value={`$${stats.avgPrice}`}
-          Icon={DollarSign}
-          iconColor="text-green-600"
-          bgGradient="from-green-500/10 to-teal-500/10"
+          icon={DollarSign}
+          gradient="from-green-500/10 to-teal-500/10"
           data-testid="stat-avg-price"
         />
         <StatCard
           title="Total Revenue (Monthly)"
           value={`$${stats.totalRevenue}`}
-          Icon={DollarSign}
-          iconColor="text-purple-600"
-          bgGradient="from-purple-500/10 to-pink-500/10"
+          icon={DollarSign}
+          gradient="from-purple-500/10 to-pink-500/10"
           data-testid="stat-revenue"
         />
       </div>
