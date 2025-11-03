@@ -19,7 +19,7 @@ import PricingPlans from "@/pages/superadmin/Pricing";
 import SystemAnalytics from "@/pages/superadmin/Analytics";
 
 import AdminDashboard from "@/pages/admin/Dashboard";
-import AdminClients from "@/pages/admin/AdminClients";
+import AdminClients from "@/pages/admin/Customer";
 import Providers from "./pages/admin/Providers";
 import GenericProducts from "./pages/admin/Generic";
 import RepairBook from "@/pages/admin/RepairBook";
@@ -98,7 +98,7 @@ function Router() {
       <Route path="/admin/dashboard">
         <ProtectedLayout><AdminDashboard /></ProtectedLayout>
       </Route>
-      <Route path="/admin/clients">
+      <Route path="/admin/customer">
         <ProtectedLayout><AdminClients /></ProtectedLayout>
       </Route>
       <Route path="/admin/providers">

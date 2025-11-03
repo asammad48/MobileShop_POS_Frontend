@@ -97,7 +97,6 @@ export default function ActivityLogs() {
         columns={columns}
         data={paginatedLogs}
         showActions={false}
-        onFilterChange={(f) => {}}  // Add any filter handling if required
       />
 
       {/* Pagination Controls Below Table */}

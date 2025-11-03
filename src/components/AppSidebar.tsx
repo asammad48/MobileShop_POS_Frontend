@@ -60,7 +60,7 @@ const menuItems: Record<string, MenuItem[]> = {
   ],
   admin: [
     { key: 'dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
-    { key: 'clients', url: '/admin/clients', icon: Users },
+    { key: 'clients', url: '/admin/customer', icon: Users },
     { key: 'providers', url: '/admin/providers', icon: UserCheck },
     {
       key: 'products',

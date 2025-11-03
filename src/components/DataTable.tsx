@@ -1,212 +1,305 @@
-import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
+import { useEffect, useState, useMemo } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import FormPopupModal from "@/components/ui/FormPopupModal";
+import DataTable from "@/components/DataTable";
+import { TablePagination } from "@/components/ui/tablepagination";
+import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
+import { useTitle } from "@/context/TitleContext";
+import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTranslation } from "react-i18next";
+import { Plus, Edit, Trash2 } from "lucide-react";
 
-interface Column {
-  key: string;
-  label: string;
-  render?: (value: any, row: any, index: number) => React.ReactNode;
-  filterType?: "text" | "select" | "none";
-  filterOptions?: string[];
-}
-
-interface DataTableProps {
-  columns: Column[];
-  data: any[];
-  showActions?: boolean;
-  renderActions?: (row: any) => React.ReactNode;
-  onFilterChange?: (filters: Record<string, string>) => void;
-}
-
-export default function DataTable({
-  columns,
-  data,
-  showActions = false,
-  renderActions,
-  onFilterChange,
-}: DataTableProps) {
+export default function Category() {
+  useAuth("admin");
   const { t } = useTranslation();
-  const [filters, setFilters] = useState<Record<string, string>>({});
-  const [draftFilters, setDraftFilters] = useState<Record<string, string>>({});
+  const { setTitle } = useTitle();
+  const { toast } = useToast();
 
-  const handleFilterChange = (key: string, value: string) => {
-    setDraftFilters((prev) => ({ ...prev, [key]: value }));
+  // 🔹 Set Page Title
+  useEffect(() => {
+    setTitle(t("admin.sub_pages.category.title"));
+    return () => setTitle("Business Dashboard");
+  }, [setTitle, t]);
+
+  // 🔹 State
+  const [isGeneric, setIsGeneric] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<any | null>(null);
+
+  const [primaryCategories, setPrimaryCategories] = useState<any[]>([
+    {
+      id: 1,
+      level1: "Electronics",
+      level2: ["Phones", "Laptops"],
+      level3: [["Android", "iPhone"], ["Gaming", "Business"]],
+    },
+  ]);
+
+  const [genericCategories, setGenericCategories] = useState<any[]>([
+    {
+      id: 1,
+      level1: "Beverages",
+      level2: ["Cold Drinks"],
+      level3: [["Pepsi", "Coke"]],
+    },
+  ]);
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+  const activeCategories = isGeneric ? genericCategories : primaryCategories;
+
+  // 🔹 Paginated data
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * limit;
+    return activeCategories.slice(start, start + limit);
+  }, [activeCategories, page, limit]);
+
+  // 🔹 Columns
+  const columns = [
+    { key: "level1", label: "Level 1 Category" },
+    {
+      key: "level2",
+      label: "Level 2 Categories",
+      render: (value: string[]) => value?.join(", "),
+    },
+    {
+      key: "level3",
+      label: "Level 3 Categories",
+      render: (value: string[][]) =>
+        value?.flat().join(", "),
+    },
+  ];
+
+  // 🔹 Handlers
+  const handleAdd = () => {
+    setEditingCategory(null);
+    setIsModalOpen(true);
   };
 
-  const applyFilter = (key: string) => {
-    const newFilters = { ...filters, [key]: draftFilters[key] || "" };
-    setFilters(newFilters);
-    onFilterChange?.(newFilters);
+  const handleEdit = (cat: any) => {
+    setEditingCategory(cat);
+    setIsModalOpen(true);
   };
 
-  const clearFilter = (key: string) => {
-    const newFilters = { ...filters, [key]: "" };
-    const newDrafts = { ...draftFilters, [key]: "" };
-    setFilters(newFilters);
-    setDraftFilters(newDrafts);
-    onFilterChange?.(newFilters);
+  const handleDelete = (cat: any) => {
+    const confirmed = confirm("Are you sure you want to delete this category?");
+    if (!confirmed) return;
+
+    if (isGeneric) {
+      setGenericCategories((prev) => prev.filter((c) => c.id !== cat.id));
+    } else {
+      setPrimaryCategories((prev) => prev.filter((c) => c.id !== cat.id));
+    }
+
+    toast({ title: "Deleted", description: "Category deleted successfully." });
+  };
+
+  const handleSubmit = (formData: any) => {
+    const newCat = {
+      id: editingCategory ? editingCategory.id : Date.now(),
+      ...formData,
+    };
+
+    if (editingCategory) {
+      if (isGeneric) {
+        setGenericCategories((prev) =>
+          prev.map((c) => (c.id === editingCategory.id ? newCat : c))
+        );
+      } else {
+        setPrimaryCategories((prev) =>
+          prev.map((c) => (c.id === editingCategory.id ? newCat : c))
+        );
+      }
+      toast({ title: "Updated", description: "Category updated successfully." });
+    } else {
+      if (isGeneric) setGenericCategories((prev) => [...prev, newCat]);
+      else setPrimaryCategories((prev) => [...prev, newCat]);
+      toast({ title: "Added", description: "Category created successfully." });
+    }
+
+    setIsModalOpen(false);
   };
 
   return (
-    <Card className="shadow-lg border-0 overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table className="w-full border-collapse">
-          {/* ---------- HEADER ---------- */}
-          <TableHeader>
-            <TableRow className="bg-gradient-to-r from-primary/5 to-accent/5 border-b-2 border-primary/20">
-              {columns.map((column) => (
-                <TableHead
-                  key={column.key}
-                  className="font-semibold text-foreground whitespace-nowrap px-3 py-3 relative"
-                >
-                  <div className="flex items-center gap-1">
-                    <span>{column.label}</span>
+    <div className="space-y-6">
+      {/* ---------- HEADER ---------- */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Checkbox
+            checked={isGeneric}
+            onCheckedChange={(checked) => setIsGeneric(Boolean(checked))}
+            id="genericSwitch"
+          />
+          <label htmlFor="genericSwitch" className="text-sm">
+            {isGeneric ? "Generic Category" : "Primary Category"}
+          </label>
+        </div>
 
-                    {column.filterType !== "none" && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-5 w-5 p-0 text-gray-500 hover:text-primary"
-                          >
-                            {column.filterType === "text" ? (
-                              <Search className="w-4 h-4" />
-                            ) : (
-                              <Filter className="w-4 h-4" />
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          align="start"
-                          side="bottom"
-                          className="w-56 p-3 space-y-3 shadow-lg border rounded-md"
-                        >
-                          {/* Search input or dropdown depending on filterType */}
-                          {column.filterType === "text" && (
-                            <Input
-                              placeholder={`Search ${column.label}`}
-                              value={draftFilters[column.key] || ""}
-                              onChange={(e) =>
-                                handleFilterChange(column.key, e.target.value)
-                              }
-                              className="text-sm"
-                            />
-                          )}
-
-                          {column.filterType === "select" && (
-                            <Select
-                              onValueChange={(value) =>
-                                handleFilterChange(
-                                  column.key,
-                                  value === "__all__" ? "" : value
-                                )
-                              }
-                              value={draftFilters[column.key] || "__all__"}
-                            >
-                              <SelectTrigger className="text-sm">
-                                <SelectValue placeholder="Filter" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="__all__">All</SelectItem>
-                                {(column.filterOptions || []).map((opt) => (
-                                  <SelectItem key={opt} value={opt}>
-                                    {opt}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-
-                          {/* Buttons */}
-                          <div className="flex justify-between pt-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => clearFilter(column.key)}
-                            >
-                              Clear
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => applyFilter(column.key)}
-                            >
-                              Apply
-                            </Button>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  </div>
-                </TableHead>
-              ))}
-              {showActions && (
-                <TableHead className="text-right font-semibold text-foreground">
-                  {t("admin.common.actions")}
-                </TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-
-          {/* ---------- BODY ---------- */}
-          <TableBody>
-            {data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length + (showActions ? 1 : 0)}
-                  className="text-center text-muted-foreground py-16"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                      <span className="text-2xl">📋</span>
-                    </div>
-                    <p className="font-medium">No data available</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((row, index) => (
-                <TableRow
-                  key={row.id || index}
-                  className="hover:bg-muted/30 transition-colors border-b border-border/50"
-                >
-                  {columns.map((column) => (
-                    <TableCell key={column.key}>
-                      {column.render
-                        ? column.render(row[column.key], row, index)
-                        : row[column.key]}
-                    </TableCell>
-                  ))}
-                  {showActions && (
-                    <TableCell className="text-right">
-                      {renderActions && renderActions(row)}
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <Button onClick={handleAdd}>
+          <Plus className="w-4 h-4 mr-2" /> Add Category
+        </Button>
       </div>
-    </Card>
+
+      {/* ---------- TABLE ---------- */}
+      <DataTable
+        columns={columns}
+        data={paginatedData}
+        showActions
+        renderActions={(row) => (
+          <div className="flex justify-end gap-1">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => handleEdit(row)}
+              className="text-blue-500"
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => handleDelete(row)}
+              className="text-red-500"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+      />
+
+      {/* ---------- PAGINATION ---------- */}
+      <div className="flex justify-between items-center">
+        <TablePageSizeSelector
+          limit={limit}
+          setLimit={setLimit}
+          setPage={setPage}
+        />
+        <TablePagination
+          page={page}
+          limit={limit}
+          total={activeCategories.length}
+          onPageChange={setPage}
+        />
+      </div>
+
+      {/* ---------- MODAL ---------- */}
+      <FormPopupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingCategory ? "Edit Category" : "Add Category"}
+      >
+        <CategoryForm
+          onSubmit={handleSubmit}
+          initialData={editingCategory}
+        />
+      </FormPopupModal>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------
+   CategoryForm Component (Internal)
+------------------------------------------------------------- */
+function CategoryForm({
+  onSubmit,
+  initialData,
+}: {
+  onSubmit: (data: any) => void;
+  initialData?: any;
+}) {
+  const [level1, setLevel1] = useState(initialData?.level1 || "");
+  const [level2List, setLevel2List] = useState<string[]>(
+    initialData?.level2 || [""]
+  );
+  const [level3List, setLevel3List] = useState<string[][]>(
+    initialData?.level3 || [[]]
+  );
+
+  const handleLevel2Change = (idx: number, value: string) => {
+    const copy = [...level2List];
+    copy[idx] = value;
+    setLevel2List(copy);
+  };
+
+  const handleLevel3Change = (lvl2Idx: number, lvl3Idx: number, value: string) => {
+    const copy = [...level3List];
+    copy[lvl2Idx][lvl3Idx] = value;
+    setLevel3List(copy);
+  };
+
+  const addLevel2 = () => {
+    setLevel2List((prev) => [...prev, ""]);
+    setLevel3List((prev) => [...prev, []]);
+  };
+
+  const addLevel3 = (lvl2Idx: number) => {
+    setLevel3List((prev) => {
+      const copy = [...prev];
+      copy[lvl2Idx] = [...(copy[lvl2Idx] || []), ""];
+      return copy;
+    });
+  };
+
+  const handleSubmit = () => {
+    if (!level1.trim()) {
+      alert("Level 1 Category is required");
+      return;
+    }
+    onSubmit({ level1, level2: level2List, level3: level3List });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="text-sm font-medium">Level 1 Category</label>
+        <Input
+          value={level1}
+          onChange={(e) => setLevel1(e.target.value)}
+          placeholder="Enter Level 1 category"
+          className="mt-1"
+        />
+      </div>
+
+      {level2List.map((lvl2, i) => (
+        <div key={i} className="space-y-2 border p-3 rounded-lg">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-medium">Level 2 Category</label>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => addLevel3(i)}
+            >
+              + Add Level 3
+            </Button>
+          </div>
+          <Input
+            value={lvl2}
+            onChange={(e) => handleLevel2Change(i, e.target.value)}
+            placeholder="Enter Level 2 category"
+          />
+          {level3List[i]?.map((lvl3, j) => (
+            <Input
+              key={j}
+              value={lvl3}
+              onChange={(e) => handleLevel3Change(i, j, e.target.value)}
+              placeholder="Enter Level 3 category"
+              className="ml-4 mt-2"
+            />
+          ))}
+        </div>
+      ))}
+
+      <Button variant="secondary" onClick={addLevel2}>
+        + Add Another Level 2
+      </Button>
+
+      <div className="pt-4 text-right">
+        <Button onClick={handleSubmit}>Save</Button>
+      </div>
+    </div>
   );
 }

@@ -22,7 +22,7 @@
     },
     "sidebar": {
       "dashboard": "Dashboard",
-      "clients": "Clients",
+      "clients": "Customer",
       "providers": "Providers",
       "products": {
         "title": "Products",
@@ -130,7 +130,7 @@
     "clients": {
       "title": "Clients",
       "sub_title": "Manage your clients",
-      "add_client": "Add Client",
+      "add_client": "Add Customer",
       "name": "Name",
       "index": "#",
       "id_number": "ID Number",
@@ -468,6 +468,11 @@
         "title": "Manage Reasons"
       }
       
+    },
+    "sub_pages": {
+      "category": {
+        "title":"Manage Categories"
+      }
     }
   },
   "super_admin": {},

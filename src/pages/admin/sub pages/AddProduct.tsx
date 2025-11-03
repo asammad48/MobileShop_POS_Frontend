@@ -10,6 +10,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Plus } from 'lucide-react'
 
 /* --- mock data --- */
 const mockCategories = [
@@ -46,6 +47,18 @@ function useSalePrice(price: string, margin: string, marginType: "percent" | "fi
     return (p + m).toFixed(2);
   }, [price, margin, marginType]);
 }
+function applyTax(salePrice: string, taxId?: string) {
+  const price = parseFloat(salePrice) || 0;
+  if (!taxId) return price;
+
+  const tax = mockTaxes.find((t) => t.id === taxId);
+  if (!tax || tax.value === 0) return price;
+
+  // reduce tax percentage from price
+  const discounted = price - (price * tax.value) / 100;
+  return Number(discounted.toFixed(2));
+}
+
 
 /* --- SearchableSelect: memoized to avoid remounts --- */
 const SearchableSelect = React.memo(function SearchableSelect({
@@ -55,7 +68,7 @@ const SearchableSelect = React.memo(function SearchableSelect({
   onChange,
   labelKey = "name",
 }: {
-  items: { id: string; [k: string]: any }[];
+  items: { id: string;[k: string]: any }[];
   placeholder?: string;
   value?: string | undefined;
   onChange: (v: string) => void;
@@ -97,7 +110,7 @@ const SearchableSelect = React.memo(function SearchableSelect({
               {it[labelKey]}
             </SelectItem>
           ))}
-          <SelectItem value="add_new">➕ Add New</SelectItem>
+          <SelectItem value="add_new"><span className="flex gap-2 items-center"><Plus className="w-4" /> Add New</span></SelectItem>
         </div>
       </SelectContent>
     </Select>
@@ -116,20 +129,34 @@ const Row = React.memo(function Row({
 }) {
   const base = stackOnMobile
     ? "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3 border-b border-gray-200"
-    : "flex items-center gap-4 py-3 border-b border-gray-200";
+    : "flex items-center justify-between gap-4 py-3 border-b border-gray-200";
 
   return (
     <div className={base}>
-      <div className="w-44 min-w-[9rem] text-sm text-gray-700 font-medium">{label}</div>
+      <div className=" min-w-[3rem] text-sm text-gray-700 font-medium">{label}</div>
       <div className="flex-1">{children}</div>
     </div>
   );
 });
 
+/* --- Mock Tax Data --- */
+const mockTaxes = [
+  { id: "no_tax", name: "No Tax", value: 0 },
+  { id: "tax5", name: "5% Tax", value: 5 },
+  { id: "tax10", name: "10% Tax", value: 10 },
+  { id: "tax15", name: "15% Tax", value: 15 },
+];
+
+
 /* --- main component --- */
 export default function AddProduct() {
   const { setTitle } = useTitle();
   const [, setLocation] = useLocation();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  // Tax states
+  const [newTax, setNewTax] = useState<string | undefined>(undefined);
+  const [usedTax, setUsedTax] = useState<string | undefined>(undefined);
+
 
   // UI state
   const [isUsed, setIsUsed] = useState(false);
@@ -161,8 +188,12 @@ export default function AddProduct() {
     return () => setTitle("Business Dashboard");
   }, [setTitle]);
 
-  const newSalePrice = useSalePrice(newPrice, newMargin, newMarginType);
-  const usedSalePrice = useSalePrice(usedPrice, usedMargin, usedMarginType);
+  const baseNewSalePrice = useSalePrice(newPrice, newMargin, newMarginType);
+  const baseUsedSalePrice = useSalePrice(usedPrice, usedMargin, usedMarginType);
+
+  const newSalePrice = useMemo(() => applyTax(baseNewSalePrice, newTax), [baseNewSalePrice, newTax]);
+  const usedSalePrice = useMemo(() => applyTax(baseUsedSalePrice, usedTax), [baseUsedSalePrice, usedTax]);
+
 
   const level1Options = categories;
   const level2Options = useMemo(() => {
@@ -231,39 +262,85 @@ export default function AddProduct() {
   const submitNew = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      const newErrors: Record<string, string> = {};
+
+      if (!newName.trim()) newErrors.newName = "Product name is required";
+      if (!newProvider) newErrors.newProvider = "Provider is required";
+      if (!newPrice) newErrors.newPrice = "Price is required";
+      if (!newMargin) newErrors.newMargin = "Margin is required";
+      if (!newQuantity) newErrors.newQuantity = "Quantity is required";
+      if (!catLevel1) newErrors.category = "Category is required";
+
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) return; // stop if errors exist
+
       const payload = {
         name: newName,
         provider: newProvider,
         price: parseFloat(newPrice) || 0,
         margin: parseFloat(newMargin) || 0,
         marginType: newMarginType,
-        salePrice: parseFloat(newSalePrice) || 0,
+        salePrice: newSalePrice || 0,
         quantity: Number(newQuantity) || 1,
         category: { level1: catLevel1, level2: catLevel2, level3: catLevel3 },
+        tax: newTax,
       };
       console.log("submitNew", payload);
       alert("New product payload printed to console");
     },
-    [newName, newProvider, newPrice, newMargin, newMarginType, newSalePrice, newQuantity, catLevel1, catLevel2, catLevel3]
+    [
+      newName,
+      newProvider,
+      newPrice,
+      newMargin,
+      newMarginType,
+      newSalePrice,
+      newQuantity,
+      catLevel1,
+      catLevel2,
+      catLevel3,
+    ]
   );
 
   const submitUsed = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      const newErrors: Record<string, string> = {};
+
+      if (!usedName.trim()) newErrors.usedName = "Product name is required";
+      if (!usedCustomer) newErrors.usedCustomer = "Customer is required";
+      if (!usedPrice) newErrors.usedPrice = "Price is required";
+      if (!usedMargin) newErrors.usedMargin = "Margin is required";
+      if (!catLevel1) newErrors.category = "Category is required";
+
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) return;
+
       const payload = {
         name: usedName,
         customer: usedCustomer,
         price: parseFloat(usedPrice) || 0,
         margin: parseFloat(usedMargin) || 0,
         marginType: usedMarginType,
-        salePrice: parseFloat(usedSalePrice) || 0,
+        salePrice: usedSalePrice || 0,
         quantity: 1,
         category: { level1: catLevel1, level2: catLevel2, level3: catLevel3 },
+        tax: usedTax,
       };
       console.log("submitUsed", payload);
       alert("Used product payload printed to console");
     },
-    [usedName, usedCustomer, usedPrice, usedMargin, usedMarginType, usedSalePrice, catLevel1, catLevel2, catLevel3]
+    [
+      usedName,
+      usedCustomer,
+      usedPrice,
+      usedMargin,
+      usedMarginType,
+      usedSalePrice,
+      catLevel1,
+      catLevel2,
+      catLevel3,
+    ]
   );
 
   /* --- category levels (dynamic array) --- */
@@ -325,13 +402,28 @@ export default function AddProduct() {
                 <h2 className="text-lg font-medium mb-3">Add New Product</h2>
 
                 <Row label="Name">
-                  <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Enter product name" />
+                  <div>
+                    <Input
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder="Enter product name"
+                    />
+                    {errors.newName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.newName}</p>
+                    )}
+                  </div>
                 </Row>
 
                 {/* pass stackOnMobile so Category only stacks on small screens */}
                 <Row label="Category" stackOnMobile>
-                  {CategoryRow}
+                  <div>
+                    {CategoryRow}
+                    {errors.category && (
+                      <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+                    )}
+                  </div>
                 </Row>
+
 
                 <Row label="Provider">
                   <div className="w-full sm:w-80">
@@ -341,8 +433,12 @@ export default function AddProduct() {
                       value={newProvider}
                       onChange={onNewProviderChange}
                     />
+                    {errors.newProvider && (
+                      <p className="text-red-500 text-xs mt-1">{errors.newProvider}</p>
+                    )}
                   </div>
                 </Row>
+
 
                 <Row label="Price">
                   <div className="w-full sm:w-64">
@@ -355,8 +451,12 @@ export default function AddProduct() {
                       onChange={(e) => setNewPrice(e.target.value)}
                       placeholder="Cost price"
                     />
+                    {errors.newPrice && (
+                      <p className="text-red-500 text-xs mt-1">{errors.newPrice}</p>
+                    )}
                   </div>
                 </Row>
+
 
                 <Row label="Quantity">
                   <div className="w-full sm:w-40">
@@ -374,9 +474,12 @@ export default function AddProduct() {
                 </Row>
 
                 <Row label="Margin">
-                  <div className="flex gap-3 items-center">
+                  <div className="flex flex-col xl:flex-row gap-3 items-center">
                     <div className="w-44">
-                      <Select onValueChange={(v) => setNewMarginType(v as "percent" | "fixed")} value={newMarginType}>
+                      <Select
+                        onValueChange={(v) => setNewMarginType(v as "percent" | "fixed")}
+                        value={newMarginType}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -397,7 +500,24 @@ export default function AddProduct() {
                         onChange={(e) => setNewMargin(e.target.value)}
                         placeholder="Value"
                       />
+                      {errors.newMargin && (
+                        <p className="text-red-500 text-xs mt-1">{errors.newMargin}</p>
+                      )}
                     </div>
+                  </div>
+                </Row>
+
+                <Row label="Tax">
+                  <div className="w-full sm:w-80">
+                    <SearchableSelect
+                      items={mockTaxes}
+                      placeholder="Select tax"
+                      value={newTax}
+                      onChange={setNewTax}
+                    />
+                    {errors.newTax && (
+                      <p className="text-red-500 text-xs mt-1">{errors.newTax}</p>
+                    )}
                   </div>
                 </Row>
 
@@ -418,12 +538,28 @@ export default function AddProduct() {
                 <h2 className="text-lg font-medium mb-3">Add Used Product</h2>
 
                 <Row label="Name">
-                  <Input value={usedName} onChange={(e) => setUsedName(e.target.value)} placeholder="Enter product name" />
+                  <div>
+                    <Input
+                      value={usedName}
+                      onChange={(e) => setUsedName(e.target.value)}
+                      placeholder="Enter product name"
+                    />
+                    {errors.usedName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.usedName}</p>
+                    )}
+                  </div>
                 </Row>
 
+
                 <Row label="Category" stackOnMobile>
-                  {CategoryRow}
+                  <div>
+                    {CategoryRow}
+                    {errors.category && (
+                      <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+                    )}
+                  </div>
                 </Row>
+
 
                 <Row label="Customer">
                   <div className="w-full sm:w-80">
@@ -433,8 +569,12 @@ export default function AddProduct() {
                       value={usedCustomer}
                       onChange={onUsedCustomerChange}
                     />
+                    {errors.usedCustomer && (
+                      <p className="text-red-500 text-xs mt-1">{errors.usedCustomer}</p>
+                    )}
                   </div>
                 </Row>
+
 
                 <Row label="Price">
                   <div className="w-full sm:w-64">
@@ -447,13 +587,20 @@ export default function AddProduct() {
                       onChange={(e) => setUsedPrice(e.target.value)}
                       placeholder="Cost price"
                     />
+                    {errors.usedPrice && (
+                      <p className="text-red-500 text-xs mt-1">{errors.usedPrice}</p>
+                    )}
                   </div>
                 </Row>
+
 
                 <Row label="Margin">
                   <div className="flex gap-3 items-center">
                     <div className="w-44">
-                      <Select onValueChange={(v) => setUsedMarginType(v as "percent" | "fixed")} value={usedMarginType}>
+                      <Select
+                        onValueChange={(v) => setUsedMarginType(v as "percent" | "fixed")}
+                        value={usedMarginType}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -474,9 +621,27 @@ export default function AddProduct() {
                         onChange={(e) => setUsedMargin(e.target.value)}
                         placeholder="Value"
                       />
+                      {errors.usedMargin && (
+                        <p className="text-red-500 text-xs mt-1">{errors.usedMargin}</p>
+                      )}
                     </div>
                   </div>
                 </Row>
+
+                <Row label="Tax">
+                  <div className="w-full sm:w-80">
+                    <SearchableSelect
+                      items={mockTaxes}
+                      placeholder="Select tax"
+                      value={usedTax}
+                      onChange={setUsedTax}
+                    />
+                    {errors.usedTax && (
+                      <p className="text-red-500 text-xs mt-1">{errors.usedTax}</p>
+                    )}
+                  </div>
+                </Row>
+
 
                 <Row label="Sale price">
                   <div className="w-full sm:w-48">
@@ -489,7 +654,6 @@ export default function AddProduct() {
                 </Row>
 
                 <div className="mt-6 flex gap-3 justify-end">
-                  <Button variant="outline">Cancel</Button>
                   <Button type="submit">Add Used Product</Button>
                 </div>
               </div>
