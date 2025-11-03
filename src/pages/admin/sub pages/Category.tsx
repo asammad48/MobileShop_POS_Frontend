@@ -277,7 +277,7 @@ export default function Category() {
             </div>
           )}
           onFilterChange={() => {
-            // we handle filters outside DataTable for now
+           
           }}
         />
       )}
