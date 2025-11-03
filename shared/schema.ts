@@ -38,6 +38,9 @@ export const categories = pgTable("categories", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   shopId: varchar("shop_id").notNull(),
   name: text("name").notNull(),
+  type: text("type").notNull(),
+  parentId: varchar("parent_id"),
+  level: integer("level").notNull().default(1),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -79,6 +82,7 @@ export const insertSaleSchema = createInsertSchema(sales).omit({ id: true, creat
 export const insertPricingPlanSchema = createInsertSchema(pricingPlans).omit({ id: true });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type User = typeof users.$inferSelect;
 export type Shop = typeof shops.$inferSelect;
 export type Product = typeof products.$inferSelect;

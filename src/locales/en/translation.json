@@ -471,11 +471,63 @@
     },
     "sub_pages": {
       "category": {
-        "title":"Manage Categories",
+        "title": "Manage Categories",
+        "subtitle": "Organize your products with three-level hierarchical categories",
         "add_button": "Add Category",
+        "edit_button": "Edit Category",
+        "delete_button": "Delete Category",
         "level1": "Level 1",
         "level2": "Level 2",
-        "level3": "Level 3" 
+        "level3": "Level 3",
+        "type": {
+          "primary": "Primary",
+          "generic": "Generic"
+        },
+        "filters": {
+          "show_generic": "Show Generic Categories",
+          "show_primary": "Show Primary Categories",
+          "search_placeholder": "Search by category name"
+        },
+        "modal": {
+          "add_title": "Add New Category",
+          "edit_title": "Edit Category",
+          "category_name": "Category Name",
+          "category_name_placeholder": "Enter category name",
+          "add_level2": "Add Level 2 Subcategory",
+          "add_level3": "Add Level 3 Subcategory",
+          "remove_level2": "Remove Level 2",
+          "remove_level3": "Remove Level 3",
+          "level2_name": "Level 2 Name",
+          "level2_placeholder": "Enter subcategory name",
+          "level3_name": "Level 3 Name",
+          "level3_placeholder": "Enter sub-subcategory name",
+          "cancel": "Cancel",
+          "save": "Save",
+          "update": "Update",
+          "add_multiple": "Add Multiple Categories"
+        },
+        "messages": {
+          "category_added": "Category Added",
+          "category_added_description": "{{name}} has been added successfully",
+          "categories_added": "Categories Added",
+          "categories_added_description": "{{count}} categories have been added successfully",
+          "category_updated": "Category Updated",
+          "category_updated_description": "{{name}} has been updated successfully",
+          "category_deleted": "Category Deleted",
+          "category_deleted_description": "Category has been deleted successfully",
+          "delete_confirmation": "Are you sure you want to delete \"{{name}}\"?",
+          "delete_warning": "This will also delete all subcategories",
+          "validation": {
+            "name_required": "Category name is required",
+            "level2_required": "Level 2 name is required",
+            "level3_required": "Level 3 name is required",
+            "at_least_one": "Please add at least one category"
+          }
+        },
+        "table": {
+          "no_data": "No categories found",
+          "total_categories": "Total categories: {{count}}"
+        }
       }
     }
   },

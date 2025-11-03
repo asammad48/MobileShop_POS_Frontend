@@ -109,34 +109,41 @@ export default function Category() {
   };
 
   const handleDelete = (cat: Category) => {
-    if (!confirm(`Delete "${cat.name}"?`)) return;
+    if (!confirm(t("admin.sub_pages.category.messages.delete_confirmation", { name: cat.name }))) return;
     const updated = activeList.filter((c) => c.id !== cat.id);
     setActiveList(updated);
-    toast({ title: "Category deleted" });
+    toast({ 
+      title: t("admin.sub_pages.category.messages.category_deleted"),
+      description: t("admin.sub_pages.category.messages.category_deleted_description")
+    });
   };
 
   const handleSubmit = (categories: { name: string; level2: { id?: string; name: string; level3: { name: string }[] }[] }[]) => {
     if (categories.length === 0) {
-      toast({ title: "Please add at least one category", variant: "destructive" });
+      toast({ 
+        title: t("admin.sub_pages.category.messages.validation.at_least_one"),
+        variant: "destructive" 
+      });
       return;
     }
 
     if (editing) {
-      // Update existing category - preserve IDs from submitted data or generate new ones
       const updatedCategory: Category = {
         id: editing.id,
         name: categories[0].name,
         level2: categories[0].level2.map((submittedL2) => ({
-          id: submittedL2.id || makeId(), // Use existing ID from popup or generate new
+          id: submittedL2.id || makeId(),
           name: submittedL2.name,
           level3: submittedL2.level3,
         })),
       };
       const updated = activeList.map((c) => (c.id === editing.id ? updatedCategory : c));
       setActiveList(updated);
-      toast({ title: `Category "${updatedCategory.name}" updated successfully` });
+      toast({ 
+        title: t("admin.sub_pages.category.messages.category_updated"),
+        description: t("admin.sub_pages.category.messages.category_updated_description", { name: updatedCategory.name })
+      });
     } else {
-      // Add new categories - generate unique IDs for each
       let nextId = Math.max(...activeList.map(c => c.id), 0) + 1;
       const newCategories: Category[] = categories.map((cat) => {
         const category: Category = {
@@ -151,7 +158,18 @@ export default function Category() {
         return category;
       });
       setActiveList([...activeList, ...newCategories]);
-      toast({ title: `${newCategories.length} categor${newCategories.length > 1 ? 'ies' : 'y'} added successfully` });
+      
+      if (newCategories.length === 1) {
+        toast({ 
+          title: t("admin.sub_pages.category.messages.category_added"),
+          description: t("admin.sub_pages.category.messages.category_added_description", { name: newCategories[0].name })
+        });
+      } else {
+        toast({ 
+          title: t("admin.sub_pages.category.messages.categories_added"),
+          description: t("admin.sub_pages.category.messages.categories_added_description", { count: newCategories.length })
+        });
+      }
     }
     
     setEditing(null);
@@ -202,18 +220,20 @@ export default function Category() {
                 setPage(1);
               }}
               className="h-4 w-4"
+              data-testid="checkbox-show-generic"
             />
-            <span className="text-sm">Show Generic Categories</span>
+            <span className="text-sm">{t("admin.sub_pages.category.filters.show_generic")}</span>
           </label>
 
           <Input
-            placeholder={t("search") || "Search by Level 1"}
+            placeholder={t("admin.sub_pages.category.filters.search_placeholder")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
             className="w-64"
+            data-testid="input-search-category"
           />
         </div>
 
@@ -225,9 +245,9 @@ export default function Category() {
               setPage(1);
             }}
           />
-          <Button onClick={openAdd}>
+          <Button onClick={openAdd} data-testid="button-add-category">
             <Plus className="w-4 h-4 mr-2" />
-            {t("admin.sub_pages.category.add_button") || "Add Category"}
+            {t("admin.sub_pages.category.add_button")}
           </Button>
         </div>
       </div>
@@ -239,10 +259,20 @@ export default function Category() {
         showActions
         renderActions={(row: Category) => (
           <div className="flex justify-end gap-2">
-            <Button size="icon" variant="ghost" onClick={() => openEdit(row)}>
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              onClick={() => openEdit(row)}
+              data-testid={`button-edit-${row.id}`}
+            >
               <Edit className="w-4 h-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => handleDelete(row)}>
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              onClick={() => handleDelete(row)}
+              data-testid={`button-delete-${row.id}`}
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>

@@ -102,6 +102,67 @@
       "search": "تلاش کریں...",
       "hi": "سلام"
     },
+    "sub_pages": {
+      "category": {
+        "title": "زمرہ جات کا انتظام",
+        "subtitle": "اپنی مصنوعات کو تین سطحی درجہ بندی کے ساتھ منظم کریں",
+        "add_button": "زمرہ شامل کریں",
+        "edit_button": "زمرہ میں ترمیم کریں",
+        "delete_button": "زمرہ حذف کریں",
+        "level1": "سطح 1",
+        "level2": "سطح 2",
+        "level3": "سطح 3",
+        "type": {
+          "primary": "بنیادی",
+          "generic": "عام"
+        },
+        "filters": {
+          "show_generic": "عام زمرہ جات دکھائیں",
+          "show_primary": "بنیادی زمرہ جات دکھائیں",
+          "search_placeholder": "زمرہ کے نام سے تلاش کریں"
+        },
+        "modal": {
+          "add_title": "نیا زمرہ شامل کریں",
+          "edit_title": "زمرہ میں ترمیم کریں",
+          "category_name": "زمرہ کا نام",
+          "category_name_placeholder": "زمرہ کا نام درج کریں",
+          "add_level2": "سطح 2 ذیلی زمرہ شامل کریں",
+          "add_level3": "سطح 3 ذیلی زمرہ شامل کریں",
+          "remove_level2": "سطح 2 ہٹائیں",
+          "remove_level3": "سطح 3 ہٹائیں",
+          "level2_name": "سطح 2 کا نام",
+          "level2_placeholder": "ذیلی زمرہ کا نام درج کریں",
+          "level3_name": "سطح 3 کا نام",
+          "level3_placeholder": "ذیلی ذیلی زمرہ کا نام درج کریں",
+          "cancel": "منسوخ کریں",
+          "save": "محفوظ کریں",
+          "update": "اپ ڈیٹ کریں",
+          "add_multiple": "متعدد زمرہ جات شامل کریں"
+        },
+        "messages": {
+          "category_added": "زمرہ شامل کیا گیا",
+          "category_added_description": "{{name}} کامیابی سے شامل کیا گیا",
+          "categories_added": "زمرہ جات شامل کیے گئے",
+          "categories_added_description": "{{count}} زمرہ جات کامیابی سے شامل کیے گئے",
+          "category_updated": "زمرہ اپ ڈیٹ کیا گیا",
+          "category_updated_description": "{{name}} کامیابی سے اپ ڈیٹ کیا گیا",
+          "category_deleted": "زمرہ حذف کیا گیا",
+          "category_deleted_description": "زمرہ کامیابی سے حذف کیا گیا",
+          "delete_confirmation": "کیا آپ واقعی \"{{name}}\" کو حذف کرنا چاہتے ہیں؟",
+          "delete_warning": "یہ تمام ذیلی زمرہ جات کو بھی حذف کر دے گا",
+          "validation": {
+            "name_required": "زمرہ کا نام ضروری ہے",
+            "level2_required": "سطح 2 کا نام ضروری ہے",
+            "level3_required": "سطح 3 کا نام ضروری ہے",
+            "at_least_one": "براہ کرم کم از کم ایک زمرہ شامل کریں"
+          }
+        },
+        "table": {
+          "no_data": "کوئی زمرہ نہیں ملا",
+          "total_categories": "کل زمرہ جات: {{count}}"
+        }
+      }
+    },
     "super_admin": {},
     "sales_person": {}
   }
