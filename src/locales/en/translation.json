@@ -471,7 +471,11 @@
     },
     "sub_pages": {
       "category": {
-        "title":"Manage Categories"
+        "title":"Manage Categories",
+        "add_button": "Add Category",
+        "level1": "Level 1",
+        "level2": "Level 2",
+        "level3": "Level 3" 
       }
     }
   },

@@ -20,8 +20,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-// import ReactSelect from "react-select";
-// import countryList from "react-select-country-list";
+import ReactSelect from "react-select";
+import countryList from "react-select-country-list";
 
 export default function Customer() {
   useAuth("admin");
@@ -29,7 +29,7 @@ export default function Customer() {
   const { t } = useTranslation();
   const { setTitle } = useTitle();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  // const options = countryList().getData();
+  const options = countryList().getData();
 
   useEffect(() => {
     setTitle(t("admin.clients.title"));
@@ -382,7 +382,7 @@ export default function Customer() {
           {/* 🌍 Nationality Dropdown */}
           <div>
             <Label>Nationality</Label>
-            {/* <ReactSelect
+            <ReactSelect
               options={options}
               value={options.find((c) => c.label === formData.nationality) || null}
               onChange={(selected: any) => {
@@ -390,7 +390,7 @@ export default function Customer() {
                 setErrors((prev) => ({ ...prev, nationality: "" }));
               }}
               placeholder="Select country"
-            /> */}
+            />
             {errors.nationality && (
               <p className="text-red-500 text-sm mt-1">{errors.nationality}</p>
             )}
