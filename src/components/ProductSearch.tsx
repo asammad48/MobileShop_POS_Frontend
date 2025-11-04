@@ -22,6 +22,7 @@ interface ProductSearchProps {
   result: string;
   setSearch: (value: string) => void;
   setResult: (value: string) => void;
+  onKeyDown: () => void;
 }
 
 export default function ProductSearch({ products, onSelectProduct, autoFocus = false, handleScanning, search, setSearch, result, setResult }: ProductSearchProps) {

@@ -21,13 +21,13 @@ import SystemAnalytics from "@/pages/superadmin/Analytics";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminClients from "@/pages/admin/Customer";
 import Providers from "./pages/admin/Providers";
-import GenericProducts from "./pages/admin/Generic";
+import GenericProducts from "./pages/admin/sub pages/Generic";
 import RepairBook from "@/pages/admin/RepairBook";
 import CloseTodayTurn from "@/pages/admin/CloseTodayTurn";
 import SalesDetailPage from "./pages/admin/SalesDetailPage";
 import PrivateWallet from "@/pages/admin/PrivateWallet";
 import RechargePayments from "@/pages/admin/RechargePayment";
-import Products from "@/pages/admin/Products";
+import Products from "@/pages/admin/sub pages/Products";
 import AddProduct from "./pages/admin/sub pages/AddProduct";
 import Category from "./pages/admin/sub pages/Category";
 import ActivityLogs from "@/pages/admin/ActivityLogs";
@@ -46,6 +46,7 @@ import RepairManDashboard from "@/pages/repairman/Dashboard";
 import WholesalerDashboard from "@/pages/wholesaler/Dashboard";
 import RepairMen from "@/pages/admin/RepairMen";
 import Wholesalers from "@/pages/admin/Wholesalers";
+import Tax from "./pages/admin/sub pages/Tax";
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -64,7 +65,7 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
           <AppHeader />
-          <main className="flex-1 overflow-auto p-8">
+          <main className="flex-1 overflow-auto p-4">
             {children}
           </main>
         </div>
@@ -109,9 +110,6 @@ function Router() {
       <Route path="/admin/providers">
         <ProtectedLayout><Providers /></ProtectedLayout>
       </Route>
-      <Route path="/admin/products">
-        <ProtectedLayout><Products /></ProtectedLayout>
-      </Route>
       <Route path={"/catalog/add-product"}>
         <ProtectedLayout><AddProduct /></ProtectedLayout>
       </Route>
@@ -124,7 +122,13 @@ function Router() {
       <Route path="/catalog/manage-stock">
         <ProtectedLayout><ManageStock /></ProtectedLayout>
       </Route>
-      <Route path="/admin/products/generic">
+      <Route path="/catalog/tax">
+        <ProtectedLayout><Tax /></ProtectedLayout>
+      </Route>
+      <Route path="/products/mobile">
+        <ProtectedLayout><Products /></ProtectedLayout>
+      </Route>
+      <Route path="/products/generic">
         <ProtectedLayout><GenericProducts /></ProtectedLayout>
       </Route>
       <Route path="/admin/repair-book">

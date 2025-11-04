@@ -62,14 +62,15 @@ const menuItems: Record<string, MenuItem[]> = {
   ],
   admin: [
     { key: 'dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
+    { key: 'POS', url: '/pos', icon: ShoppingCart },
     { key: 'clients', url: '/admin/customer', icon: Users },
     { key: 'providers', url: '/admin/providers', icon: UserCheck },
     {
       key: 'products',
       icon: Package,
       subMenu: [
-        { key: 'mobile', url: '/admin/products/' },
-        { key: 'generic', url: '/admin/products/generic' },
+        { key: 'mobile', url: '/products/mobile' },
+        { key: 'generic', url: '/products/generic' },
       ],
     },
     {
@@ -79,7 +80,8 @@ const menuItems: Record<string, MenuItem[]> = {
         {key: 'add_product', url: '/catalog/add-product'},
         {key: 'manage_stock', url: '/catalog/manage-stock'},
         {key: 'category', url: '/catalog/categories'},
-        {key: 'reasons', url: '/catalog/manage-reasons'}
+        {key: 'reasons', url: '/catalog/manage-reasons'},
+        {key: 'add_tax', url: '/catalog/tax'},
       ]
     },
     { key: 'repair_book', url: '/admin/repair-book', icon: Book },
@@ -114,9 +116,29 @@ const menuItems: Record<string, MenuItem[]> = {
     { key: 'coupons', url: '/admin/coupons', icon: Tag },
   ],
   sales_person: [
-    { key: 'POS Dashboard', url: '/pos', icon: ShoppingCart },
+    { key: 'POS', url: '/pos', icon: ShoppingCart },
     { key: 'Recent Sales', url: '/pos/sales', icon: Clock },
-    { key: 'Products', url: '/pos/products', icon: Package },
+    { key: 'clients', url: '/admin/customer', icon: Users },
+    { key: 'providers', url: '/admin/providers', icon: UserCheck },
+    {
+      key: 'products',
+      icon: Package,
+      subMenu: [
+        { key: 'mobile', url: '/products/mobile' },
+        { key: 'generic', url: '/products/generic' },
+      ],
+    },
+    {
+      key: "catalog",
+      icon: BoxesIcon,
+      subMenu: [
+        {key: 'add_product', url: '/catalog/add-product'},
+        {key: 'manage_stock', url: '/catalog/manage-stock'},
+        {key: 'category', url: '/catalog/categories'},
+        {key: 'reasons', url: '/catalog/manage-reasons'},
+        {key: 'add_tax', url: '/catalog/tax'},
+      ]
+    },
   ],
   repair_man: [
     { key: 'Dashboard', url: '/repair-man/dashboard', icon: LayoutDashboard },

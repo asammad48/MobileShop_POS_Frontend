@@ -9,6 +9,7 @@ interface Sale {
   items: string;
   total: number;
   date: string;
+  title: string
 }
 
 interface LastSalesProps {

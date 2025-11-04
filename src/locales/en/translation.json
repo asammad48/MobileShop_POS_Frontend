@@ -22,6 +22,7 @@
     },
     "sidebar": {
       "dashboard": "Dashboard",
+      "POS": "POS",
       "clients": "Customer",
       "providers": "Providers",
       "products": {
@@ -64,12 +65,13 @@
           "add_product": "Add Product",
           "manage_stock": "Manage Stock",
           "category": "Category",
-          "reasons": "Manage Reasons"
+          "reasons": "Manage Reasons",
+          "add_tax": "Manage Tax"
         }
       
       },
       "repair_men": "Repair Men",
-      "wholesalers": "WholeSaler" 
+      "wholesalers": "WholeSaler"
     },
     "dashboard": {
       "title": "Shop Dashboard",
@@ -484,8 +486,8 @@
         "placeholder": {
           "main": "enter the reason title"
         }
-        
       }
+      
       
     },
     "sub_pages": {
@@ -547,6 +549,9 @@
           "no_data": "No categories found",
           "total_categories": "Total categories: {{count}}"
         }
+      },
+      "manage_stock": {
+        "title": "Manage Stock"
       }
     },
     "repair_men": {

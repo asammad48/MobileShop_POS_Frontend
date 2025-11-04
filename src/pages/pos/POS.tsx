@@ -20,7 +20,7 @@ interface CartItemType {
 }
 
 export default function POS() {
-  useAuth('sales_person');
+  useAuth(['sales_person', 'admin']);
   const [cart, setCart] = useState<CartItemType[]>([]); //todo: remove mock functionality
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
@@ -28,6 +28,12 @@ export default function POS() {
   const [search, setSearch] = useState('');
   const [result, setResult] = useState("");
   const [couponCode, setCouponeCode] = useState('')
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      performSearch(search);
+    }
+  };  
 
   const handleAddToCart = (product: any) => {
     const existing = cart.find(item => item.id === product.id);
@@ -92,7 +98,6 @@ export default function POS() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       <div className="lg:col-span-2 space-y-4">
         <div>
-          <h1 className="text-3xl font-semibold mb-1">Point of Sale</h1>
           <p className="text-muted-foreground">Scan or search for products</p>
         </div>
 
@@ -101,6 +106,7 @@ export default function POS() {
           onSelectProduct={handleAddToCart}
           handleScanning={handleScanning}
           search={search}
+          onKeyDown={handleKeyDown}
           setSearch={setSearch}
           result={result}
           setResult={setResult}

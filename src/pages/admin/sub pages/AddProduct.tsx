@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useTitle } from "@/context/TitleContext";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,7 +10,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Plus } from 'lucide-react'
+import { Plus } from 'lucide-react';
+import { useAuth } from "@/hooks/useAuth";
 
 /* --- mock data --- */
 const mockCategories = [
@@ -110,7 +111,14 @@ const SearchableSelect = React.memo(function SearchableSelect({
               {it[labelKey]}
             </SelectItem>
           ))}
-          <SelectItem value="add_new"><span className="flex gap-2 items-center"><Plus className="w-4" /> Add New</span></SelectItem>
+          <SelectItem 
+          value="add_new"
+          >
+            <span className="flex gap-2 items-center">
+              <Plus className="w-4" />
+              Add New
+            </span>
+          </SelectItem>
         </div>
       </SelectContent>
     </Select>
@@ -150,6 +158,7 @@ const mockTaxes = [
 
 /* --- main component --- */
 export default function AddProduct() {
+  useAuth(['admin', 'sales_person'])
   const { setTitle } = useTitle();
   const [, setLocation] = useLocation();
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -208,7 +217,7 @@ export default function AddProduct() {
   /* --- stable callbacks --- */
   const onNewProviderChange = useCallback(
     (v: string) => {
-      if (v === "add_new") setLocation("/admin/providers/add");
+      if (v === "add_new") setLocation("/admin/providers");
       else setNewProvider(v);
     },
     [setLocation]
@@ -225,7 +234,7 @@ export default function AddProduct() {
   const onCatLevel1Change = useCallback(
     (v: string) => {
       if (v === "add_new") {
-        setLocation("/admin/categories/add");
+        setLocation("/catalog/categories");
         return;
       }
       setCatLevel1(v);
@@ -238,7 +247,7 @@ export default function AddProduct() {
   const onCatLevel2Change = useCallback(
     (v: string) => {
       if (v === "add_new") {
-        setLocation("/admin/categories/add");
+        setLocation("/catalog/categories");
         return;
       }
       setCatLevel2(v);
@@ -250,7 +259,7 @@ export default function AddProduct() {
   const onCatLevel3Change = useCallback(
     (v: string) => {
       if (v === "add_new") {
-        setLocation("/admin/categories/add");
+        setLocation("/catalog/categories");
         return;
       }
       setCatLevel3(v);
@@ -399,7 +408,7 @@ export default function AddProduct() {
           {!isUsed ? (
             <form onSubmit={submitNew}>
               <div className="px-6 py-4">
-                <h2 className="text-lg font-medium mb-3">Add New Product</h2>
+                <h2 className="text-lg font-medium mb-3">Add New Mobile</h2>
 
                 <Row label="Name">
                   <div>
@@ -535,7 +544,7 @@ export default function AddProduct() {
           ) : (
             <form onSubmit={submitUsed}>
               <div className="px-6 py-4">
-                <h2 className="text-lg font-medium mb-3">Add Used Product</h2>
+                <h2 className="text-lg font-medium mb-3">Add Used Mobile</h2>
 
                 <Row label="Name">
                   <div>

@@ -23,7 +23,7 @@ import {
 import { useTitle } from '@/context/TitleContext';
 
 export default function Providers() {
-  useAuth("admin");
+  useAuth(["admin", "sales_person"]); 
   const { toast } = useToast();
   const { t } = useTranslation();
 

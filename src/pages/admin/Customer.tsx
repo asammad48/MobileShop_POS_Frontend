@@ -24,7 +24,7 @@ import ReactSelect from "react-select";
 import countryList from "react-select-country-list";
 
 export default function Customer() {
-  useAuth("admin");
+  useAuth(["admin", "sales_person"]);
   const { toast } = useToast();
   const { t } = useTranslation();
   const { setTitle } = useTitle();

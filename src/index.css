@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  overflow-y: hidden;
+}
+
 /* Modern scrollbar style */
 div[data-slot="sidebar-content"] {
   overflow-y: auto; /* ensures scrollability */

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/DataTable";
 import { TablePagination } from "@/components/ui/tablepagination";
@@ -30,7 +29,7 @@ type Category = {
 };
 
 export default function Category() {
-  useAuth("admin");
+  useAuth(['admin', 'sales_person'])
   const { t } = useTranslation();
   const { setTitle } = useTitle();
   const { toast } = useToast();
@@ -278,6 +277,7 @@ export default function Category() {
           setIsModalOpen(false);
           setEditing(null);
         }}
+        // if active type is true, it means it is generic and if it is false, means it's mobile
         isGeneric={activeType}
         initialData={editing ? [{ name: editing.name, level2: editing.level2 }] : undefined}
         onSubmit={handleSubmit}
