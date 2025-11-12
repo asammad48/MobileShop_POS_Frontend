@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, decimal, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, decimal, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -137,6 +137,8 @@ export const wholesalerProducts = pgTable("wholesaler_products", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const purchaseOrderStatusEnum = pgEnum("purchase_order_status", ["pending", "approved", "rejected", "fulfilled"]);
+
 export const purchaseOrders = pgTable("purchase_orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   orderNumber: text("order_number").notNull().unique(),
@@ -147,11 +149,12 @@ export const purchaseOrders = pgTable("purchase_orders", {
   shopPhone: text("shop_phone"),
   shopEmail: text("shop_email"),
   contactPerson: text("contact_person").notNull(),
-  status: text("status").notNull().default("pending"),
+  status: purchaseOrderStatusEnum("status").notNull().default("pending"),
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   discount: decimal("discount", { precision: 10, scale: 2 }).notNull().default("0"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
   notes: text("notes"),
+  wholesalerResponse: text("wholesaler_response"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -166,6 +169,8 @@ export const purchaseOrderItems = pgTable("purchase_order_items", {
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
 });
 
+export const dealRequestStatusEnum = pgEnum("deal_request_status", ["pending", "approved", "rejected", "negotiating"]);
+
 export const dealRequests = pgTable("deal_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   shopId: varchar("shop_id").notNull(),
@@ -179,7 +184,7 @@ export const dealRequests = pgTable("deal_requests", {
   requestedPrice: decimal("requested_price", { precision: 10, scale: 2 }),
   quantity: integer("quantity"),
   message: text("message").notNull(),
-  status: text("status").notNull().default("pending"),
+  status: dealRequestStatusEnum("status").notNull().default("pending"),
   wholesalerResponse: text("wholesaler_response"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

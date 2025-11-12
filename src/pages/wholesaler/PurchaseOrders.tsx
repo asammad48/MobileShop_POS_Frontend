@@ -141,15 +141,28 @@ export default function PurchaseOrders() {
   const handleAction = () => {
     if (!selectedOrder || !actionType) return;
 
+    if (actionType === "reject" && !responseNotes.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide a reason for rejection.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setOrders(orders.map(o => 
       o.id === selectedOrder.id 
-        ? { ...o, status: actionType === "approve" ? "approved" : "rejected" }
+        ? { 
+            ...o, 
+            status: actionType === "approve" ? "approved" : "rejected",
+            notes: responseNotes || o.notes
+          }
         : o
     ));
 
     toast({
       title: `Order ${actionType === "approve" ? "Approved" : "Rejected"}`,
-      description: `Order ${selectedOrder.orderNumber} has been ${actionType === "approve" ? "approved" : "rejected"} successfully.`,
+      description: `Order ${selectedOrder.orderNumber} has been ${actionType === "approve" ? "approved" : "rejected"} successfully.${responseNotes ? " Your response has been recorded." : ""}`,
     });
 
     setIsActionModalOpen(false);

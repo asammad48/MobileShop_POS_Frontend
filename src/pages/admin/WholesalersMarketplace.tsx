@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import FormPopupModal from "@/components/ui/FormPopupModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ShoppingCart, Package, Tag, Store, Plus, Minus, Send, TrendingDown } from "lucide-react";
+import { ShoppingCart, Package, Tag, Store, Plus, Minus, Send, TrendingDown, X } from "lucide-react";
 
 type WholesalerProduct = {
   id: number;
