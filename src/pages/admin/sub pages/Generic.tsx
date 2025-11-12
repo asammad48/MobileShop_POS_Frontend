@@ -271,12 +271,28 @@ export default function GenericProducts() {
     return (<div className="space-y-6">
         {/* Header */}
         <div className="flex justify-end flex-col gap-8">
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-end gap-3 flex-wrap">
 
-                <Button onClick={() => setIsCreateCategoryOpen(true)}><Plus className="w-4 h-4 mr-2" />Create New Category</Button>
-                <Button variant="outline" onClick={() => setIsEditCategoryOpen(true)}><Edit className="w-4 h-4 mr-2" />Edit Category</Button>
-                <Button variant="outline" onClick={() => handleOpenModal()}><Plus className="w-4 h-4 mr-2" />Create New Product</Button>
-                <Button variant="outline" onClick={() => setIsManageStockOpen(true)}><Boxes className="w-4 h-4 mr-2" />Manage Stock</Button>
+                <Button onClick={() => setIsCreateCategoryOpen(true)} data-testid="button-create-category">
+                    <Plus className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">Create New Category</span>
+                    <span className="sm:hidden">New Category</span>
+                </Button>
+                <Button variant="outline" onClick={() => setIsEditCategoryOpen(true)} data-testid="button-edit-category">
+                    <Edit className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">Edit Category</span>
+                    <span className="sm:hidden">Edit Cat.</span>
+                </Button>
+                <Button variant="outline" onClick={() => handleOpenModal()} data-testid="button-create-product">
+                    <Plus className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">Create New Product</span>
+                    <span className="sm:hidden">New Product</span>
+                </Button>
+                <Button variant="outline" onClick={() => setIsManageStockOpen(true)} data-testid="button-manage-stock">
+                    <Boxes className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">Manage Stock</span>
+                    <span className="sm:hidden">Stock</span>
+                </Button>
             </div>
 
             <div className="flex w-full justify-end">

@@ -317,20 +317,24 @@ export default function Products() {
       {/* Header */}
       <div className="flex items-center justify-end">
 
-        <div className="flex items-center gap-3">
-          <Button onClick={openCreateModal}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button onClick={openCreateModal} data-testid="button-create-product">
             <Plus className="w-4 h-4 mr-2" />
-            {t("admin.products.create_new_product")}
+            <span className="hidden sm:inline">{t("admin.products.create_new_product")}</span>
+            <span className="sm:hidden">New Product</span>
           </Button>
-          <Button variant="outline" onClick={openManageStockModal}>
+          <Button variant="outline" onClick={openManageStockModal} data-testid="button-manage-stock">
             <Boxes className="w-4 h-4 mr-2" />
-            {t("admin.products.manage_stock")}
+            <span className="hidden sm:inline">{t("admin.products.manage_stock")}</span>
+            <span className="sm:hidden">Stock</span>
           </Button>
-          <Button variant="outline" onClick={openInterStockModal}>
-            {t("admin.products.inter_stock_transfer")}
+          <Button variant="outline" onClick={openInterStockModal} data-testid="button-inter-stock">
+            <span className="hidden sm:inline">{t("admin.products.inter_stock_transfer")}</span>
+            <span className="sm:hidden">Transfer</span>
           </Button>
-          <Button variant={"outline"} onClick={openPurchaseOrderModel}>
-            Purchase Order
+          <Button variant="outline" onClick={openPurchaseOrderModel} data-testid="button-purchase-order">
+            <span className="hidden sm:inline">Purchase Order</span>
+            <span className="sm:hidden">PO</span>
           </Button>
         </div>
       </div>
