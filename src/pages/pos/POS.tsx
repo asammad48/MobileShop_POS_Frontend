@@ -31,12 +31,15 @@ import {
   DollarSign,
   Star,
   Settings,
+  Menu,
 } from 'lucide-react';
 import { mockProducts } from '@/utils/mockData';
 import { useToast } from '@/hooks/use-toast';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { useSidebar } from '@/components/ui/sidebar';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { printReceipt, Receipt, openCashDrawer } from '@/utils/thermalPrinter';
+import { useTitle } from '@/context/TitleContext';
 
 interface CartItemType {
   id: string;
@@ -62,6 +65,7 @@ const PAYMENT_METHODS = [
 export default function POS() {
   useAuth(['sales_person', 'admin']);
   const { setOpen: setSidebarOpen } = useSidebar();
+  const { setTitle } = useTitle();
   const [cart, setCart] = useState<CartItemType[]>([]);
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
@@ -78,11 +82,12 @@ export default function POS() {
   const { quickProducts, setQuickProducts, maxQuickProducts } = useQuickProducts();
 
   useEffect(() => {
+    setTitle('Point of Sale');
     setSidebarOpen(false);
     return () => {
       setSidebarOpen(true);
     };
-  }, [setSidebarOpen]);
+  }, [setSidebarOpen, setTitle]);
 
   const performSearch = () => {
     const product = mockProducts.find(p => 
@@ -286,9 +291,12 @@ export default function POS() {
   return (
     <div className="h-full flex flex-col p-4 sm:p-6 gap-4 max-w-[1600px] mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Point of Sale</h1>
-          <p className="text-sm text-muted-foreground">Scan, search, and sell products</p>
+        <div className="flex items-center gap-3">
+          <SidebarTrigger data-testid="button-sidebar-toggle-pos" />
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">Point of Sale</h1>
+            <p className="text-sm text-muted-foreground">Scan, search, and sell products</p>
+          </div>
         </div>
         
         <div className="flex flex-wrap gap-2">
@@ -323,59 +331,6 @@ export default function POS() {
                 setResult={setResult}
                 autoFocus
               />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-4 flex flex-row items-center justify-between gap-2 space-y-0">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-primary" />
-                <CardTitle className="text-lg">Quick Products</CardTitle>
-              </div>
-              <QuickProductsDialog
-                products={mockProducts}
-                selectedIds={quickProducts}
-                maxSelections={maxQuickProducts}
-                onSave={setQuickProducts}
-              />
-            </CardHeader>
-            <CardContent>
-              {quickProducts.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {quickProducts.map((productId) => {
-                    const product = mockProducts.find(p => p.id === productId);
-                    if (!product) return null;
-                    
-                    return (
-                      <Button
-                        key={product.id}
-                        variant="secondary"
-                        className="h-auto flex flex-col items-start p-3 gap-1"
-                        onClick={() => handleAddToCart(product)}
-                        data-testid={`quick-product-${product.id}`}
-                      >
-                        <div className="font-medium text-sm text-left line-clamp-2">
-                          {product.name}
-                        </div>
-                        <div className="text-primary font-semibold">
-                          ${product.price}
-                        </div>
-                        {product.stock < product.lowStockThreshold && (
-                          <Badge variant="destructive" className="text-xs mt-1">
-                            Low Stock
-                          </Badge>
-                        )}
-                      </Button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                  <p className="text-sm">No quick products selected</p>
-                  <p className="text-xs mt-1">Click "Manage" to add frequently used products</p>
-                </div>
-              )}
             </CardContent>
           </Card>
 
@@ -421,43 +376,98 @@ export default function POS() {
             </Button>
           </div>
 
-          <Card className="flex-1 flex flex-col min-h-0">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Current Sale</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto">
-              {cart.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-3">
-                    <Banknote className="w-8 h-8 text-muted-foreground" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
+            <Card className="flex flex-col min-h-0">
+              <CardHeader className="pb-4 flex flex-row items-center justify-between gap-2 space-y-0">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-primary" />
+                  <CardTitle className="text-lg">Quick Products</CardTitle>
+                </div>
+                <QuickProductsDialog
+                  products={mockProducts}
+                  selectedIds={quickProducts}
+                  maxSelections={maxQuickProducts}
+                  onSave={setQuickProducts}
+                />
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto">
+                {quickProducts.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {quickProducts.map((productId) => {
+                      const product = mockProducts.find(p => p.id === productId);
+                      if (!product) return null;
+                      
+                      return (
+                        <Button
+                          key={product.id}
+                          variant="secondary"
+                          className="h-auto flex flex-col items-start p-3 gap-1"
+                          onClick={() => handleAddToCart(product)}
+                          data-testid={`quick-product-${product.id}`}
+                        >
+                          <div className="font-medium text-sm text-left line-clamp-2">
+                            {product.name}
+                          </div>
+                          <div className="text-primary font-semibold">
+                            ${product.price}
+                          </div>
+                          {product.stock < product.lowStockThreshold && (
+                            <Badge variant="destructive" className="text-xs mt-1">
+                              Low Stock
+                            </Badge>
+                          )}
+                        </Button>
+                      );
+                    })}
                   </div>
-                  <p className="text-muted-foreground">No items in cart</p>
-                  <p className="text-sm text-muted-foreground">Scan or search to add products</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {cart.map(item => (
-                    <CartItem
-                      key={item.id}
-                      {...item}
-                      onUpdateQuantity={handleUpdateQuantity}
-                      onRemove={handleRemove}
-                    />
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                    <p className="text-sm">No quick products selected</p>
+                    <p className="text-xs mt-1">Click "Manage" to add frequently used products</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col min-h-0">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Current Sale</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto">
+                {cart.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-3">
+                      <Banknote className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-muted-foreground">No items in cart</p>
+                    <p className="text-sm text-muted-foreground">Scan or search to add products</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {cart.map(item => (
+                      <CartItem
+                        key={item.id}
+                        {...item}
+                        onUpdateQuantity={handleUpdateQuantity}
+                        onRemove={handleRemove}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          <Card>
+          <Card className="flex-1">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Customer</CardTitle>
+              <CardTitle className="text-lg">Order Summary</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label>Select Customer</Label>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <Label>Customer</Label>
                 <Select
                   value={selectedCustomer?.id || ''}
                   onValueChange={(value) => {
@@ -476,24 +486,19 @@ export default function POS() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowCustomerDialog(true)}
+                  data-testid="button-add-new-customer"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Add New Customer
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setShowCustomerDialog(true)}
-                data-testid="button-add-new-customer"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Add New Customer
-              </Button>
-            </CardContent>
-          </Card>
 
-          <Card className="flex-1">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              <Separator />
+
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>

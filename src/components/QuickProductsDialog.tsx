@@ -11,7 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Settings, Star } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Settings, Star, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -37,10 +38,12 @@ export function QuickProductsDialog({
 }: QuickProductsDialogProps) {
   const [open, setOpen] = useState(false);
   const [localSelection, setLocalSelection] = useState<string[]>(selectedIds);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (open) {
       setLocalSelection(selectedIds);
+      setSearchQuery('');
     }
   }, [open, selectedIds]);
 
@@ -62,6 +65,10 @@ export function QuickProductsDialog({
 
   const isAtLimit = localSelection.length >= maxSelections;
 
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -80,51 +87,79 @@ export function QuickProductsDialog({
             Select up to {maxSelections} frequently used products. Current selection: {localSelection.length}/{maxSelections}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center gap-2 pb-2">
-          <Badge variant={isAtLimit ? 'destructive' : 'secondary'}>
-            {localSelection.length}/{maxSelections} {isAtLimit && '(Max reached)'}
-          </Badge>
+        
+        <div className="space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+              data-testid="input-search-quick-products"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Badge variant={isAtLimit ? 'destructive' : 'secondary'}>
+              {localSelection.length}/{maxSelections} {isAtLimit && '(Max reached)'}
+            </Badge>
+            {searchQuery && (
+              <Badge variant="outline">
+                {filteredProducts.length} results
+              </Badge>
+            )}
+          </div>
         </div>
         
         <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-2">
-            {products.map((product) => {
-              const isSelected = localSelection.includes(product.id);
-              const isDisabled = !isSelected && isAtLimit;
+          {filteredProducts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center py-12">
+              <Search className="w-12 h-12 mx-auto mb-3 opacity-20" />
+              <p className="text-muted-foreground">No products found</p>
+              <p className="text-sm text-muted-foreground mt-1">Try adjusting your search</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredProducts.map((product) => {
+                const isSelected = localSelection.includes(product.id);
+                const isDisabled = !isSelected && isAtLimit;
 
-              return (
-                <div
-                  key={product.id}
-                  className={`flex items-center gap-3 p-3 rounded-md border hover-elevate ${
-                    isDisabled ? 'opacity-50' : ''
-                  }`}
-                  data-testid={`quick-product-option-${product.id}`}
-                >
-                  <Checkbox
-                    id={`quick-${product.id}`}
-                    checked={isSelected}
-                    onCheckedChange={() => handleToggle(product.id)}
-                    disabled={isDisabled}
-                    data-testid={`checkbox-quick-product-${product.id}`}
-                  />
-                  <Label
-                    htmlFor={`quick-${product.id}`}
-                    className="flex-1 flex items-center justify-between cursor-pointer"
+                return (
+                  <div
+                    key={product.id}
+                    className={`flex items-center gap-3 p-3 rounded-md border hover-elevate ${
+                      isDisabled ? 'opacity-50' : ''
+                    }`}
+                    data-testid={`quick-product-option-${product.id}`}
                   >
-                    <div>
-                      <div className="font-medium">{product.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Stock: {product.stock}
+                    <Checkbox
+                      id={`quick-${product.id}`}
+                      checked={isSelected}
+                      onCheckedChange={() => handleToggle(product.id)}
+                      disabled={isDisabled}
+                      data-testid={`checkbox-quick-product-${product.id}`}
+                    />
+                    <Label
+                      htmlFor={`quick-${product.id}`}
+                      className="flex-1 flex items-center justify-between cursor-pointer"
+                    >
+                      <div>
+                        <div className="font-medium">{product.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Stock: {product.stock}
+                        </div>
                       </div>
-                    </div>
-                    <div className="font-semibold text-primary">
-                      ${product.price}
-                    </div>
-                  </Label>
-                </div>
-              );
-            })}
-          </div>
+                      <div className="font-semibold text-primary">
+                        ${product.price}
+                      </div>
+                    </Label>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </ScrollArea>
 
         <DialogFooter>
