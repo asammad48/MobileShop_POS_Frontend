@@ -83,11 +83,7 @@ export default function POS() {
 
   useEffect(() => {
     setTitle('Point of Sale');
-    setSidebarOpen(false);
-    return () => {
-      setSidebarOpen(true);
-    };
-  }, [setSidebarOpen, setTitle]);
+  }, [setTitle]);
 
   const performSearch = () => {
     const product = mockProducts.find(p => 
@@ -401,11 +397,11 @@ export default function POS() {
                         <Button
                           key={product.id}
                           variant="secondary"
-                          className="h-auto flex flex-col items-start p-3 gap-1"
+                          className="h-auto flex flex-col items-start p-3 gap-1 min-w-0"
                           onClick={() => handleAddToCart(product)}
                           data-testid={`quick-product-${product.id}`}
                         >
-                          <div className="font-medium text-sm text-left line-clamp-2">
+                          <div className="font-medium text-sm text-left line-clamp-2 w-full break-words">
                             {product.name}
                           </div>
                           <div className="text-primary font-semibold">
