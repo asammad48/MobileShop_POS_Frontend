@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TablePagination } from "@/components/ui/tablepagination";
 import { TablePageSizeSelector } from "@/components/ui/tablepagesizeselector";
 import { useTitle } from '@/context/TitleContext';
+import { MobileProductForm, MobileProductPayload } from "@/components/MobileProductForm";
 
 
 import {
@@ -189,6 +190,28 @@ export default function Products() {
       toast({ title: "Product Added", description: `${name} has been added.` });
     }
 
+    setIsModalOpen(false);
+  };
+
+  const handleMobileProductSubmit = (payload: MobileProductPayload) => {
+    // Create a new mobile product from the payload
+    const newProduct = {
+      id: products.length + 1,
+      name: `${payload.brand} ${payload.model} ${payload.color}`,
+      imeiOrSerial: payload.imei,
+      stock: 1, // New mobile always starts with stock of 1
+      salePrice: payload.sellingPrice,
+      store: "Main Store",
+    };
+    
+    setProducts([...products, newProduct]);
+    
+    toast({ 
+      title: "Mobile Added Successfully", 
+      description: `${newProduct.name} has been added to inventory.`,
+    });
+
+    console.log("Mobile Product Payload (API-ready):", payload);
     setIsModalOpen(false);
   };
 
@@ -358,34 +381,41 @@ export default function Products() {
 
       {/* Product Modal */}
       <FormPopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-2xl font-semibold">
-          {currentProduct ? "Edit Product" : "Create New Product"}
+        <h2 className="text-2xl font-semibold mb-4">
+          {currentProduct ? "Edit Product" : "Add New Mobile"}
         </h2>
-        <form onSubmit={handleSubmitForm} className="space-y-4">
-          <div>
-            <Label>Product Name</Label>
-            <Input name="name" value={formData.name} onChange={handleChange} required />
-          </div>
-          <div>
-            <Label>Sale Price (PKR)</Label>
-            <Input
-              name="salePrice"
-              type="number"
-              step="0.01"
-              value={formData.salePrice}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit">
-              {currentProduct ? "Update Product" : "Save Product"}
-            </Button>
-          </div>
-        </form>
+        {currentProduct ? (
+          <form onSubmit={handleSubmitForm} className="space-y-4">
+            <div>
+              <Label>Product Name</Label>
+              <Input name="name" value={formData.name} onChange={handleChange} required />
+            </div>
+            <div>
+              <Label>Sale Price (PKR)</Label>
+              <Input
+                name="salePrice"
+                type="number"
+                step="0.01"
+                value={formData.salePrice}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                Update Product
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <MobileProductForm
+            onSubmit={handleMobileProductSubmit}
+            onCancel={() => setIsModalOpen(false)}
+          />
+        )}
       </FormPopupModal>
 
       {/* Manage Stock Modal */}
