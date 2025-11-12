@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import ProductSearch from '@/components/ProductSearch';
-import CartItem from '@/components/CartItem';
-import { QuickCustomerDialog } from '@/components/QuickCustomerDialog';
-import { QuickProductsDialog } from '@/components/QuickProductsDialog';
-import { useQuickProducts } from '@/hooks/useQuickProducts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import ProductSearch from "@/components/ProductSearch";
+import CartItem from "@/components/CartItem";
+import { QuickCustomerDialog } from "@/components/QuickCustomerDialog";
+import { QuickProductsDialog } from "@/components/QuickProductsDialog";
+import { useQuickProducts } from "@/hooks/useQuickProducts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
   Printer,
   Check,
@@ -32,14 +32,14 @@ import {
   Star,
   Settings,
   Menu,
-} from 'lucide-react';
-import { mockProducts } from '@/utils/mockData';
-import { useToast } from '@/hooks/use-toast';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { useSidebar } from '@/components/ui/sidebar';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { printReceipt, Receipt, openCashDrawer } from '@/utils/thermalPrinter';
-import { useTitle } from '@/context/TitleContext';
+} from "lucide-react";
+import { mockProducts } from "@/utils/mockData";
+import { useToast } from "@/hooks/use-toast";
+import { Html5QrcodeScanner } from "html5-qrcode";
+import { useSidebar } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { printReceipt, Receipt, openCashDrawer } from "@/utils/thermalPrinter";
+import { useTitle } from "@/context/TitleContext";
 
 interface CartItemType {
   id: string;
@@ -57,105 +57,134 @@ interface Customer {
 }
 
 const PAYMENT_METHODS = [
-  { value: 'cash', label: 'Cash', icon: Banknote },
-  { value: 'card', label: 'Card', icon: CreditCard },
-  { value: 'mobile', label: 'Mobile Payment', icon: Smartphone },
+  { value: "cash", label: "Cash", icon: Banknote },
+  { value: "card", label: "Card", icon: CreditCard },
+  { value: "mobile", label: "Mobile Payment", icon: Smartphone },
 ] as const;
 
 export default function POS() {
-  useAuth(['sales_person', 'admin']);
+  useAuth(["sales_person", "admin"]);
   const { setOpen: setSidebarOpen } = useSidebar();
   const { setTitle } = useTitle();
   const [cart, setCart] = useState<CartItemType[]>([]);
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
   const { toast } = useToast();
-  const [search, setSearch] = useState('');
-  const [result, setResult] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [search, setSearch] = useState("");
+  const [result, setResult] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null,
+  );
   const [customers, setCustomers] = useState<Customer[]>([
-    { id: '1', name: 'Walk-in Customer', phone: '' },
+    { id: "1", name: "Walk-in Customer", phone: "" },
   ]);
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string>('cash');
-  const [heldOrders, setHeldOrders] = useState<{ cart: CartItemType[]; customer: Customer | null }[]>([]);
-  const { quickProducts, setQuickProducts, maxQuickProducts } = useQuickProducts();
+  const [paymentMethod, setPaymentMethod] = useState<string>("cash");
+  const [heldOrders, setHeldOrders] = useState<
+    { cart: CartItemType[]; customer: Customer | null }[]
+  >([]);
+  const { quickProducts, setQuickProducts, maxQuickProducts } =
+    useQuickProducts();
 
   useEffect(() => {
-    setTitle('Point of Sale');
+    setTitle("POS");
   }, [setTitle]);
 
   const performSearch = () => {
-    const product = mockProducts.find(p => 
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.barcode === search
+    const product = mockProducts.find(
+      (p) =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.barcode === search,
     );
     if (product) {
       handleAddToCart(product);
-      setSearch('');
+      setSearch("");
     }
   };
 
   const handleAddToCart = (product: any) => {
-    const existing = cart.find(item => item.id === product.id);
+    const existing = cart.find((item) => item.id === product.id);
     if (existing) {
       if (existing.quantity < product.stock) {
-        setCart(cart.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        ));
+        setCart(
+          cart.map((item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item,
+          ),
+        );
       } else {
-        toast({ title: 'Out of Stock', description: 'No more stock available', variant: 'destructive' });
+        toast({
+          title: "Out of Stock",
+          description: "No more stock available",
+          variant: "destructive",
+        });
       }
     } else {
-      setCart([...cart, {
-        id: product.id,
-        name: product.name,
-        price: parseFloat(product.price),
-        quantity: 1,
-        stock: product.stock,
-        lowStock: product.stock < product.lowStockThreshold,
-      }]);
+      setCart([
+        ...cart,
+        {
+          id: product.id,
+          name: product.name,
+          price: parseFloat(product.price),
+          quantity: 1,
+          stock: product.stock,
+          lowStock: product.stock < product.lowStockThreshold,
+        },
+      ]);
     }
   };
 
   const handleUpdateQuantity = (id: string, quantity: number) => {
-    setCart(cart.map(item =>
-      item.id === id ? { ...item, quantity } : item
-    ));
+    setCart(
+      cart.map((item) => (item.id === id ? { ...item, quantity } : item)),
+    );
   };
 
   const handleRemove = (id: string) => {
-    setCart(cart.filter(item => item.id !== id));
+    setCart(cart.filter((item) => item.id !== id));
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const tax = subtotal * taxRate;
   const total = subtotal + tax - discount;
 
   const handleHoldOrder = () => {
     if (cart.length === 0) {
-      toast({ title: 'Empty Cart', description: 'Nothing to hold', variant: 'destructive' });
+      toast({
+        title: "Empty Cart",
+        description: "Nothing to hold",
+        variant: "destructive",
+      });
       return;
     }
-    setHeldOrders([...heldOrders, { cart: [...cart], customer: selectedCustomer }]);
+    setHeldOrders([
+      ...heldOrders,
+      { cart: [...cart], customer: selectedCustomer },
+    ]);
     setCart([]);
     setSelectedCustomer(null);
     setDiscount(0);
-    toast({ title: 'Order Held', description: 'Order saved for later' });
+    toast({ title: "Order Held", description: "Order saved for later" });
   };
 
   const handleRecallOrder = () => {
     if (heldOrders.length === 0) {
-      toast({ title: 'No Held Orders', description: 'No orders on hold', variant: 'destructive' });
+      toast({
+        title: "No Held Orders",
+        description: "No orders on hold",
+        variant: "destructive",
+      });
       return;
     }
     const lastOrder = heldOrders[heldOrders.length - 1];
     setCart(lastOrder.cart);
     setSelectedCustomer(lastOrder.customer);
     setHeldOrders(heldOrders.slice(0, -1));
-    toast({ title: 'Order Recalled', description: 'Last held order restored' });
+    toast({ title: "Order Recalled", description: "Last held order restored" });
   };
 
   const handleClearCart = () => {
@@ -163,22 +192,26 @@ export default function POS() {
     setCart([]);
     setSelectedCustomer(null);
     setDiscount(0);
-    toast({ title: 'Cart Cleared', description: 'All items removed' });
+    toast({ title: "Cart Cleared", description: "All items removed" });
   };
 
   const handleCompleteSale = async () => {
     if (cart.length === 0) {
-      toast({ title: 'Empty Cart', description: 'Add items to cart first', variant: 'destructive' });
+      toast({
+        title: "Empty Cart",
+        description: "Add items to cart first",
+        variant: "destructive",
+      });
       return;
     }
 
     const receipt: Receipt = {
       id: `POS-${Date.now()}`,
       date: new Date(),
-      storeName: 'Sell POS',
-      storeAddress: '1234 Business Avenue, Suite 500',
-      storePhone: '+1 (555) 123-4567',
-      items: cart.map(item => ({
+      storeName: "Sell POS",
+      storeAddress: "1234 Business Avenue, Suite 500",
+      storePhone: "+1 (555) 123-4567",
+      items: cart.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
@@ -188,15 +221,17 @@ export default function POS() {
       tax,
       discount,
       total,
-      paymentMethod: PAYMENT_METHODS.find(pm => pm.value === paymentMethod)?.label || 'Cash',
+      paymentMethod:
+        PAYMENT_METHODS.find((pm) => pm.value === paymentMethod)?.label ||
+        "Cash",
       customerName: selectedCustomer?.name,
-      cashierName: 'Current User',
+      cashierName: "Current User",
     };
 
     try {
-      await printReceipt(receipt, paymentMethod === 'cash');
+      await printReceipt(receipt, paymentMethod === "cash");
       toast({
-        title: 'Sale Completed',
+        title: "Sale Completed",
         description: `Total: $${total.toFixed(2)}`,
       });
       setCart([]);
@@ -204,26 +239,30 @@ export default function POS() {
       setSelectedCustomer(null);
     } catch (error) {
       toast({
-        title: 'Print Error',
-        description: 'Receipt sent to fallback printer',
-        variant: 'destructive',
+        title: "Print Error",
+        description: "Receipt sent to fallback printer",
+        variant: "destructive",
       });
     }
   };
 
   const handlePrintReceipt = async () => {
     if (cart.length === 0) {
-      toast({ title: 'Empty Cart', description: 'Add items to cart first', variant: 'destructive' });
+      toast({
+        title: "Empty Cart",
+        description: "Add items to cart first",
+        variant: "destructive",
+      });
       return;
     }
 
     const receipt: Receipt = {
       id: `POS-${Date.now()}`,
       date: new Date(),
-      storeName: 'Sell POS',
-      storeAddress: '1234 Business Avenue, Suite 500',
-      storePhone: '+1 (555) 123-4567',
-      items: cart.map(item => ({
+      storeName: "Sell POS",
+      storeAddress: "1234 Business Avenue, Suite 500",
+      storePhone: "+1 (555) 123-4567",
+      items: cart.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
@@ -233,19 +272,24 @@ export default function POS() {
       tax,
       discount,
       total,
-      paymentMethod: PAYMENT_METHODS.find(pm => pm.value === paymentMethod)?.label || 'Cash',
+      paymentMethod:
+        PAYMENT_METHODS.find((pm) => pm.value === paymentMethod)?.label ||
+        "Cash",
       customerName: selectedCustomer?.name,
-      cashierName: 'Current User',
+      cashierName: "Current User",
     };
 
     try {
       await printReceipt(receipt, false);
-      toast({ title: 'Receipt Printing', description: 'Receipt sent to printer' });
+      toast({
+        title: "Receipt Printing",
+        description: "Receipt sent to printer",
+      });
     } catch (error) {
       toast({
-        title: 'Print Error',
-        description: 'Could not print receipt',
-        variant: 'destructive',
+        title: "Print Error",
+        description: "Could not print receipt",
+        variant: "destructive",
       });
     }
   };
@@ -253,30 +297,37 @@ export default function POS() {
   const handleOpenDrawer = async () => {
     try {
       const drawerCommand = openCashDrawer();
-      await fetch('http://localhost:9100/print', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/octet-stream' },
+      await fetch("http://localhost:9100/print", {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
         body: drawerCommand,
       });
-      toast({ title: 'Cash Drawer', description: 'Opening cash drawer...' });
+      toast({ title: "Cash Drawer", description: "Opening cash drawer..." });
     } catch (error) {
       toast({
-        title: 'Drawer Error',
-        description: 'Could not open cash drawer',
-        variant: 'destructive',
+        title: "Drawer Error",
+        description: "Could not open cash drawer",
+        variant: "destructive",
       });
     }
   };
 
   const handleScanning = () => {
-    const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 250 }, false);
-    scanner.render((decodedText) => {
-      setResult(decodedText);
-      const product = mockProducts.find(p => p.barcode === decodedText);
-      if (product) {
-        handleAddToCart(product);
-      }
-    }, () => {});
+    const scanner = new Html5QrcodeScanner(
+      "reader",
+      { fps: 10, qrbox: 250 },
+      false,
+    );
+    scanner.render(
+      (decodedText) => {
+        setResult(decodedText);
+        const product = mockProducts.find((p) => p.barcode === decodedText);
+        if (product) {
+          handleAddToCart(product);
+        }
+      },
+      () => {},
+    );
   };
 
   const handleCustomerAdded = (customer: Customer) => {
@@ -286,29 +337,6 @@ export default function POS() {
 
   return (
     <div className="h-full flex flex-col p-4 sm:p-6 gap-4 max-w-[1600px] mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <SidebarTrigger data-testid="button-sidebar-toggle-pos" />
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Point of Sale</h1>
-            <p className="text-sm text-muted-foreground">Scan, search, and sell products</p>
-          </div>
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline" className="gap-1" data-testid="badge-cart-items">
-            <span className="text-xs text-muted-foreground">Items:</span>
-            <span className="font-semibold">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
-          </Badge>
-          {heldOrders.length > 0 && (
-            <Badge variant="secondary" className="gap-1" data-testid="badge-held-orders">
-              <PauseCircle className="w-3 h-3" />
-              {heldOrders.length} Held
-            </Badge>
-          )}
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
         <div className="lg:col-span-2 flex flex-col gap-4 min-h-0">
           <Card>
@@ -370,6 +398,41 @@ export default function POS() {
               <DollarSign className="w-4 h-4 mr-2" />
               Open Drawer
             </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              data-testid="button-open-drawer"
+            >
+              <span className="text-xs text-muted-foreground">Items:</span>
+              <span className="font-semibold">
+                {cart.reduce((sum, item) => sum + item.quantity, 0)}
+              </span>
+            </Button>
+            {/* <div className="flex flex-wrap items-center justify-end gap-4">
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant="outline"
+                  className="gap-1"
+                  data-testid="badge-cart-items"
+                >
+                  <span className="text-xs text-muted-foreground">Items:</span>
+                  <span className="font-semibold">
+                    {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                  </span>
+                </Badge>
+                {heldOrders.length > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="gap-1"
+                    data-testid="badge-held-orders"
+                  >
+                    <PauseCircle className="w-3 h-3" />
+                    {heldOrders.length} Held
+                  </Badge>
+                )}
+              </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
@@ -390,9 +453,11 @@ export default function POS() {
                 {quickProducts.length > 0 ? (
                   <div className="grid grid-cols-2 gap-2">
                     {quickProducts.map((productId) => {
-                      const product = mockProducts.find(p => p.id === productId);
+                      const product = mockProducts.find(
+                        (p) => p.id === productId,
+                      );
                       if (!product) return null;
-                      
+
                       return (
                         <Button
                           key={product.id}
@@ -408,7 +473,10 @@ export default function POS() {
                             ${product.price}
                           </div>
                           {product.stock < product.lowStockThreshold && (
-                            <Badge variant="destructive" className="text-xs mt-1">
+                            <Badge
+                              variant="destructive"
+                              className="text-xs mt-1"
+                            >
                               Low Stock
                             </Badge>
                           )}
@@ -420,7 +488,9 @@ export default function POS() {
                   <div className="text-center py-8 text-muted-foreground">
                     <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
                     <p className="text-sm">No quick products selected</p>
-                    <p className="text-xs mt-1">Click "Manage" to add frequently used products</p>
+                    <p className="text-xs mt-1">
+                      Click "Manage" to add frequently used products
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -437,11 +507,13 @@ export default function POS() {
                       <Banknote className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <p className="text-muted-foreground">No items in cart</p>
-                    <p className="text-sm text-muted-foreground">Scan or search to add products</p>
+                    <p className="text-sm text-muted-foreground">
+                      Scan or search to add products
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {cart.map(item => (
+                    {cart.map((item) => (
                       <CartItem
                         key={item.id}
                         {...item}
@@ -465,9 +537,9 @@ export default function POS() {
               <div className="space-y-3">
                 <Label>Customer</Label>
                 <Select
-                  value={selectedCustomer?.id || ''}
+                  value={selectedCustomer?.id || ""}
                   onValueChange={(value) => {
-                    const customer = customers.find(c => c.id === value);
+                    const customer = customers.find((c) => c.id === value);
                     setSelectedCustomer(customer || null);
                   }}
                 >
@@ -475,7 +547,7 @@ export default function POS() {
                     <SelectValue placeholder="Walk-in Customer" />
                   </SelectTrigger>
                   <SelectContent>
-                    {customers.map(customer => (
+                    {customers.map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
                         {customer.name}
                       </SelectItem>
@@ -498,19 +570,30 @@ export default function POS() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium" data-testid="text-subtotal">${subtotal.toFixed(2)}</span>
+                  <span className="font-medium" data-testid="text-subtotal">
+                    ${subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tax (10%)</span>
-                  <span className="font-medium" data-testid="text-tax">${tax.toFixed(2)}</span>
+                  <span className="font-medium" data-testid="text-tax">
+                    ${tax.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center gap-2">
-                  <Label htmlFor="discount" className="text-muted-foreground whitespace-nowrap">Discount</Label>
+                  <Label
+                    htmlFor="discount"
+                    className="text-muted-foreground whitespace-nowrap"
+                  >
+                    Discount
+                  </Label>
                   <Input
                     id="discount"
                     type="number"
                     value={discount}
-                    onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setDiscount(parseFloat(e.target.value) || 0)
+                    }
                     className="w-28 text-right"
                     min="0"
                     step="0.01"
@@ -523,7 +606,9 @@ export default function POS() {
 
               <div className="flex justify-between items-center py-2">
                 <span className="text-lg font-semibold">Total</span>
-                <span className="text-2xl font-bold" data-testid="text-total">${total.toFixed(2)}</span>
+                <span className="text-2xl font-bold" data-testid="text-total">
+                  ${total.toFixed(2)}
+                </span>
               </div>
 
               <Separator />
@@ -537,7 +622,7 @@ export default function POS() {
                     return (
                       <Button
                         key={method.value}
-                        variant={isSelected ? 'default' : 'outline'}
+                        variant={isSelected ? "default" : "outline"}
                         size="sm"
                         onClick={() => setPaymentMethod(method.value)}
                         className="flex flex-col h-auto py-3 gap-1"
