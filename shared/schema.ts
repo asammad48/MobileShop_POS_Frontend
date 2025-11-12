@@ -122,6 +122,69 @@ export const featureFlags = pgTable("feature_flags", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const wholesalerProducts = pgTable("wholesaler_products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  wholesalerId: varchar("wholesaler_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  category: text("category").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  stock: integer("stock").notNull().default(0),
+  discount: decimal("discount", { precision: 5, scale: 2 }),
+  minOrderQuantity: integer("min_order_quantity").notNull().default(1),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const purchaseOrders = pgTable("purchase_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderNumber: text("order_number").notNull().unique(),
+  shopId: varchar("shop_id").notNull(),
+  wholesalerId: varchar("wholesaler_id").notNull(),
+  shopName: text("shop_name").notNull(),
+  shopAddress: text("shop_address"),
+  shopPhone: text("shop_phone"),
+  shopEmail: text("shop_email"),
+  contactPerson: text("contact_person").notNull(),
+  status: text("status").notNull().default("pending"),
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+  discount: decimal("discount", { precision: 10, scale: 2 }).notNull().default("0"),
+  total: decimal("total", { precision: 10, scale: 2 }).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const purchaseOrderItems = pgTable("purchase_order_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  purchaseOrderId: varchar("purchase_order_id").notNull(),
+  wholesalerProductId: varchar("wholesaler_product_id").notNull(),
+  productName: text("product_name").notNull(),
+  quantity: integer("quantity").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  total: decimal("total", { precision: 10, scale: 2 }).notNull(),
+});
+
+export const dealRequests = pgTable("deal_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  shopId: varchar("shop_id").notNull(),
+  wholesalerId: varchar("wholesaler_id").notNull(),
+  shopName: text("shop_name").notNull(),
+  shopPhone: text("shop_phone"),
+  shopEmail: text("shop_email"),
+  wholesalerProductId: varchar("wholesaler_product_id"),
+  productName: text("product_name"),
+  requestedDiscount: decimal("requested_discount", { precision: 5, scale: 2 }),
+  requestedPrice: decimal("requested_price", { precision: 10, scale: 2 }),
+  quantity: integer("quantity"),
+  message: text("message").notNull(),
+  status: text("status").notNull().default("pending"),
+  wholesalerResponse: text("wholesaler_response"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
 export const insertShopSchema = createInsertSchema(shops).omit({ id: true, createdAt: true });
 export const insertProductSchema = createInsertSchema(products).omit({ id: true, createdAt: true });
@@ -132,6 +195,10 @@ export const insertPricingPlanSchema = createInsertSchema(pricingPlans).omit({ i
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true });
 export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({ id: true, createdAt: true });
 export const insertFeatureFlagSchema = createInsertSchema(featureFlags).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertWholesalerProductSchema = createInsertSchema(wholesalerProducts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPurchaseOrderSchema = createInsertSchema(purchaseOrders).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPurchaseOrderItemSchema = createInsertSchema(purchaseOrderItems).omit({ id: true });
+export const insertDealRequestSchema = createInsertSchema(dealRequests).omit({ id: true, createdAt: true, updatedAt: true });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -140,6 +207,10 @@ export type InsertPricingPlan = z.infer<typeof insertPricingPlanSchema>;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
 export type InsertFeatureFlag = z.infer<typeof insertFeatureFlagSchema>;
+export type InsertWholesalerProduct = z.infer<typeof insertWholesalerProductSchema>;
+export type InsertPurchaseOrder = z.infer<typeof insertPurchaseOrderSchema>;
+export type InsertPurchaseOrderItem = z.infer<typeof insertPurchaseOrderItemSchema>;
+export type InsertDealRequest = z.infer<typeof insertDealRequestSchema>;
 export type User = typeof users.$inferSelect;
 export type Shop = typeof shops.$inferSelect;
 export type Product = typeof products.$inferSelect;
@@ -151,3 +222,7 @@ export type PricingPlan = typeof pricingPlans.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type FeatureFlag = typeof featureFlags.$inferSelect;
+export type WholesalerProduct = typeof wholesalerProducts.$inferSelect;
+export type PurchaseOrder = typeof purchaseOrders.$inferSelect;
+export type PurchaseOrderItem = typeof purchaseOrderItems.$inferSelect;
+export type DealRequest = typeof dealRequests.$inferSelect;

@@ -171,15 +171,18 @@ export default function WholesalerDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Welcome, {user?.businessName || user?.username}!</h1>
-        <Button onClick={openAdd} data-testid="button-add-product">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Welcome, {user?.businessName || user?.username}!</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage your wholesale products and inventory</p>
+        </div>
+        <Button onClick={openAdd} data-testid="button-add-product" className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Add Product
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Active Products"
           value={stats.totalProducts.toString()}
