@@ -44,10 +44,23 @@ export const categories = pgTable("categories", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const customers = pgTable("customers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  shopId: varchar("shop_id").notNull(),
+  name: text("name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  address: text("address"),
+  totalPurchases: decimal("total_purchases", { precision: 10, scale: 2 }).notNull().default("0"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const sales = pgTable("sales", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   shopId: varchar("shop_id").notNull(),
   salesPersonId: varchar("sales_person_id").notNull(),
+  customerId: varchar("customer_id"),
+  paymentMethod: text("payment_method").notNull().default("cash"),
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   tax: decimal("tax", { precision: 10, scale: 2 }).notNull().default("0"),
   discount: decimal("discount", { precision: 10, scale: 2 }).notNull().default("0"),
@@ -113,6 +126,7 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true, creat
 export const insertShopSchema = createInsertSchema(shops).omit({ id: true, createdAt: true });
 export const insertProductSchema = createInsertSchema(products).omit({ id: true, createdAt: true });
 export const insertCategorySchema = createInsertSchema(categories).omit({ id: true, createdAt: true });
+export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true, createdAt: true, totalPurchases: true });
 export const insertSaleSchema = createInsertSchema(sales).omit({ id: true, createdAt: true });
 export const insertPricingPlanSchema = createInsertSchema(pricingPlans).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true });
@@ -121,6 +135,7 @@ export const insertFeatureFlagSchema = createInsertSchema(featureFlags).omit({ i
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 export type InsertPricingPlan = z.infer<typeof insertPricingPlanSchema>;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
@@ -129,6 +144,7 @@ export type User = typeof users.$inferSelect;
 export type Shop = typeof shops.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Category = typeof categories.$inferSelect;
+export type Customer = typeof customers.$inferSelect;
 export type Sale = typeof sales.$inferSelect;
 export type SaleItem = typeof saleItems.$inferSelect;
 export type PricingPlan = typeof pricingPlans.$inferSelect;

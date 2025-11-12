@@ -1,15 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ProductSearch from '@/components/ProductSearch';
 import CartItem from '@/components/CartItem';
-import { Card } from '@/components/ui/card';
+import { QuickCustomerDialog } from '@/components/QuickCustomerDialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Printer, Check } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import {
+  Printer,
+  Check,
+  UserPlus,
+  CreditCard,
+  Banknote,
+  Smartphone,
+  PauseCircle,
+  RotateCcw,
+  Trash2,
+  DollarSign,
+} from 'lucide-react';
 import { mockProducts } from '@/utils/mockData';
 import { useToast } from '@/hooks/use-toast';
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import { useSidebar } from '@/components/ui/sidebar';
+import { printReceipt, Receipt, openCashDrawer } from '@/utils/thermalPrinter';
+
 interface CartItemType {
   id: string;
   name: string;
@@ -19,21 +43,52 @@ interface CartItemType {
   lowStock: boolean;
 }
 
+interface Customer {
+  id: string;
+  name: string;
+  phone?: string;
+}
+
+const PAYMENT_METHODS = [
+  { value: 'cash', label: 'Cash', icon: Banknote },
+  { value: 'card', label: 'Card', icon: CreditCard },
+  { value: 'mobile', label: 'Mobile Payment', icon: Smartphone },
+] as const;
+
 export default function POS() {
   useAuth(['sales_person', 'admin']);
-  const [cart, setCart] = useState<CartItemType[]>([]); //todo: remove mock functionality
+  const { setOpen: setSidebarOpen } = useSidebar();
+  const [cart, setCart] = useState<CartItemType[]>([]);
   const [taxRate] = useState(0.1);
   const [discount, setDiscount] = useState(0);
   const { toast } = useToast();
   const [search, setSearch] = useState('');
-  const [result, setResult] = useState("");
-  const [couponCode, setCouponeCode] = useState('')
+  const [result, setResult] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [customers, setCustomers] = useState<Customer[]>([
+    { id: '1', name: 'Walk-in Customer', phone: '' },
+  ]);
+  const [showCustomerDialog, setShowCustomerDialog] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<string>('cash');
+  const [heldOrders, setHeldOrders] = useState<{ cart: CartItemType[]; customer: Customer | null }[]>([]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      performSearch(search);
+  useEffect(() => {
+    setSidebarOpen(false);
+    return () => {
+      setSidebarOpen(true);
+    };
+  }, [setSidebarOpen]);
+
+  const performSearch = () => {
+    const product = mockProducts.find(p => 
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.barcode === search
+    );
+    if (product) {
+      handleAddToCart(product);
+      setSearch('');
     }
-  };  
+  };
 
   const handleAddToCart = (product: any) => {
     const existing = cart.find(item => item.id === product.id);
@@ -73,139 +128,402 @@ export default function POS() {
   const tax = subtotal * taxRate;
   const total = subtotal + tax - discount;
 
-  const handleCompleteSale = () => {
+  const handleHoldOrder = () => {
+    if (cart.length === 0) {
+      toast({ title: 'Empty Cart', description: 'Nothing to hold', variant: 'destructive' });
+      return;
+    }
+    setHeldOrders([...heldOrders, { cart: [...cart], customer: selectedCustomer }]);
+    setCart([]);
+    setSelectedCustomer(null);
+    setDiscount(0);
+    toast({ title: 'Order Held', description: 'Order saved for later' });
+  };
+
+  const handleRecallOrder = () => {
+    if (heldOrders.length === 0) {
+      toast({ title: 'No Held Orders', description: 'No orders on hold', variant: 'destructive' });
+      return;
+    }
+    const lastOrder = heldOrders[heldOrders.length - 1];
+    setCart(lastOrder.cart);
+    setSelectedCustomer(lastOrder.customer);
+    setHeldOrders(heldOrders.slice(0, -1));
+    toast({ title: 'Order Recalled', description: 'Last held order restored' });
+  };
+
+  const handleClearCart = () => {
+    if (cart.length === 0) return;
+    setCart([]);
+    setSelectedCustomer(null);
+    setDiscount(0);
+    toast({ title: 'Cart Cleared', description: 'All items removed' });
+  };
+
+  const handleCompleteSale = async () => {
     if (cart.length === 0) {
       toast({ title: 'Empty Cart', description: 'Add items to cart first', variant: 'destructive' });
       return;
     }
-    toast({
-      title: 'Sale Completed',
-      description: `Total: $${total.toFixed(2)}`,
-    });
-    setCart([]);
-    setDiscount(0);
+
+    const receipt: Receipt = {
+      id: `POS-${Date.now()}`,
+      date: new Date(),
+      storeName: 'Sell POS',
+      storeAddress: '1234 Business Avenue, Suite 500',
+      storePhone: '+1 (555) 123-4567',
+      items: cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.price * item.quantity,
+      })),
+      subtotal,
+      tax,
+      discount,
+      total,
+      paymentMethod: PAYMENT_METHODS.find(pm => pm.value === paymentMethod)?.label || 'Cash',
+      customerName: selectedCustomer?.name,
+      cashierName: 'Current User',
+    };
+
+    try {
+      await printReceipt(receipt, paymentMethod === 'cash');
+      toast({
+        title: 'Sale Completed',
+        description: `Total: $${total.toFixed(2)}`,
+      });
+      setCart([]);
+      setDiscount(0);
+      setSelectedCustomer(null);
+    } catch (error) {
+      toast({
+        title: 'Print Error',
+        description: 'Receipt sent to fallback printer',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handlePrintReceipt = async () => {
+    if (cart.length === 0) {
+      toast({ title: 'Empty Cart', description: 'Add items to cart first', variant: 'destructive' });
+      return;
+    }
+
+    const receipt: Receipt = {
+      id: `POS-${Date.now()}`,
+      date: new Date(),
+      storeName: 'Sell POS',
+      storeAddress: '1234 Business Avenue, Suite 500',
+      storePhone: '+1 (555) 123-4567',
+      items: cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.price * item.quantity,
+      })),
+      subtotal,
+      tax,
+      discount,
+      total,
+      paymentMethod: PAYMENT_METHODS.find(pm => pm.value === paymentMethod)?.label || 'Cash',
+      customerName: selectedCustomer?.name,
+      cashierName: 'Current User',
+    };
+
+    try {
+      await printReceipt(receipt, false);
+      toast({ title: 'Receipt Printing', description: 'Receipt sent to printer' });
+    } catch (error) {
+      toast({
+        title: 'Print Error',
+        description: 'Could not print receipt',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleOpenDrawer = async () => {
+    try {
+      const drawerCommand = openCashDrawer();
+      await fetch('http://localhost:9100/print', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/octet-stream' },
+        body: drawerCommand,
+      });
+      toast({ title: 'Cash Drawer', description: 'Opening cash drawer...' });
+    } catch (error) {
+      toast({
+        title: 'Drawer Error',
+        description: 'Could not open cash drawer',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleScanning = () => {
-    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }, false);
-    scanner.render((decodedText, decodedResult) => {
+    const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 250 }, false);
+    scanner.render((decodedText) => {
       setResult(decodedText);
-      console.log("Scanned:", decodedText);
-    });
-  }
+      const product = mockProducts.find(p => p.barcode === decodedText);
+      if (product) {
+        handleAddToCart(product);
+      }
+    }, () => {});
+  };
+
+  const handleCustomerAdded = (customer: Customer) => {
+    setCustomers([...customers, customer]);
+    setSelectedCustomer(customer);
+  };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-      <div className="lg:col-span-2 space-y-4">
+    <div className="h-full flex flex-col p-4 sm:p-6 gap-4 max-w-[1600px] mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-muted-foreground">Scan or search for products</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Point of Sale</h1>
+          <p className="text-sm text-muted-foreground">Scan, search, and sell products</p>
         </div>
-
-        <ProductSearch
-          products={mockProducts}
-          onSelectProduct={handleAddToCart}
-          handleScanning={handleScanning}
-          search={search}
-          onKeyDown={handleKeyDown}
-          setSearch={setSearch}
-          result={result}
-          setResult={setResult}
-          autoFocus
-        />
-
-        <div>
-          <div id="reader" style={{ width: "300px" }}></div>
+        
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="outline" className="gap-1" data-testid="badge-cart-items">
+            <span className="text-xs text-muted-foreground">Items:</span>
+            <span className="font-semibold">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+          </Badge>
+          {heldOrders.length > 0 && (
+            <Badge variant="secondary" className="gap-1" data-testid="badge-held-orders">
+              <PauseCircle className="w-3 h-3" />
+              {heldOrders.length} Held
+            </Badge>
+          )}
         </div>
-
-        <Card className="flex-1">
-          <div className="p-4 border-b">
-            <h3 className="font-semibold">Current Sale</h3>
-          </div>
-          <div className="max-h-96 overflow-y-auto">
-            {cart.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground">
-                No items in cart
-              </div>
-            ) : (
-              cart.map(item => (
-                <CartItem
-                  key={item.id}
-                  {...item}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRemove={handleRemove}
-                />
-              ))
-            )}
-          </div>
-        </Card>
       </div>
 
-      <div className="space-y-4">
-        <Card className="p-6 space-y-4">
-          <h3 className="font-semibold text-lg">Order Summary</h3>
-
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-medium" data-testid="text-subtotal">${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Tax (10%)</span>
-              <span className="font-medium" data-testid="text-tax">${tax.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <Label htmlFor="discount" className="text-muted-foreground">Discount</Label>
-              <Input
-                id="discount"
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                className="w-24 text-right"
-                min="0"
-                step="0.01"
-                data-testid="input-discount"
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+        <div className="lg:col-span-2 flex flex-col gap-4 min-h-0">
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Product Search</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProductSearch
+                products={mockProducts}
+                onSelectProduct={handleAddToCart}
+                handleScanning={handleScanning}
+                search={search}
+                onKeyDown={performSearch}
+                setSearch={setSearch}
+                result={result}
+                setResult={setResult}
+                autoFocus
               />
-            </div>
-            <div className="flex justify-between items-center">
-              <label htmlFor="coupon" className='text-muted-foreground'>Coupon</label>
-              <Input 
-              type="text" 
-              value={couponCode}
-              className="w-24 text-right"
-              />
+            </CardContent>
+          </Card>
 
-            </div>
-          </div>
-
-          <div className="border-t pt-4">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-semibold">Total</span>
-              <span className="text-2xl font-bold" data-testid="text-total">${total.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-4">
+          <div className="flex flex-wrap gap-2">
             <Button
-              className="w-full bg-gradient-to-br from-chart-4 to-chart-3"
-              size="lg"
-              onClick={handleCompleteSale}
-              data-testid="button-complete-sale"
+              variant="outline"
+              size="sm"
+              onClick={handleHoldOrder}
+              disabled={cart.length === 0}
+              data-testid="button-hold-order"
             >
-              <Check className="w-5 h-5 mr-2" />
-              Complete Sale
+              <PauseCircle className="w-4 h-4 mr-2" />
+              Hold Order
             </Button>
             <Button
               variant="outline"
-              className="w-full"
-              onClick={() => toast({ title: 'Print Receipt', description: 'Printing receipt...' })}
-              data-testid="button-print-receipt"
+              size="sm"
+              onClick={handleRecallOrder}
+              disabled={heldOrders.length === 0}
+              data-testid="button-recall-order"
             >
-              <Printer className="w-4 h-4 mr-2" />
-              Print Receipt
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Recall Order
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearCart}
+              disabled={cart.length === 0}
+              data-testid="button-clear-cart"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear Cart
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenDrawer}
+              data-testid="button-open-drawer"
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              Open Drawer
             </Button>
           </div>
-        </Card>
+
+          <Card className="flex-1 flex flex-col min-h-0">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Current Sale</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto">
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-3">
+                    <Banknote className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <p className="text-muted-foreground">No items in cart</p>
+                  <p className="text-sm text-muted-foreground">Scan or search to add products</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {cart.map(item => (
+                    <CartItem
+                      key={item.id}
+                      {...item}
+                      onUpdateQuantity={handleUpdateQuantity}
+                      onRemove={handleRemove}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Customer</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-2">
+                <Label>Select Customer</Label>
+                <Select
+                  value={selectedCustomer?.id || ''}
+                  onValueChange={(value) => {
+                    const customer = customers.find(c => c.id === value);
+                    setSelectedCustomer(customer || null);
+                  }}
+                >
+                  <SelectTrigger data-testid="select-customer">
+                    <SelectValue placeholder="Walk-in Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map(customer => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowCustomerDialog(true)}
+                data-testid="button-add-new-customer"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add New Customer
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="flex-1">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium" data-testid="text-subtotal">${subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax (10%)</span>
+                  <span className="font-medium" data-testid="text-tax">${tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center gap-2">
+                  <Label htmlFor="discount" className="text-muted-foreground whitespace-nowrap">Discount</Label>
+                  <Input
+                    id="discount"
+                    type="number"
+                    value={discount}
+                    onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                    className="w-28 text-right"
+                    min="0"
+                    step="0.01"
+                    data-testid="input-discount"
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-between items-center py-2">
+                <span className="text-lg font-semibold">Total</span>
+                <span className="text-2xl font-bold" data-testid="text-total">${total.toFixed(2)}</span>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Payment Method</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {PAYMENT_METHODS.map((method) => {
+                    const Icon = method.icon;
+                    const isSelected = paymentMethod === method.value;
+                    return (
+                      <Button
+                        key={method.value}
+                        variant={isSelected ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setPaymentMethod(method.value)}
+                        className="flex flex-col h-auto py-3 gap-1"
+                        data-testid={`button-payment-${method.value}`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="text-xs">{method.label}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleCompleteSale}
+                  disabled={cart.length === 0}
+                  data-testid="button-complete-sale"
+                >
+                  <Check className="w-5 h-5 mr-2" />
+                  Complete Sale
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handlePrintReceipt}
+                  disabled={cart.length === 0}
+                  data-testid="button-print-receipt"
+                >
+                  <Printer className="w-4 h-4 mr-2" />
+                  Print Receipt
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <QuickCustomerDialog
+        open={showCustomerDialog}
+        onOpenChange={setShowCustomerDialog}
+        onCustomerAdded={handleCustomerAdded}
+      />
     </div>
   );
 }
