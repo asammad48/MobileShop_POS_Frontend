@@ -1,47 +1,37 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTitle } from "@/context/TitleContext";
-import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import DataTable from "@/components/DataTable";
-import FormPopupModal from "@/components/ui/FormPopupModal";
-import { Eye, Check, X, Package, Clock, CheckCircle, XCircle, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import FormPopupModal from "@/components/ui/FormPopupModal";
+import { ShoppingCart, Store, Package, Check, X, MessageSquare } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import StatCard from "@/components/StatCard";
 
 type PurchaseOrder = {
   id: number;
   orderNumber: string;
   shopName: string;
-  shopAddress: string;
   shopPhone: string;
-  shopEmail: string;
+  shopWhatsapp: string;
+  shopEmail?: string;
+  shopAddress?: string;
   contactPerson: string;
-  status: "pending" | "approved" | "rejected";
+  items: { productName: string; quantity: number; price: number; total: number }[];
   subtotal: number;
-  discount: number;
   total: number;
+  status: "pending" | "approved" | "rejected" | "fulfilled";
   notes?: string;
-  createdAt: string;
-  items: OrderItem[];
+  wholesalerResponse?: string;
+  createdAt: Date;
 };
 
-type OrderItem = {
-  id: number;
-  productName: string;
-  quantity: number;
-  price: number;
-  total: number;
-};
-
-export default function PurchaseOrders() {
+export default function WholesalerPurchaseOrders() {
   useAuth("wholesaler");
-  const { t } = useTranslation();
   const { setTitle } = useTitle();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     setTitle("Purchase Orders");
@@ -49,437 +39,362 @@ export default function PurchaseOrders() {
   }, [setTitle]);
 
   const [orders, setOrders] = useState<PurchaseOrder[]>([
-    {
-      id: 1,
-      orderNumber: "PO-2024-001",
-      shopName: "Tech Mobile Shop",
-      shopAddress: "123 Main St, Islamabad",
+    { 
+      id: 1, 
+      orderNumber: "PO-2025-001", 
+      shopName: "Tech Mobile Shop", 
       shopPhone: "+92-300-1234567",
-      shopEmail: "contact@techmobile.com",
-      contactPerson: "Ahmed Khan",
+      shopWhatsapp: "+92-300-1234567",
+      shopEmail: "tech@mobileshop.pk",
+      shopAddress: "Shop 123, Mobile Market, Karachi",
+      contactPerson: "Ahmed Khan", 
+      items: [
+        { productName: "iPhone 15 Pro Cases (Bulk)", quantity: 2, price: 10800, total: 21600 },
+        { productName: "USB-C Cables (Bulk)", quantity: 1, price: 20400, total: 20400 }
+      ], 
+      subtotal: 42000,
+      total: 42000, 
       status: "pending",
-      subtotal: 25000,
-      discount: 2500,
-      total: 22500,
-      notes: "Please deliver within 7 days",
-      createdAt: "2024-01-15T10:30:00",
-      items: [
-        { id: 1, productName: "iPhone Cases (Bulk - 50pcs)", quantity: 2, price: 12000, total: 24000 },
-        { id: 2, productName: "USB-C Cables (Bulk - 100pcs)", quantity: 1, price: 6000, total: 6000 },
-      ],
+      notes: "Need urgent delivery within 3 days",
+      createdAt: new Date("2025-01-10")
     },
-    {
-      id: 2,
-      orderNumber: "PO-2024-002",
-      shopName: "Mobile Zone Lahore",
-      shopAddress: "456 Commercial Area, Lahore",
-      shopPhone: "+92-321-9876543",
-      shopEmail: "info@mobilezone.pk",
-      contactPerson: "Sarah Ali",
+    { 
+      id: 2, 
+      orderNumber: "PO-2025-002", 
+      shopName: "Mobile World", 
+      shopPhone: "+92-321-7654321",
+      shopWhatsapp: "+92-321-7654321",
+      shopEmail: "contact@mobileworld.pk",
+      contactPerson: "Sara Ahmed", 
+      items: [
+        { productName: "Screen Protectors (Bulk)", quantity: 3, price: 30000, total: 90000 }
+      ],
+      subtotal: 90000,
+      total: 90000, 
+      status: "pending",
+      notes: "Regular customer, please provide best price",
+      createdAt: new Date("2025-01-11")
+    },
+    { 
+      id: 3, 
+      orderNumber: "PO-2025-003", 
+      shopName: "Gadget Hub", 
+      shopPhone: "+92-333-9998888",
+      shopWhatsapp: "+92-333-9998888",
+      contactPerson: "Hassan Ali", 
+      items: [
+        { productName: "Samsung Fast Chargers (Bulk)", quantity: 5, price: 18000, total: 90000 }
+      ],
+      subtotal: 90000,
+      total: 90000, 
       status: "approved",
-      subtotal: 48000,
-      discount: 4800,
-      total: 43200,
-      createdAt: "2024-01-14T14:20:00",
-      items: [
-        { id: 3, productName: "Power Banks (Bulk - 50pcs)", quantity: 3, price: 15000, total: 45000 },
-        { id: 4, productName: "Screen Protectors (Bulk - 200pcs)", quantity: 1, price: 8000, total: 8000 },
-      ],
-    },
-    {
-      id: 3,
-      orderNumber: "PO-2024-003",
-      shopName: "Smart Accessories Hub",
-      shopAddress: "789 Market Road, Karachi",
-      shopPhone: "+92-333-5554444",
-      shopEmail: "sales@smarthub.pk",
-      contactPerson: "Bilal Ahmed",
-      status: "rejected",
-      subtotal: 18000,
-      discount: 0,
-      total: 18000,
-      notes: "Urgent order needed",
-      createdAt: "2024-01-13T09:15:00",
-      items: [
-        { id: 5, productName: "Samsung Chargers (Bulk - 100pcs)", quantity: 1, price: 18000, total: 18000 },
-      ],
+      wholesalerResponse: "Order confirmed. Will ship within 2 days.",
+      createdAt: new Date("2025-01-09")
     },
   ]);
 
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
-  const [actionType, setActionType] = useState<"approve" | "reject" | null>(null);
-  const [responseNotes, setResponseNotes] = useState("");
+  const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
+  const [responseAction, setResponseAction] = useState<"approved" | "rejected" | null>(null);
+  const [responseMessage, setResponseMessage] = useState("");
 
-  const stats = useMemo(() => {
-    const pending = orders.filter(o => o.status === "pending").length;
-    const approved = orders.filter(o => o.status === "approved").length;
-    const rejected = orders.filter(o => o.status === "rejected").length;
-    const totalValue = orders.filter(o => o.status === "approved").reduce((sum, o) => sum + o.total, 0);
-    
+  const filteredOrders = useMemo(() => {
+    if (statusFilter === "all") return orders;
+    return orders.filter(order => order.status === statusFilter);
+  }, [orders, statusFilter]);
+
+  const statusCounts = useMemo(() => {
     return {
-      pending,
-      approved,
-      rejected,
-      totalValue: totalValue.toFixed(2),
+      all: orders.length,
+      pending: orders.filter(o => o.status === "pending").length,
+      approved: orders.filter(o => o.status === "approved").length,
+      rejected: orders.filter(o => o.status === "rejected").length,
+      fulfilled: orders.filter(o => o.status === "fulfilled").length,
     };
   }, [orders]);
 
-  const viewOrder = (order: PurchaseOrder) => {
+  const openResponseModal = (order: PurchaseOrder, action: "approved" | "rejected") => {
     setSelectedOrder(order);
-    setIsViewModalOpen(true);
+    setResponseAction(action);
+    setResponseMessage("");
+    setIsResponseModalOpen(true);
   };
 
-  const openActionModal = (order: PurchaseOrder, action: "approve" | "reject") => {
-    setSelectedOrder(order);
-    setActionType(action);
-    setResponseNotes("");
-    setIsActionModalOpen(true);
-  };
+  const handleOrderAction = () => {
+    if (!selectedOrder || !responseAction) return;
 
-  const handleAction = () => {
-    if (!selectedOrder || !actionType) return;
-
-    if (actionType === "reject" && !responseNotes.trim()) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide a reason for rejection.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setOrders(orders.map(o => 
-      o.id === selectedOrder.id 
-        ? { 
-            ...o, 
-            status: actionType === "approve" ? "approved" : "rejected",
-            notes: responseNotes || o.notes
-          }
-        : o
+    setOrders(orders.map(order => 
+      order.id === selectedOrder.id 
+        ? { ...order, status: responseAction, wholesalerResponse: responseMessage || undefined } 
+        : order
     ));
 
-    toast({
-      title: `Order ${actionType === "approve" ? "Approved" : "Rejected"}`,
-      description: `Order ${selectedOrder.orderNumber} has been ${actionType === "approve" ? "approved" : "rejected"} successfully.${responseNotes ? " Your response has been recorded." : ""}`,
+    toast({ 
+      title: responseAction === "approved" ? "Order Approved" : "Order Rejected",
+      description: `Purchase order ${selectedOrder.orderNumber} has been ${responseAction}` 
     });
 
-    setIsActionModalOpen(false);
-    setIsViewModalOpen(false);
+    setIsResponseModalOpen(false);
+    setSelectedOrder(null);
+    setResponseAction(null);
+    setResponseMessage("");
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        key: "orderNumber",
-        label: "Order #",
-        filterType: "text" as const,
-      },
-      {
-        key: "shopName",
-        label: "Shop Name",
-        filterType: "text" as const,
-      },
-      {
-        key: "contactPerson",
-        label: "Contact Person",
-        filterType: "none" as const,
-      },
-      {
-        key: "total",
-        label: "Total Amount",
-        filterType: "none" as const,
-        render: (value: number) => `Rs. ${value.toLocaleString()}`,
-      },
-      {
-        key: "status",
-        label: "Status",
-        filterType: "select" as const,
-        filterOptions: ["pending", "approved", "rejected"],
-        render: (value: string) => {
-          const variants: Record<string, "default" | "destructive" | "secondary"> = {
-            pending: "secondary",
-            approved: "default",
-            rejected: "destructive",
-          };
-          return (
-            <Badge variant={variants[value] || "default"}>
-              {value.charAt(0).toUpperCase() + value.slice(1)}
-            </Badge>
-          );
-        },
-      },
-      {
-        key: "createdAt",
-        label: "Date",
-        filterType: "none" as const,
-        render: (value: string) => new Date(value).toLocaleDateString(),
-      },
-    ],
-    []
-  );
+  const openWhatsApp = (number: string, shopName: string, orderNumber: string) => {
+    const message = encodeURIComponent(`Hello! This is ${user?.businessName || user?.username} regarding purchase order ${orderNumber}.`);
+    window.open(`https://wa.me/${number.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      pending: "outline",
+      approved: "default",
+      rejected: "destructive",
+      fulfilled: "secondary",
+    } as const;
+    
+    return (
+      <Badge variant={variants[status as keyof typeof variants] || "outline"}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>
+    );
+  };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Purchase Orders</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">Manage incoming purchase orders from shop owners</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Purchase Orders</h1>
+        <p className="text-sm text-muted-foreground mt-1">Manage incoming orders from shop owners</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Pending Orders"
-          value={stats.pending.toString()}
-          icon={Clock}
-          gradient="from-amber-500/10 to-yellow-500/10"
-        />
-        <StatCard
-          title="Approved Orders"
-          value={stats.approved.toString()}
-          icon={CheckCircle}
-          gradient="from-green-500/10 to-emerald-500/10"
-        />
-        <StatCard
-          title="Rejected Orders"
-          value={stats.rejected.toString()}
-          icon={XCircle}
-          gradient="from-red-500/10 to-rose-500/10"
-        />
-        <StatCard
-          title="Total Value (Approved)"
-          value={`Rs. ${Number(stats.totalValue).toLocaleString()}`}
-          icon={ShoppingCart}
-          gradient="from-blue-500/10 to-cyan-500/10"
-        />
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={statusFilter === "all" ? "default" : "outline"}
+          onClick={() => setStatusFilter("all")}
+          data-testid="filter-all"
+        >
+          All ({statusCounts.all})
+        </Button>
+        <Button
+          variant={statusFilter === "pending" ? "default" : "outline"}
+          onClick={() => setStatusFilter("pending")}
+          data-testid="filter-pending"
+        >
+          Pending ({statusCounts.pending})
+        </Button>
+        <Button
+          variant={statusFilter === "approved" ? "default" : "outline"}
+          onClick={() => setStatusFilter("approved")}
+          data-testid="filter-approved"
+        >
+          Approved ({statusCounts.approved})
+        </Button>
+        <Button
+          variant={statusFilter === "rejected" ? "default" : "outline"}
+          onClick={() => setStatusFilter("rejected")}
+          data-testid="filter-rejected"
+        >
+          Rejected ({statusCounts.rejected})
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Purchase Orders</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            columns={columns}
-            data={orders}
-            showActions
-            renderActions={(row: PurchaseOrder) => (
-              <div className="flex justify-end gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => viewOrder(row)}
-                  data-testid={`button-view-${row.id}`}
-                >
-                  <Eye className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">View</span>
-                </Button>
-                {row.status === "pending" && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={() => openActionModal(row, "approve")}
-                      data-testid={`button-approve-${row.id}`}
-                    >
-                      <Check className="w-4 h-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Approve</span>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => openActionModal(row, "reject")}
-                      data-testid={`button-reject-${row.id}`}
-                    >
-                      <X className="w-4 h-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Reject</span>
-                    </Button>
-                  </>
-                )}
-              </div>
-            )}
-            onFilterChange={() => {}}
-          />
-        </CardContent>
-      </Card>
-
-      <FormPopupModal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)}>
-        {selectedOrder && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold mb-1">{selectedOrder.orderNumber}</h2>
-              <Badge
-                variant={
-                  selectedOrder.status === "approved"
-                    ? "default"
-                    : selectedOrder.status === "rejected"
-                    ? "destructive"
-                    : "secondary"
-                }
-              >
-                {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
-              </Badge>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-3 text-base sm:text-lg">Shop Details</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+      <div className="space-y-4">
+        {filteredOrders.map((order) => (
+          <Card key={order.id} className={`${
+            order.status === "pending" ? "bg-amber-50/50 dark:bg-amber-950/10" :
+            order.status === "approved" ? "bg-green-50/50 dark:bg-green-950/10" :
+            order.status === "rejected" ? "bg-red-50/50 dark:bg-red-950/10" :
+            "bg-blue-50/50 dark:bg-blue-950/10"
+          }`} data-testid={`order-card-${order.id}`}>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <p className="text-sm text-muted-foreground">Shop Name</p>
-                  <p className="font-semibold">{selectedOrder.shopName}</p>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    {order.orderNumber}
+                    {getStatusBadge(order.status)}
+                  </CardTitle>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Store className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-semibold text-base">{order.shopName}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {order.createdAt.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
                 </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                  <p className="text-2xl font-bold text-primary">Rs. {order.total.toLocaleString()}</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
                 <div>
                   <p className="text-sm text-muted-foreground">Contact Person</p>
-                  <p className="font-semibold">{selectedOrder.contactPerson}</p>
+                  <p className="font-semibold">{order.contactPerson}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="font-semibold">{selectedOrder.shopPhone}</p>
+                  <p className="font-semibold">{order.shopPhone}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-semibold text-sm break-all">{selectedOrder.shopEmail}</p>
-                </div>
-                <div className="sm:col-span-2">
-                  <p className="text-sm text-muted-foreground">Address</p>
-                  <p className="font-semibold">{selectedOrder.shopAddress}</p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-3 text-base sm:text-lg">Order Items</h3>
-              <div className="space-y-2">
-                {selectedOrder.items.map((item) => (
-                  <div key={item.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium text-sm sm:text-base">{item.productName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Qty: {item.quantity} × Rs. {item.price.toLocaleString()}
-                      </p>
-                    </div>
-                    <p className="font-bold text-base sm:text-lg">Rs. {item.total.toLocaleString()}</p>
+                {order.shopEmail && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-semibold text-sm break-all">{order.shopEmail}</p>
                   </div>
-                ))}
+                )}
+                {order.shopAddress && (
+                  <div className="sm:col-span-2 lg:col-span-3">
+                    <p className="text-sm text-muted-foreground">Address</p>
+                    <p className="font-semibold">{order.shopAddress}</p>
+                  </div>
+                )}
               </div>
-            </div>
 
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between text-sm sm:text-base">
-                <span className="text-muted-foreground">Subtotal:</span>
-                <span className="font-semibold">Rs. {selectedOrder.subtotal.toLocaleString()}</span>
+              <div>
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Package className="w-4 h-4" />
+                  Order Items
+                </h4>
+                <div className="space-y-2">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-3 border rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium">{item.productName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Quantity: {item.quantity} × Rs. {item.price.toLocaleString()}
+                        </p>
+                      </div>
+                      <p className="font-bold text-lg">Rs. {item.total.toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              {selectedOrder.discount > 0 && (
-                <div className="flex justify-between text-sm sm:text-base text-green-600">
-                  <span>Discount:</span>
-                  <span className="font-semibold">- Rs. {selectedOrder.discount.toLocaleString()}</span>
+
+              {order.notes && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <MessageSquare className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-amber-900 dark:text-amber-100 text-sm">Shop Owner Notes</p>
+                      <p className="text-sm text-amber-800 dark:text-amber-200">{order.notes}</p>
+                    </div>
+                  </div>
                 </div>
               )}
-              <div className="flex justify-between text-base sm:text-lg font-bold">
-                <span>Total:</span>
-                <span>Rs. {selectedOrder.total.toLocaleString()}</span>
-              </div>
-            </div>
 
-            {selectedOrder.notes && (
-              <div className="bg-muted p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Notes from Shop Owner:</p>
-                <p className="text-sm sm:text-base">{selectedOrder.notes}</p>
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row justify-end gap-2">
-              {selectedOrder.status === "pending" && (
-                <>
-                  <Button
-                    variant="destructive"
-                    onClick={() => openActionModal(selectedOrder, "reject")}
-                    data-testid="button-reject-modal"
-                    className="w-full sm:w-auto"
+              {order.wholesalerResponse && (
+                <div className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <MessageSquare className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-green-900 dark:text-green-100 text-sm">Your Response</p>
+                      <p className="text-sm text-green-800 dark:text-green-200">{order.wholesalerResponse}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+            <CardFooter className="flex flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => openWhatsApp(order.shopWhatsapp, order.shopName, order.orderNumber)}
+                className="w-full sm:w-auto"
+                data-testid={`button-whatsapp-${order.id}`}
+              >
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Contact Shop
+              </Button>
+              {order.status === "pending" && (
+                <div className="flex gap-2 flex-1">
+                  <Button 
+                    variant="destructive" 
+                    onClick={() => openResponseModal(order, "rejected")}
+                    className="flex-1"
+                    data-testid={`button-reject-${order.id}`}
                   >
                     <X className="w-4 h-4 mr-2" />
-                    Reject Order
+                    Reject
                   </Button>
-                  <Button
-                    onClick={() => openActionModal(selectedOrder, "approve")}
-                    data-testid="button-approve-modal"
-                    className="w-full sm:w-auto"
+                  <Button 
+                    onClick={() => openResponseModal(order, "approved")}
+                    className="flex-1"
+                    data-testid={`button-approve-${order.id}`}
                   >
                     <Check className="w-4 h-4 mr-2" />
-                    Approve Order
+                    Approve
                   </Button>
-                </>
+                </div>
               )}
-              <Button
-                variant="outline"
-                onClick={() => setIsViewModalOpen(false)}
-                data-testid="button-close-view"
-                className="w-full sm:w-auto"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        )}
-      </FormPopupModal>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
 
-      <FormPopupModal isOpen={isActionModalOpen} onClose={() => setIsActionModalOpen(false)}>
-        {selectedOrder && actionType && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold mb-2">
-                {actionType === "approve" ? "Approve" : "Reject"} Order
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Order: {selectedOrder.orderNumber}
-              </p>
-            </div>
+      {filteredOrders.length === 0 && (
+        <div className="text-center py-12">
+          <ShoppingCart className="w-16 h-16 mx-auto mb-4 opacity-50 text-muted-foreground" />
+          <h3 className="text-lg font-semibold mb-2">No purchase orders</h3>
+          <p className="text-muted-foreground">
+            {statusFilter === "all" 
+              ? "You haven't received any purchase orders yet." 
+              : `No ${statusFilter} orders found.`}
+          </p>
+        </div>
+      )}
 
+      <FormPopupModal isOpen={isResponseModalOpen} onClose={() => setIsResponseModalOpen(false)}>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">
+            {responseAction === "approved" ? "Approve Order" : "Reject Order"}
+          </h2>
+
+          {selectedOrder && (
             <div className="p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Shop Name:</p>
-              <p className="font-semibold text-sm sm:text-base">{selectedOrder.shopName}</p>
-              <p className="text-sm text-muted-foreground mt-2 mb-1">Total Amount:</p>
-              <p className="font-bold text-base sm:text-lg">Rs. {selectedOrder.total.toLocaleString()}</p>
+              <p className="font-semibold">{selectedOrder.orderNumber}</p>
+              <p className="text-sm text-muted-foreground">{selectedOrder.shopName}</p>
+              <p className="text-lg font-bold mt-2">Total: Rs. {selectedOrder.total.toLocaleString()}</p>
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {actionType === "approve" ? "Confirmation Notes (Optional)" : "Reason for Rejection"}
-              </label>
-              <Textarea
-                value={responseNotes}
-                onChange={(e) => setResponseNotes(e.target.value)}
-                placeholder={
-                  actionType === "approve"
-                    ? "Add any notes or delivery instructions..."
-                    : "Please provide a reason for rejection..."
-                }
-                rows={4}
-                data-testid="textarea-response-notes"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsActionModalOpen(false)}
-                data-testid="button-cancel-action"
-                className="w-full sm:w-auto"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={actionType === "approve" ? "default" : "destructive"}
-                onClick={handleAction}
-                data-testid="button-confirm-action"
-                className="w-full sm:w-auto"
-              >
-                {actionType === "approve" ? <Check className="w-4 h-4 mr-2" /> : <X className="w-4 h-4 mr-2" />}
-                Confirm {actionType === "approve" ? "Approval" : "Rejection"}
-              </Button>
-            </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Response Message {responseAction === "rejected" && <span className="text-red-500">*</span>}
+            </label>
+            <Textarea
+              value={responseMessage}
+              onChange={(e) => setResponseMessage(e.target.value)}
+              placeholder={
+                responseAction === "approved" 
+                  ? "Add any delivery or payment instructions..." 
+                  : "Explain reason for rejection..."
+              }
+              rows={4}
+              data-testid="textarea-response"
+            />
           </div>
-        )}
+
+          <div className="flex gap-2 justify-end">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsResponseModalOpen(false)}
+              data-testid="button-cancel"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleOrderAction}
+              disabled={responseAction === "rejected" && !responseMessage.trim()}
+              variant={responseAction === "approved" ? "default" : "destructive"}
+              data-testid="button-confirm"
+            >
+              {responseAction === "approved" ? "Approve Order" : "Reject Order"}
+            </Button>
+          </div>
+        </div>
       </FormPopupModal>
     </div>
   );

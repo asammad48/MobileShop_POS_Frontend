@@ -50,7 +50,10 @@ import RepairManDashboard from "@/pages/repairman/Dashboard";
 import WholesalerDashboard from "@/pages/wholesaler/Dashboard";
 import RepairMen from "@/pages/admin/RepairMen";
 import Wholesalers from "@/pages/admin/Wholesalers";
+import WholesalersMarketplace from "@/pages/admin/WholesalersMarketplace";
+import AdminPurchaseOrders from "@/pages/admin/PurchaseOrders";
 import Tax from "./pages/admin/sub pages/Tax";
+import WholesalerPurchaseOrders from "@/pages/wholesaler/PurchaseOrders";
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -183,6 +186,12 @@ function Router() {
       <Route path="/admin/wholesalers">
         <ProtectedLayout><Wholesalers /></ProtectedLayout>
       </Route>
+      <Route path="/admin/wholesalers/marketplace">
+        <ProtectedLayout><WholesalersMarketplace /></ProtectedLayout>
+      </Route>
+      <Route path="/admin/purchase-orders">
+        <ProtectedLayout><AdminPurchaseOrders /></ProtectedLayout>
+      </Route>
 
       {/* POS routes */}
       <Route path="/pos">
@@ -203,6 +212,9 @@ function Router() {
       {/* Wholesaler routes */}
       <Route path="/wholesaler/dashboard">
         <ProtectedLayout><WholesalerDashboard /></ProtectedLayout>
+      </Route>
+      <Route path="/wholesaler/purchase-orders">
+        <ProtectedLayout><WholesalerPurchaseOrders /></ProtectedLayout>
       </Route>
 
       <Route path="/">

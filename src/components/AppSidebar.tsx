@@ -115,7 +115,15 @@ const menuItems: Record<string, MenuItem[]> = {
     },
     { key: 'sale_managers', url: '/admin/sale-managers', icon: UserPlus },
     { key: 'repair_men', url: '/admin/repair-men', icon: Wrench },
-    { key: 'wholesalers', url: '/admin/wholesalers', icon: Building2 },
+    {
+      key: 'wholesale',
+      icon: Building2,
+      subMenu: [
+        { key: 'wholesaler_list', url: '/admin/wholesalers' },
+        { key: 'marketplace', url: '/admin/wholesalers/marketplace' },
+        { key: 'purchase_orders', url: '/admin/purchase-orders' },
+      ],
+    },
     { key: 'subscription', url: '/admin/subscription', icon: BanknoteIcon },
     { key: 'coupons', url: '/admin/coupons', icon: Tag },
   ],
@@ -151,6 +159,7 @@ const menuItems: Record<string, MenuItem[]> = {
   wholesaler: [
     { key: 'Dashboard', url: '/wholesaler/dashboard', icon: LayoutDashboard },
     { key: 'My Products', url: '/wholesaler/dashboard', icon: Package },
+    { key: 'Purchase Orders', url: '/wholesaler/purchase-orders', icon: ShoppingCart },
   ],
 };
 

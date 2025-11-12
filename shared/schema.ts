@@ -10,6 +10,10 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   role: text("role").notNull(),
   shopId: varchar("shop_id"),
+  businessName: text("business_name"),
+  phone: text("phone"),
+  whatsapp: text("whatsapp"),
+  address: text("address"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -19,6 +23,9 @@ export const shops = pgTable("shops", {
   ownerId: varchar("owner_id").notNull(),
   subscriptionTier: text("subscription_tier").notNull().default("silver"),
   subscriptionStatus: text("subscription_status").notNull().default("active"),
+  phone: text("phone"),
+  whatsapp: text("whatsapp"),
+  address: text("address"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -130,8 +137,10 @@ export const wholesalerProducts = pgTable("wholesaler_products", {
   category: text("category").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   stock: integer("stock").notNull().default(0),
-  discount: decimal("discount", { precision: 5, scale: 2 }),
+  discount: decimal("discount", { precision: 5, scale: 2 }).default("0"),
   minOrderQuantity: integer("min_order_quantity").notNull().default(1),
+  unit: text("unit").notNull().default("pack"),
+  imageUrl: text("image_url"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
