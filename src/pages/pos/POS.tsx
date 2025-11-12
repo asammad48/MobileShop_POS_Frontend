@@ -3,6 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import ProductSearch from '@/components/ProductSearch';
 import CartItem from '@/components/CartItem';
 import { QuickCustomerDialog } from '@/components/QuickCustomerDialog';
+import { QuickProductsDialog } from '@/components/QuickProductsDialog';
+import { useQuickProducts } from '@/hooks/useQuickProducts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +29,8 @@ import {
   RotateCcw,
   Trash2,
   DollarSign,
+  Star,
+  Settings,
 } from 'lucide-react';
 import { mockProducts } from '@/utils/mockData';
 import { useToast } from '@/hooks/use-toast';
@@ -71,6 +75,7 @@ export default function POS() {
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string>('cash');
   const [heldOrders, setHeldOrders] = useState<{ cart: CartItemType[]; customer: Customer | null }[]>([]);
+  const { quickProducts, setQuickProducts, maxQuickProducts } = useQuickProducts();
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -318,6 +323,59 @@ export default function POS() {
                 setResult={setResult}
                 autoFocus
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4 flex flex-row items-center justify-between gap-2 space-y-0">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg">Quick Products</CardTitle>
+              </div>
+              <QuickProductsDialog
+                products={mockProducts}
+                selectedIds={quickProducts}
+                maxSelections={maxQuickProducts}
+                onSave={setQuickProducts}
+              />
+            </CardHeader>
+            <CardContent>
+              {quickProducts.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {quickProducts.map((productId) => {
+                    const product = mockProducts.find(p => p.id === productId);
+                    if (!product) return null;
+                    
+                    return (
+                      <Button
+                        key={product.id}
+                        variant="secondary"
+                        className="h-auto flex flex-col items-start p-3 gap-1"
+                        onClick={() => handleAddToCart(product)}
+                        data-testid={`quick-product-${product.id}`}
+                      >
+                        <div className="font-medium text-sm text-left line-clamp-2">
+                          {product.name}
+                        </div>
+                        <div className="text-primary font-semibold">
+                          ${product.price}
+                        </div>
+                        {product.stock < product.lowStockThreshold && (
+                          <Badge variant="destructive" className="text-xs mt-1">
+                            Low Stock
+                          </Badge>
+                        )}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                  <p className="text-sm">No quick products selected</p>
+                  <p className="text-xs mt-1">Click "Manage" to add frequently used products</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
