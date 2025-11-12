@@ -1,4 +1,4 @@
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/store/authStore';
@@ -9,11 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useTitle } from '@/context/TitleContext';
+import NotificationPanel from '@/components/NotificationPanel';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -80,23 +80,7 @@ export default function AppHeader() {
           </div>
 
           {/* NOTIFICATIONS */}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="relative h-9 w-9 rounded-xl hover:bg-muted/50 transition flex items-center justify-center"
-            data-testid="button-notifications"
-            aria-label={t('admin.header.notifications')}
-          >
-            {/* Bell Icon (now absolute and centered) */}
-            <Bell className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-
-            {/* Notification Badge */}
-            <Badge
-              className="absolute -top-2 -right-2 flex items-center justify-center text-[10px] font-semibold bg-accent text-white rounded-full w-4 h-4 shadow-md"
-            >
-              12
-            </Badge>
-          </Button>
+          <NotificationPanel />
 
 
 

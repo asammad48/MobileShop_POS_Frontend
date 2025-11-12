@@ -17,6 +17,10 @@ import SuperAdminDashboard from "@/pages/superadmin/Dashboard";
 import ManageAdmins from "@/pages/superadmin/Admins";
 import PricingPlans from "@/pages/superadmin/Pricing";
 import SystemAnalytics from "@/pages/superadmin/Analytics";
+import ShopManagement from "@/pages/superadmin/Shops";
+import UserManagement from "@/pages/superadmin/Users";
+import FeatureFlags from "@/pages/superadmin/FeatureFlags";
+import ActivityLogs from "@/pages/superadmin/ActivityLogs";
 
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminClients from "@/pages/admin/Customer";
@@ -30,7 +34,7 @@ import RechargePayments from "@/pages/admin/RechargePayment";
 import Products from "@/pages/admin/sub pages/Products";
 import AddProduct from "./pages/admin/sub pages/AddProduct";
 import Category from "./pages/admin/sub pages/Category";
-import ActivityLogs from "@/pages/admin/ActivityLogs";
+import AdminActivityLogs from "@/pages/admin/ActivityLogs";
 import DrawerOpenHistory from "@/pages/admin/DrawerOpenHistory";
 import SalesReport from "./pages/admin/reports/SalesReport";
 import Subscription from "@/pages/admin/Subscription";
@@ -93,8 +97,20 @@ function Router() {
       <Route path="/super-admin/admins">
         <ProtectedLayout><ManageAdmins /></ProtectedLayout>
       </Route>
+      <Route path="/super-admin/shops">
+        <ProtectedLayout><ShopManagement /></ProtectedLayout>
+      </Route>
+      <Route path="/super-admin/users">
+        <ProtectedLayout><UserManagement /></ProtectedLayout>
+      </Route>
       <Route path="/super-admin/pricing">
         <ProtectedLayout><PricingPlans /></ProtectedLayout>
+      </Route>
+      <Route path="/super-admin/feature-flags">
+        <ProtectedLayout><FeatureFlags /></ProtectedLayout>
+      </Route>
+      <Route path="/super-admin/activity-logs">
+        <ProtectedLayout><ActivityLogs /></ProtectedLayout>
       </Route>
       <Route path="/super-admin/analytics">
         <ProtectedLayout><SystemAnalytics /></ProtectedLayout>
@@ -147,7 +163,7 @@ function Router() {
         <ProtectedLayout><RechargePayments /></ProtectedLayout>
       </Route>
       <Route path="/admin/activity-logs">
-        <ProtectedLayout><ActivityLogs /></ProtectedLayout>
+        <ProtectedLayout><AdminActivityLogs /></ProtectedLayout>
       </Route>
       <Route path="/admin/reports/sales">
         <ProtectedLayout><SalesReport /></ProtectedLayout>

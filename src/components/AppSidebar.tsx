@@ -56,8 +56,12 @@ type MenuItem = {
 const menuItems: Record<string, MenuItem[]> = {
   super_admin: [
     { key: 'Dashboard', url: '/super-admin/dashboard', icon: LayoutDashboard },
-    { key: 'Manage Admins', url: '/super-admin/admins', icon: Users },
+    { key: 'Manage Admins', url: '/super-admin/admins', icon: UserPlus },
+    { key: 'Shop Management', url: '/super-admin/shops', icon: Store },
+    { key: 'User Management', url: '/super-admin/users', icon: Users },
     { key: 'Pricing Plans', url: '/super-admin/pricing', icon: DollarSign },
+    { key: 'Feature Flags', url: '/super-admin/feature-flags', icon: Zap },
+    { key: 'Activity Logs', url: '/super-admin/activity-logs', icon: List },
     { key: 'System Analytics', url: '/super-admin/analytics', icon: BarChart3 },
   ],
   admin: [
