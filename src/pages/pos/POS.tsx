@@ -4,6 +4,7 @@ import ProductSearch from "@/components/ProductSearch";
 import CartItem from "@/components/CartItem";
 import { QuickCustomerDialog } from "@/components/QuickCustomerDialog";
 import { QuickProductsDialog } from "@/components/QuickProductsDialog";
+import { BarcodeScannerDialog } from "@/components/BarcodeScannerDialog";
 import { useQuickProducts } from "@/hooks/useQuickProducts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,10 +36,10 @@ import {
   Settings,
   Menu,
   ShoppingCart,
+  Camera,
 } from "lucide-react";
 import { mockProducts } from "@/utils/mockData";
 import { useToast } from "@/hooks/use-toast";
-import { Html5QrcodeScanner } from "html5-qrcode";
 import { useSidebar } from "@/components/ui/sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { printReceipt, Receipt, openCashDrawer } from "@/utils/thermalPrinter";
@@ -82,6 +83,7 @@ export default function POS() {
     { id: "1", name: "Walk-in Customer", phone: "" },
   ]);
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
+  const [showScannerDialog, setShowScannerDialog] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string>("cash");
   const [heldOrders, setHeldOrders] = useState<
     { cart: CartItemType[]; customer: Customer | null }[]
@@ -316,21 +318,26 @@ export default function POS() {
   };
 
   const handleScanning = () => {
-    const scanner = new Html5QrcodeScanner(
-      "reader",
-      { fps: 10, qrbox: 250 },
-      false,
-    );
-    scanner.render(
-      (decodedText) => {
-        setResult(decodedText);
-        const product = mockProducts.find((p) => p.barcode === decodedText);
-        if (product) {
-          handleAddToCart(product);
-        }
-      },
-      () => {},
-    );
+    setShowScannerDialog(true);
+  };
+
+  const handleBarcodeScanned = (barcode: string) => {
+    setResult(barcode);
+    setSearch(barcode);
+    const product = mockProducts.find((p) => p.barcode === barcode);
+    if (product) {
+      handleAddToCart(product);
+      toast({
+        title: "Product Added",
+        description: `${product.name} added to cart`,
+      });
+    } else {
+      toast({
+        title: "Product Not Found",
+        description: `No product found with barcode: ${barcode}`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCustomerAdded = (customer: Customer) => {
@@ -492,6 +499,16 @@ export default function POS() {
 
               <div className="flex flex-wrap gap-2">
                 <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleScanning}
+                  data-testid="button-scan-barcode"
+                  className="flex-shrink-0"
+                >
+                  <Camera className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Scan Barcode</span>
+                </Button>
+                <Button
                   variant="outline"
                   size="sm"
                   onClick={handleHoldOrder}
@@ -500,7 +517,7 @@ export default function POS() {
                   className="flex-shrink-0"
                 >
                   <PauseCircle className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Hold Order</span>
+                  <span className="hidden sm:inline">Hold</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -695,6 +712,12 @@ export default function POS() {
         open={showCustomerDialog}
         onOpenChange={setShowCustomerDialog}
         onCustomerAdded={handleCustomerAdded}
+      />
+
+      <BarcodeScannerDialog
+        open={showScannerDialog}
+        onOpenChange={setShowScannerDialog}
+        onScanSuccess={handleBarcodeScanned}
       />
     </div>
   );
