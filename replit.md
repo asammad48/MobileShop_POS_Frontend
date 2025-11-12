@@ -135,6 +135,37 @@ shared/
 
 ## Recent Changes (Latest Session)
 
+### POS Quick Products Feature (November 12, 2025)
+Implemented a quick products feature for faster checkout:
+
+#### Features Added
+1. **Quick Products Hook** (`useQuickProducts`)
+   - localStorage persistence for selected quick products
+   - Maximum 12 products limit with enforcement
+   - Survives page refresh and app restarts
+
+2. **Quick Products Management Dialog**
+   - Select/deselect frequently used products
+   - Visual feedback with checkbox UI
+   - Live counter showing selection progress (X/12)
+   - Limit enforcement prevents selection bypass via keyboard
+   - Disabled state when maximum reached
+
+3. **Quick Products Display Section**
+   - Positioned below Product Search on POS page
+   - Responsive grid layout (2/3/4 columns based on screen size)
+   - Product buttons show name, price, and low stock badges
+   - Single-click to add product to cart
+   - Empty state with helpful guidance when no products selected
+   - Settings button in header to manage selections
+
+#### Technical Implementation
+- Created `src/hooks/useQuickProducts.ts` for state management
+- Created `src/components/QuickProductsDialog.tsx` for management UI
+- Integrated into `src/pages/pos/POS.tsx` with proper positioning
+- All accessibility features and data-testid attributes added
+- Fixed DOM nesting and checkbox bypass issues
+
 ### Super Admin Platform Management (November 2025)
 Complete implementation of super admin capabilities for platform-wide management:
 
