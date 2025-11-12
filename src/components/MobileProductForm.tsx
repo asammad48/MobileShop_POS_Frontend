@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -198,6 +198,11 @@ function PhoneModelAutocomplete({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
+  // Sync inputValue with parent value and brandId changes
+  useEffect(() => {
+    setInputValue(value);
+  }, [value, brandId]);
+
   const models = useMemo(() => {
     if (!brandId) return [];
     return mockPhoneModels[brandId] || [];
@@ -284,6 +289,12 @@ export function MobileProductForm({ onSubmit, onCancel }: MobileProductFormProps
   // Scanner state
   const [showScanner, setShowScanner] = useState(false);
 
+  // Handle brand change - reset model when brand changes
+  const handleBrandChange = useCallback((newBrand: string) => {
+    setBrand(newBrand);
+    setModel(""); // Clear model when brand changes
+  }, []);
+
   // Calculate final price with tax
   const finalPrice = useMemo(() => {
     const price = parseFloat(sellingPrice) || 0;
@@ -307,7 +318,15 @@ export function MobileProductForm({ onSubmit, onCancel }: MobileProductFormProps
     const newErrors: Record<string, string> = {};
     
     if (!brand) newErrors.brand = "Brand is required";
-    if (!model.trim()) newErrors.model = "Phone model is required";
+    if (!model.trim()) {
+      newErrors.model = "Phone model is required";
+    } else if (brand) {
+      // Validate that model belongs to selected brand
+      const brandModels = mockPhoneModels[brand] || [];
+      if (brandModels.length > 0 && !brandModels.includes(model.trim())) {
+        newErrors.model = "Please select a valid model for the selected brand";
+      }
+    }
     if (!color.trim()) newErrors.color = "Color is required";
     if (!imei.trim()) newErrors.imei = "IMEI is required";
     if (!purchasePrice || parseFloat(purchasePrice) <= 0) {
@@ -323,9 +342,12 @@ export function MobileProductForm({ onSubmit, onCancel }: MobileProductFormProps
       return;
     }
 
+    // Get brand display name
+    const brandName = mockBrands.find(b => b.id === brand)?.name || brand;
+
     // Prepare payload
     const payload: MobileProductPayload = {
-      brand,
+      brand: brandName, // Use display name instead of ID
       model: model.trim(),
       color: color.trim(),
       imei: imei.trim(),
@@ -349,7 +371,7 @@ export function MobileProductForm({ onSubmit, onCancel }: MobileProductFormProps
           items={mockBrands}
           placeholder="Select brand"
           value={brand}
-          onChange={setBrand}
+          onChange={handleBrandChange}
         />
         {errors.brand && (
           <p className="text-destructive text-xs mt-1">{errors.brand}</p>
