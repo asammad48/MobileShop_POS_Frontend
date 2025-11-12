@@ -135,6 +135,46 @@ shared/
 
 ## Recent Changes (Latest Session)
 
+### POS Layout Improvements (November 12, 2025 - Latest)
+Enhanced the POS page layout for better usability and screen real estate optimization:
+
+#### Layout Changes
+1. **Header Title Integration**
+   - Added `useTitle` hook to set dynamic page title in header
+   - Title now displays "Point of Sale" in the main application header
+   - Removes redundant page title from POS page itself
+
+2. **Sidebar Navigation**
+   - Added SidebarTrigger button to POS page header
+   - Users can now open sidebar while on POS page to navigate to other sections
+   - Previously sidebar was hidden with no way to re-open
+
+3. **Two-Column Layout for Quick Products and Cart**
+   - Reorganized Quick Products and Current Sale into side-by-side columns
+   - Better utilization of horizontal screen space
+   - Responsive grid: stacks vertically on smaller screens, shows columns on md+ viewports
+   - Both sections maintain scrollable areas for long lists
+
+4. **Customer Selection in Order Summary**
+   - Moved customer selection from separate card to Order Summary section
+   - Reduces vertical scrolling needed
+   - Consolidates checkout-related controls in one place
+   - "Add New Customer" button remains accessible
+
+5. **Quick Products Search Enhancement**
+   - Added search input in QuickProductsDialog for filtering products
+   - Real-time search filtering by product name (case-insensitive)
+   - Shows result count badge when searching
+   - Empty state when no products match search query
+   - Search resets when dialog closes
+
+#### Technical Implementation
+- Modified `src/pages/pos/POS.tsx` with new layout structure
+- Enhanced `src/components/QuickProductsDialog.tsx` with search functionality
+- Maintained all existing functionality (cart, payments, order holding, etc.)
+- Preserved responsive design and accessibility features
+- All data-testid attributes updated for new layout
+
 ### POS Quick Products Feature (November 12, 2025)
 Implemented a quick products feature for faster checkout:
 
