@@ -119,7 +119,7 @@ const menuItems: Record<string, MenuItem[]> = {
       key: 'wholesale',
       icon: Building2,
       subMenu: [
-        { key: 'wholesaler_list', url: '/admin/wholesalers' },
+        // { key: 'wholesaler_list', url: '/admin/wholesalers' },
         { key: 'marketplace', url: '/admin/wholesalers/marketplace' },
         { key: 'purchase_orders', url: '/admin/purchase-orders' },
       ],

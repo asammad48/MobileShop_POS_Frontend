@@ -71,7 +71,13 @@
       
       },
       "repair_men": "Repair Men",
-      "wholesalers": "WholeSaler"
+      "wholesale": {
+        "title": "wholesale",
+        "sub": {
+          "marketplace": "Marketplace",
+          "purchase_orders": "Purchase Order"
+        }
+      }
     },
     "dashboard": {
       "title": "Shop Dashboard",
